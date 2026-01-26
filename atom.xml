@@ -6,7 +6,7 @@
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-01-25T12:09:26.275Z</updated>
+  <updated>2026-01-26T11:01:41.220Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>&#39;Trae-Java环境配置&#39;</title>
+    <link href="https://zhizhi2213.github.io/2026/01/26/Trae-Java%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/"/>
+    <id>https://zhizhi2213.github.io/2026/01/26/Trae-Java%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/</id>
+    <published>2026-01-26T11:01:35.000Z</published>
+    <updated>2026-01-26T11:01:41.220Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;配置Java环境&quot;&gt;&lt;a href=&quot;#配置Java环境&quot; class=&quot;headerlink&quot; title=&quot;配置Java环境&quot;&gt;&lt;/a&gt;配置Java环境&lt;/h2&gt;&lt;h3</summary>
+        
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>&#39;为什么Java中只有值传递？&#39;</title>
