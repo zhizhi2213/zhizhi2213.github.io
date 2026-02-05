@@ -90,8 +90,13 @@ class BlogGenerator {
   parseMarkdown(content) {
     let html = content;
     
+    // 修复代码块解析，支持VS Code相同的逻辑
     html = html.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
       const langName = lang || 'text';
+      // 保留代码中的换行和格式
+      code = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      // 保留代码中的换行
+      code = code.replace(/\n/g, '\n');
       return `<pre class="language-${langName}" data-lang="${langName}"><code class="language-${langName}">${code}</code></pre>`;
     });
     

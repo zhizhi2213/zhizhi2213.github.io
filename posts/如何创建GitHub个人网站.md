@@ -86,10 +86,8 @@ keywords: 关键词
 author: 作者名
 language: zh-CN
 timezone: Asia/Shanghai
-
 # URL
 url: https://你的用户名.github.io
-
 # Deployment
 deploy:
   type: git
