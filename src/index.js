@@ -90,10 +90,16 @@ class BlogGenerator {
   parseMarkdown(content) {
     let html = content;
     
-    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>');
+    html = html.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
+      const langName = lang || 'text';
+      return `<pre class="language-${langName}" data-lang="${langName}"><code class="language-${langName}">${code}</code></pre>`;
+    });
     
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
     
+    html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
+    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
+    html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
     html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
     html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
     html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
