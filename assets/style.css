@@ -1,5 +1,5 @@
 :root {
-  --accent-color: #6366f1;
+  --accent-color: {{theme.accentColor}};
   --bg-primary: #fafafa;
   --bg-secondary: #f5f5f7;
   --bg-card: rgba(255, 255, 255, 0.8);
@@ -192,8 +192,6 @@ body {
   font-weight: 800;
   margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-primary) 50%, var(--accent-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: fadeInUp 0.8s ease;
   letter-spacing: -0.03em;
@@ -512,8 +510,6 @@ body {
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 

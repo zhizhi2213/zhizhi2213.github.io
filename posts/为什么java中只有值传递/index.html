@@ -42,7 +42,7 @@
           <p>#为什么Java中只有值传递？</p><h2>形参&实参</h2><p>方法的定义可能会用到 <strong>参数</strong>，参数在程序语言中分为：</p><ul><ol><li><strong>实参（实际参数，Arguments）</strong>：用于传递给函数/方法的参数，必须有确定的值。</li>
 <li><strong>形参（形式参数，Parameters）</strong>：用于定义函数/方法，接收实参，不需要有确定的值。</li>
 </ol></ul>
-<pre><code class="language-java">String hello = "Hello!";
+<pre class="language-java" data-lang="java"><code class="language-java">String hello = "Hello!";
 // hello 为实参
 sayHello(hello);
 // str 为形参
@@ -52,7 +52,7 @@ void sayHello(String str) {
 </code></pre><h2>值传递&引用传递</h2><p>程序设计语言将实参传递给方法（或函数）的方式分为两种：</p><ul><ol><li><strong>值传递</strong>：方法接收的是实参值的拷贝，会创建副本。</li>
 <li><strong>引用传递</strong>：方法接收的直接是实参的地址，而不是实参内的值，这就是指针，此时形参就是实参，对形参的任何修改都会反应到实参，包括重新赋值。</li>
 </ol></ul>
-很多程序设计语言（比如 C++、 Pascal）提供了两种参数传递的方式，不过，在 Java 中只有值传递。</p><h2>为什么 Java 只有值传递？</h2><p><strong>为什么说 Java 只有值传递呢？</strong> 不需要太多废话，我通过 3 个例子来给大家证明。</p><h3>案例 1：传递基本类型参数</h3><p>代码：</p><pre><code class="language-java">public static void main(String[] args) {
+很多程序设计语言（比如 C++、 Pascal）提供了两种参数传递的方式，不过，在 Java 中只有值传递。</p><h2>为什么 Java 只有值传递？</h2><p><strong>为什么说 Java 只有值传递呢？</strong> 不需要太多废话，我通过 3 个例子来给大家证明。</p><h3>案例 1：传递基本类型参数</h3><p>代码：</p><p><pre class="language-java" data-lang="java"><code class="language-java">public static void main(String[] args) {
     int num1 = 10;
     int num2 = 20;
     swap(num1, num2);
@@ -65,11 +65,11 @@ void sayHello(String str) {
     System.out.println("a = " + a);
     System.out.println("b = " + b);
 }
-</code></pre><p>输出：</p><pre><code class="language-plain">a = 20
+</code></pre><p>输出：</p><p><pre class="language-plain" data-lang="plain"><code class="language-plain">a = 20
 b = 10
 num1 = 10
 num2 = 20
-</code></pre><p>解析：</p><p>这里应该是基本类型，实参传递过来的是地址中数值，然后形参地址中存放了这个数值，所有修改形参只是修改数值而已，不会影响到实参。</p><p>在 <code>swap()</code> 方法中，<code>a</code>、<code>b</code> 的值进行交换，并不会影响到 <code>num1</code>、<code>num2</code>。因为，<code>a</code>、<code>b</code> 的值，只是从 <code>num1</code>、<code>num2</code> 的复制过来的。也就是说，a、b 相当于 <code>num1</code>、<code>num2</code> 的副本，副本的内容无论怎么修改，都不会影响到原件本身。</p><h3>案例 2：传递引用类型参数 1</h3><p>代码：</p><pre><code class="language-java">  public static void main(String[] args) {
+</code></pre><p>解析：</p><p>这里应该是基本类型，实参传递过来的是地址中数值，然后形参地址中存放了这个数值，所有修改形参只是修改数值而已，不会影响到实参。</p><p>在 <code>swap()</code> 方法中，<code>a</code>、<code>b</code> 的值进行交换，并不会影响到 <code>num1</code>、<code>num2</code>。因为，<code>a</code>、<code>b</code> 的值，只是从 <code>num1</code>、<code>num2</code> 的复制过来的。也就是说，a、b 相当于 <code>num1</code>、<code>num2</code> 的副本，副本的内容无论怎么修改，都不会影响到原件本身。</p><h3>案例 2：传递引用类型参数 1</h3><p>代码：</p><p><pre class="language-java" data-lang="java"><code class="language-java">  public static void main(String[] args) {
       int[] arr = { 1, 2, 3, 4, 5 };
       System.out.println(arr[0]);
       change(arr);
@@ -78,10 +78,10 @@ num2 = 20
       // 将数组的第一个元素变为0
       array[0] = 0;
   }
-</code></pre><p>输出：</p><pre><code class="language-plain">1
+</code></pre><p>输出：</p><p><pre class="language-plain" data-lang="plain"><code class="language-plain">1
 0
 </code></pre><p>解析：</p><p>这里我的理解是这里还是传递的实参指向的值，这不过这个值是个地址罢了，所以形参只是拷贝了这个地址，指向的还是同一个对象。方法中修改了这个对象内部的值，所以影响到了实参。
-如果你直接修改array这个值，是不会影响到实参的。</p><p>看了这个案例很多人肯定觉得 Java 对引用类型的参数采用的是引用传递。</p><p>实际上，并不是的，这里传递的还是值，不过，这个值是实参的地址罢了！</p><p>也就是说 <code>change</code> 方法的参数拷贝的是 <code>arr</code> （实参）的地址，因此，它和 <code>arr</code> 指向的是同一个数组对象。这也就说明了为什么方法内部对形参的修改会影响到实参。</p><h3>案例 3：传递引用类型参数 2</h3><pre><code class="language-java">public class Person {
+如果你直接修改array这个值，是不会影响到实参的。</p><p>看了这个案例很多人肯定觉得 Java 对引用类型的参数采用的是引用传递。</p><p>实际上，并不是的，这里传递的还是值，不过，这个值是实参的地址罢了！</p><p>也就是说 <code>change</code> 方法的参数拷贝的是 <code>arr</code> （实参）的地址，因此，它和 <code>arr</code> 指向的是同一个数组对象。这也就说明了为什么方法内部对形参的修改会影响到实参。</p><h3>案例 3：传递引用类型参数 2</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class Person {
     private String name;
    // 省略构造函数、Getter&Setter方法
 }</p><p>public static void main(String[] args) {
@@ -97,7 +97,7 @@ num2 = 20
     System.out.println("person1:" + person1.getName());
     System.out.println("person2:" + person2.getName());
 }
-</code></pre><p>输出:</p><pre><code class="language-plain">person1:小李
+</code></pre><p>输出:</p><p><pre class="language-plain" data-lang="plain"><code class="language-plain">person1:小李
 person2:小张
 xiaoZhang:小张
 xiaoLi:小李
@@ -116,7 +116,7 @@ xiaoLi:小李
     incr(age);
     std::cout << "invoke after: " << age << "\n";
 }
-<pre><code class="language-">
+<pre class="language-text" data-lang="text"><code class="language-text">
 输出结果：</p><p></code></pre>plain
 invoke before: 10
 incr before: 10
