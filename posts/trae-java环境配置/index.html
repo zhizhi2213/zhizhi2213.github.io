@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>'''Trae-Java环境配置''' - 吱吱的博客</title>
+  <meta name="description" content="{{post.excerpt}}">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <article class="post">
+        <div class="post-header">
+          <a href="/" class="back-link">← 返回首页</a>
+          <h1 class="post-title">'''Trae-Java环境配置'''</h1>
+          <div class="post-meta">
+            <span class="post-date">2026年1月26日</span>
+            
+          </div>
+        </div>
+        
+        <div class="post-content">
+          <h2>配置Java环境</h2>
+<h3>1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3><h3>2. 配置Java环境 settings.json文件</h3>
+<pre><code class="language-json">{
+  "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"
+}
+ 
+</code></pre><p>
+<h3>3.配置maven环境 settings.json文件</h3>
+<pre><code class="language-json">{
+  "java.configuration.maven.globalSettings": "C:\\work\\apache-maven-3.9.12\\conf\\all.xml",
+  "maven.executable.path": "C:\\work\\apache-maven-3.9.12\\bin\\mvn.cmd"
+}
+ 
+</code></pre>
+<h3>4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<pre><code class="language-json">{
+  "java.test.config": {
+    "vmArgs": [
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.math=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+      "--add-opens=java.base/java.io=ALL-UNNAMED",
+      "--add-opens=java.base/java.time=ALL-UNNAMED",
+      "--add-opens=java.base/java.security=ALL-UNNAMED",
+      "--add-opens=java.base/sun.security.util=ALL-UNNAMED",
+      "--illegal-access=permit"
+    ]
+  } 
+}</p><p></code></pre>
+<h3>5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+launch.json
+<pre><code class="language-json">{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}",
+      "vmArgs" :"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"
+    },
+    {
+      "type": "java",
+      "name": "BankSteelPurchaseFinanceApp",
+      "request": "launch",
+      "mainClass": "com.banksteel.purchase.BankSteelPurchaseFinanceApp",
+      "projectName": "banksteel-purchase-finance",
+      "vmArgs" :"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"
+    }
+  ]
+}
+</code></pre><p>
+ps:
+cursor 配置文件 settings.json
+<pre><code class="language-json">{
+  "workbench.colorTheme": "Default Light Modern",
+  "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot",
+  "java.jdt.ls.java.home": "",
+  "maven.executable.options": "",
+  "java.configuration.maven.globalSettings": "",
+  "maven.executable.path": "C:\\work\\apache-maven-3.6.3\\bin\\mvn.cmd",
+  "maven.excludedFolders": [</p><p>    "*<em>/.</em>",
+    "<strong>/node_modules",
+    "</strong>/target",
+    "<strong>/bin",
+    "</strong>/archetype-resources"
+  ],
+  "redhat.telemetry.enabled": true,
+  "java.configuration.maven.userSettings": "<?xml version=\"1.0\" encoding=\"UTF-8\"?> <settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"           xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\">      <localRepository>C:\\repository</localRepository>     <pluginGroups></pluginGroups>     <proxies></proxies>   <mirrors>     <mirror>       <id>banksteel-mirror</id>       <name>Banksteel Maven Public Mirror</name>       <url>http://nexus.registry.banksteel.com/repository/banksteel/</url>       <mirrorOf>central</mirrorOf>       <blocked>false</blocked>     </mirror>   </mirrors>     <profiles>      <profile>       <id>dev</id>       <repositories>              <repository>           <id>dev.snapshot</id>           <url>http://nexus.registry.banksteel.com/repository/dev-snapshots/</url>           <releases>               <enabled>false</enabled>           </releases>           <snapshots>               <enabled>true</enabled>               <updatePolicy>always</updatePolicy>           </snapshots>         </repository>       </repositories>     </profile> \t \t <profile>       <id>test</id>       <repositories>         <repository>           <id>test.snapshot</id>           <url>http://nexus.registry.banksteel.com/repository/test-snapshots/</url>           <releases>               <enabled>false</enabled>           </releases>           <snapshots>               <enabled>true</enabled>               <updatePolicy>always</updatePolicy>           </snapshots>         </repository>       </repositories>     </profile> \t \t \t <profile>       <id>pre</id>       <repositories>          <repository>           <id>pre.snapshot</id>           <url>http://nexus.registry.banksteel.com/repository/pre-snapshots/</url>           <releases>               <enabled>false</enabled>           </releases>           <snapshots>               <enabled>true</enabled>               <updatePolicy>always</updatePolicy>           </snapshots>         </repository>        </repositories>     </profile> \t \t <profile>       <id>prod</id>       <repositories>         <!-- 生产仓库 -->         <repository>           <id>prod.snapshot</id>           <url>http://nexus.registry.banksteel.com/repository/snapshots/</url>           <releases>             <enabled>false</enabled>           </releases>           <snapshots>             <enabled>true</enabled>             <updatePolicy>always</updatePolicy>           </snapshots>         </repository>        </repositories>     </profile>   </profiles>    <activeProfiles>     <activeProfile>dev</activeProfile>   </activeProfiles> </settings>",
+  "maven.terminal.useJavaHome": true,
+  "java.project.outputPath": "",
+  "maven.settingsFile": "C:\\work\\apache-maven-3.6.3\\conf\\all.xml",
+  "security.workspace.trust.untrustedFiles": "open",
+  "java.test.config": {
+    "vmArgs": [
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.math=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+      "--add-opens=java.base/java.io=ALL-UNNAMED",
+      "--add-opens=java.base/java.time=ALL-UNNAMED",
+      "--add-opens=java.base/java.security=ALL-UNNAMED",
+      "--add-opens=java.base/sun.security.util=ALL-UNNAMED",
+      "--illegal-access=permit"
+    ]
+  }
+}
+</code></pre>
+<h3>可能遇到的问题</h3><ol><li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件</li>
+</ol>   blocked 设置 false
+<pre><code class="language-xml">    <mirror>
+       ...
+      <blocked>false</blocked>
+    </mirror>
+</code></pre>
+以上无法解决，建议本地仓库地址使用配置默认的也就是.m2下的仓库地址</p>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/script.js"></script>
+</body>
+</html>

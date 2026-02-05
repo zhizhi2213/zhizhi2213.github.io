@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何创建GitHub个人网站 - 吱吱的博客</title>
+  <meta name="description" content="{{post.excerpt}}">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <article class="post">
+        <div class="post-header">
+          <a href="/" class="back-link">← 返回首页</a>
+          <h1 class="post-title">如何创建GitHub个人网站</h1>
+          <div class="post-meta">
+            <span class="post-date">2026年1月22日</span>
+            
+          </div>
+        </div>
+        
+        <div class="post-content">
+          <h2>如何创建GitHub个人网站</h2><p>本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。</p><h3>准备工作</h3><p>在开始之前，请确保你的电脑已经安装以下工具：</p><ul><ol><li>Node.js (建议选择LTS版本)</li>
+<li>Git</li>
+</ol></ul>
+#### 1. 配置SSH密钥</p><ol><li>生成SSH密钥：</li>
+</ol>
+<pre><code class="language-shell">   ssh-keygen -t rsa -C "你的邮箱地址"
+</code></pre><ol><li>查看公钥内容：</li>
+</ol>
+<pre><code class="language-shell">   cat ~/.ssh/id_rsa.pub  # Windows系统使用: type C:\Users\用户名\.ssh\id_rsa.pub
+</code></pre><ol><li>复制公钥内容，前往访问 GitHub SSH设置</li>
+</ol>
+<ul><ol><li>访问 GitHub SSH设置</li>
+<li>点击 “New SSH key”</li>
+<li>填写标题（如：My PC）</li>
+<li>粘贴公钥内容</li>
+<li>点击 “Add SSH key”</li>
+</ol></ul>
+<ol><li>测试SSH连接：</li>
+</ol>
+<pre><code class="language-shell">    ssh -T git@github.com
+</code></pre><p>#### 2. 创建GitHub Pages仓库</p><ol><li>登录GitHub，点击右上角 “+” 号，选择 “New repository”</li>
+<li>仓库名称必须为：你的用户名.github.io</li>
+<li>选择 “Public”</li>
+<li>点击 “Create repository”</li>
+</ol>
+#### 3. 安装Hexo框架</p><ol><li>全局安装Hexo-CLI：</li>
+</ol>
+<pre><code class="language-shell">   npm install -g hexo-cli
+</code></pre> </p><ol><li>创建博客项目：</li>
+</ol>
+<pre><code class="language-shell">   hexo init blog
+   cd blog
+   npm install
+</code></pre> </p><ol><li>安装必要插件：</li>
+</ol>
+<pre><code class="language-shell">   npm install hexo-deployer-git --save
+   npm install hexo-renderer-pug hexo-renderer-stylus --save
+</code></pre><p>#### 4. 配置Hexo</p><ol><li>编辑根目录下的 _config.yml，修改以下配置：</li>
+</ol>
+<pre><code class="language-yaml"># Site
+title: 你的网站标题
+subtitle: 副标题
+description: 网站描述
+keywords: 关键词
+author: 作者名
+language: zh-CN
+timezone: Asia/Shanghai</p><h1>URL</h1>
+url: https://你的用户名.github.io</p><h1>Deployment</h1>
+deploy:
+  type: git
+  repo: git@github.com:你的用户名/你的用户名.github.io.git
+  branch: main
+</code></pre><p>#### 5. 安装Butterfly主题</p><ol><li>下载主题：</li>
+</ol>
+<pre><code class="language-shell">    #最好开启小飞机，还有问题开启TUN模式
+    git clone https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+</code></pre><ol><li>修改Hexo配置文件 <code>_config.yml</code>：</li>
+</ol>
+<pre><code class="language-yaml">   theme: butterfly
+</code></pre><ol><li>创建主题配置文件：</li>
+</ol>
+<pre><code class="language-"># 在博客根目录创建文件：_config.butterfly.yml
+<h1>从主题目录 themes/butterfly/_config.yml 复制配置到 _config.butterfly.yml</h1>
+</code></pre><p>#### 6. 创建GitHub Actions自动部署</p><ol><li>在博客根目录创建 .github/workflows/deploy.yml：</li>
+</ol>
+<pre><code class="language-yaml">name: Deploy</p><p>on:
+  push:
+    branches:
+      - main</p><p>jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+      - run: npm install
+      - run: npm run build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+</code></pre><p>#### 7. 本地预览与部署</p><ol><li>本地预览：</li>
+</ol>
+<pre><code class="language-shell">   hexo clean   # 清除缓存
+   hexo server  # 启动本地服务器
+</code></pre><p>访问 http://localhost:4000 预览效果</p><ol><li>部署到GitHub：</li>
+</ol>
+<pre><code class="language-shell">   hexo clean # 清除缓存
+   hexo deploy # 部署到GitHub
+</code></pre><p>#### 8. 自定义域名（可选）
+    1. 在你的域名服务商处添加DNS记录：
+        - 类型：CNAME
+        - 主机记录：www 或 @
+        - 记录值：你的用户名.github.io
+    2. 在博客的source目录下创建CNAME文件：</p><pre><code class="language-shell">    echo "你的域名" > source/CNAME
+</code></pre>
+#### 9，写作博客
+<ol><li>创建博客</li>
+</ol><pre><code class="language-shell">    hexo new 'Github 首页美化教程'
+</code></pre>
+<ol><li>编辑生产的博客文件</li>
+</ol>
+<ol><li>预览发布</li>
+</ol>
+</p>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/script.js"></script>
+</body>
+</html>
