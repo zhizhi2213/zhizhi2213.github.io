@@ -1,6 +1,5 @@
 ---
-layout: '''github'
-title: 首页美化教程'
+title: "首页美化教程"
 date: 2026-01-23 18:55:54
 tags:
 ---

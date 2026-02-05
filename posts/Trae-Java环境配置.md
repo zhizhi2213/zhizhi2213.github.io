@@ -1,5 +1,5 @@
 ---
-title: '''Trae-Java环境配置'''
+title: "Trae-Java环境配置"
 date: 2026-01-26 19:01:35
 tags:
 ---
