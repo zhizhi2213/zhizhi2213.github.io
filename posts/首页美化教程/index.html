@@ -60,7 +60,7 @@
 <li>保存</li>
 </ol></ul>
 这个WAKATIME_API_KEY就是我们.github/workflows/waka.yml文件里面的那个环境变量。
-<pre><code class="language-markdown"><!--START_SECTION:waka-->
+<pre class="language-markdown" data-lang="markdown"><code class="language-markdown"><!--START_SECTION:waka-->
 <!--END_SECTION:waka-->
 </code></pre>
 Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配置Token</h3>
@@ -81,16 +81,16 @@ Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配�
    - ACCESS_TOKEN
    - METRICS_TOKEN
    - GITHUB_TOKEN</p><h3>4. Repobeats 配置</h3>
-<pre><code class="language-md"><img width="120%" src="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg" />
+<pre class="language-md" data-lang="md"><code class="language-md"><img width="120%" src="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg" />
 </code></pre>
 这一行是 Repobeats 服务，自动生成一张仓库贡献的动态分析图。比如提交数、活跃度、PR、issue 等，会显示成五颜六色的曲线图。这个 Repobeats 图，它并不是记录你的「整个 GitHub 账号」，而是记录某一个具体仓库的活动情况。</p><p>你只需要在 <a href="https://repobeats.axiom.co/">Repobeats</a> 这个网页中登录你的 Github 账号，然后选择需要记录的仓库，就会有一句这样的话：
-<pre><code class="language-">// Add the following to your README.md to embed Repobeats</p><p>!<a href="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image"">Alt</a>
+<pre class="language-text" data-lang="text"><code class="language-text">// Add the following to your README.md to embed Repobeats</p><p>!<a href="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image"">Alt</a>
 </code></pre>
 替换掉这个地址就ok了。
 <h3>5. readme-streak-stats配置</h3><p><a href="https://github.com/DenverCoder1/github-readme-streak-stats?tab=readme-ov-file">github-readme-streak-stats 项目地址</a>
 <ol><li>参考项目地址部署配置</li>
 <li>readme 修改 user 与 域名（主题、语言等都可以修改，具体参考项目介绍）</li>
-</ol><pre><code class="language-markdown"><picture>
+</ol><pre class="language-markdown" data-lang="markdown"><code class="language-markdown"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&theme=dark&locale=zh_Hans&hide_border=true&date_format=j/n/Y" />
   <source media="(prefers-color-scheme: light)" srcset="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&theme=light&locale=zh_Hans&hide_border=true&date_format=j/n/Y" />
   <img src="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&theme=dark&locale=zh_Hans&hide_border=true&date_format=j/n/Y" />
@@ -98,10 +98,10 @@ Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配�
 </code></pre><h3>6. Hexo blog 配置</h3>
 <ol><li>Hexo 生成 RSS</li>
 </ol>   - 在你的 Hexo 博客目录（有 source/、themes/ 的那个根目录）里执行：
-<pre><code class="language-shell">      npm install hexo-generator-feed --save=hexo-generator-feed@3.0.0
+<pre class="language-shell" data-lang="shell"><code class="language-shell">      npm install hexo-generator-feed --save=hexo-generator-feed@3.0.0
 </code></pre><ol><li>修改 根目录 _config.yml</li>
 </ol>
-<pre><code class="language-yaml"># 站点基本信息（确保正确，影响 feed 的链接）
+<pre class="language-yaml" data-lang="yaml"><code class="language-yaml"># 站点基本信息（确保正确，影响 feed 的链接）
 url: https://wenjiew-astro.github.io
 root: /
 permalink: :year/:month/:day/:title/</p><h1>RSS 配置（hexo-generator-feed）</h1>
@@ -115,7 +115,7 @@ feed:
 </ol>
    http://localhost:4000/atom.xml</p><p>
 <ol><li>修改 GitHub Actions</li>
-</ol><pre><code class="language-yaml">name: Recent Blog</p><p>on:
+</ol><pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Recent Blog</p><p>on:
    schedule:
       - cron: "0 0 <em> </em> *"   # 每天 00:00 UTC 跑一次
    workflow_dispatch:</p><p>jobs:
@@ -134,7 +134,7 @@ feed:
          - uses: sarisia/actions-commit@master</p><p></code></pre>
 <ol><li>修改readme</li>
 </ol>   在 README.md 里加：
-<pre><code class="language-markdown">## 📝 最近更新
+<pre class="language-markdown" data-lang="markdown"><code class="language-markdown">## 📝 最近更新
 <!--START_SECTION:feed-->
 <!--END_SECTION:feed-->
 </code></pre>
