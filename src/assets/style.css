@@ -192,8 +192,6 @@ body {
   font-weight: 800;
   margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-primary) 50%, var(--accent-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: fadeInUp 0.8s ease;
   letter-spacing: -0.03em;
@@ -352,7 +350,8 @@ body {
 
 .post-card .post-title a {
   color: var(--text-primary) !important;
-  text-decoration: none;
+  text-decoration: none !important;
+  border: none !important;
   transition: all 0.3s ease;
   display: block;
   position: relative;
@@ -511,8 +510,6 @@ body {
   font-weight: 800;
   margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--text-primary), var(--accent-color));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
@@ -693,51 +690,68 @@ body {
 }
 
 .post-content pre {
-  background: var(--bg-secondary);
-  padding: 1.5rem;
-  border-radius: 12px;
-  overflow-x: auto;
-  margin: 2rem 0;
-  border: 1px solid var(--border-color);
-  position: relative;
-  box-shadow: var(--shadow-sm);
-}
-
-.post-content pre code {
-  background: none;
+  background: #1e1e1e;
   padding: 0;
-  font-size: 0.9rem;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
-  line-height: 1.7;
-  color: var(--text-primary);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem 0;
+  border: 1px solid #3e3e3e;
+  position: relative;
+  box-shadow: var(--shadow-md);
 }
 
 .post-content pre::before {
   content: attr(data-lang);
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.25rem 0.6rem;
-  font-size: 0.7rem;
+  top: 0;
+  right: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  border-radius: 4px;
-  color: var(--text-secondary);
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
+  border-radius: 0 8px 0 8px;
+  color: #d4d4d4;
+  background: #252526;
+  border: 1px solid #3e3e3e;
+  border-top: none;
+  border-right: none;
   font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
   letter-spacing: 0.5px;
+  z-index: 2;
+}
+
+.post-content pre code {
+  display: block;
+  background: #1e1e1e;
+  padding: 1.5rem;
+  padding-top: 2rem;
+  font-size: 0.9rem;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+  line-height: 1.6;
+  color: #d4d4d4;
+  overflow-x: auto;
+}
+
+.post-content pre code a {
+  color: #4fc1ff;
+  text-decoration: none;
+  border-bottom: none;
 }
 
 [data-theme="dark"] .post-content pre {
-  background: #1e293b;
-  border-color: #334155;
+  background: #1e1e1e;
+  border-color: #3e3e3e;
 }
 
 [data-theme="dark"] .post-content pre::before {
-  background: #0f172a;
-  border-color: #334155;
-  color: #94a3b8;
+  background: #252526;
+  border-color: #3e3e3e;
+  color: #d4d4d4;
+}
+
+[data-theme="dark"] .post-content pre code {
+  background: #1e1e1e;
+  color: #d4d4d4;
 }
 
 .post-content img {
