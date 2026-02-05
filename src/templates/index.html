@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{site.title}} - {{site.subtitle}}</title>
+  <meta name="description" content="{{site.description}}">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">{{site.title}}</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link active">首页</a>
+          <a href="/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <section class="hero">
+        <h1 class="hero-title">{{site.title}}</h1>
+        <p class="hero-subtitle">{{site.subtitle}}</p>
+        <div class="hero-divider"></div>
+      </section>
+
+      <section class="posts-section">
+        <div class="posts-grid">
+          {{posts}}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 {{site.author}}. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/script.js"></script>
+</body>
+</html>
