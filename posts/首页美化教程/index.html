@@ -84,7 +84,9 @@ Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配�
 <pre class="language-md" data-lang="md"><code class="language-md">&lt;img width="120%" src="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg" /&gt;
 </code></pre>
 这一行是 Repobeats 服务，自动生成一张仓库贡献的动态分析图。比如提交数、活跃度、PR、issue 等，会显示成五颜六色的曲线图。这个 Repobeats 图，它并不是记录你的「整个 GitHub 账号」，而是记录某一个具体仓库的活动情况。</p><p>你只需要在 <a href="https://repobeats.axiom.co/">Repobeats</a> 这个网页中登录你的 Github 账号，然后选择需要记录的仓库，就会有一句这样的话：
-<pre class="language-text" data-lang="text"><code class="language-text">// Add the following to your README.md to embed Repobeats</p><p>!<a href="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image"">Alt</a>
+<pre class="language-text" data-lang="text"><code class="language-text">// Add the following to your README.md to embed Repobeats
+
+![Alt](https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image")
 </code></pre>
 替换掉这个地址就ok了。
 <h3>5. readme-streak-stats配置</h3><p><a href="https://github.com/DenverCoder1/github-readme-streak-stats?tab=readme-ov-file">github-readme-streak-stats 项目地址</a>
@@ -95,30 +97,36 @@ Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配�
   &lt;source media="(prefers-color-scheme: light)" srcset="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=light&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y" /&gt;
   &lt;img src="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=dark&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y" /&gt;
 &lt;/picture&gt;
-</code></pre><h3>6. Hexo blog 配置</h3>
+</code></pre></p><h3>6. Hexo blog 配置</h3>
 <ol><li>Hexo 生成 RSS</li>
 </ol>   - 在你的 Hexo 博客目录（有 source/、themes/ 的那个根目录）里执行：
 <pre class="language-shell" data-lang="shell"><code class="language-shell">      npm install hexo-generator-feed --save=hexo-generator-feed@3.0.0
-</code></pre><ol><li>修改 根目录 _config.yml</li>
+</code></pre></p><ol><li>修改 根目录 _config.yml</li>
 </ol>
 <pre class="language-yaml" data-lang="yaml"><code class="language-yaml"># 站点基本信息（确保正确，影响 feed 的链接）
 url: https://wenjiew-astro.github.io
 root: /
-permalink: :year/:month/:day/:title/</p><h1>RSS 配置（hexo-generator-feed）</h1>
+permalink: :year/:month/:day/:title/
+
+# RSS 配置（hexo-generator-feed）
 feed:
    type: atom            # 可选 atom | rss2 | both
    path: atom.xml        # 生成文件名（常见：atom.xml 或 rss2.xml）
    limit: 10             # 列出最近 N 篇
    hub:
    content: true         # 是否包含全文（true/false）
-</code></pre><ol><li>使用hexo启动 本地预览 提交</li>
+</code></pre></p><ol><li>使用hexo启动 本地预览 提交</li>
 </ol>
    http://localhost:4000/atom.xml</p><p>
 <ol><li>修改 GitHub Actions</li>
-</ol><pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Recent Blog</p><p>on:
+</ol><pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Recent Blog
+
+on:
    schedule:
-      - cron: "0 0 <em> </em> *"   # 每天 00:00 UTC 跑一次
-   workflow_dispatch:</p><p>jobs:
+      - cron: "0 0 * * *"   # 每天 00:00 UTC 跑一次
+   workflow_dispatch:
+
+jobs:
    build:
       runs-on: ubuntu-latest
       name: generate-readme-feed
@@ -131,7 +139,9 @@ feed:
               # 可选：最多显示 5 篇、每项的格式
               max_item: 5
               format: "- &lt;a href='${link}'&gt;${title}&lt;/a&gt; &lt;sub&gt;(${pubDate})&lt;/sub&gt;"
-         - uses: sarisia/actions-commit@master</p><p></code></pre>
+         - uses: sarisia/actions-commit@master
+
+</code></pre>
 <ol><li>修改readme</li>
 </ol>   在 README.md 里加：
 <pre class="language-markdown" data-lang="markdown"><code class="language-markdown">## 📝 最近更新
