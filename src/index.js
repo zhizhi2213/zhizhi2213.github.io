@@ -90,14 +90,13 @@ class BlogGenerator {
   parseMarkdown(content) {
     let html = content;
     
-    // 修复代码块解析，支持VS Code相同的逻辑
+    const codeBlocks = [];
     html = html.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
       const langName = lang || 'text';
-      // 保留代码中的换行和格式
+      const index = codeBlocks.length;
       code = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      // 保留代码中的换行
-      code = code.replace(/\n/g, '\n');
-      return `<pre class="language-${langName}" data-lang="${langName}"><code class="language-${langName}">${code}</code></pre>`;
+      codeBlocks.push({ lang: langName, code });
+      return `__CODEBLOCK_${index}__`;
     });
     
     html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
@@ -137,6 +136,11 @@ class BlogGenerator {
         return `<li>${content.replace(/\n/g, '<br>')}</li>`;
       }
       return match;
+    });
+    
+    html = html.replace(/__CODEBLOCK_(\d+)__/g, (match, index) => {
+      const block = codeBlocks[index];
+      return `<pre class="language-${block.lang}" data-lang="${block.lang}"><code class="language-${block.lang}">${block.code}</code></pre>`;
     });
     
     return html;
@@ -240,7 +244,6 @@ ${post.content}`;
 
   slugify(text) {
     return text
-      .toLowerCase()
       .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
       .replace(/^-+|-+$/g, '');
   }
