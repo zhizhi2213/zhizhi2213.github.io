@@ -320,6 +320,34 @@ ${post.content}`;
     );
   }
 
+  async generateFeed() {
+    const updated = this.posts.length > 0 ? this.formatDateISO(this.posts[0].date) : new Date().toISOString();
+    
+    const feed = `<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>${this.config.site.title}</title>
+  <link href="${this.config.site.url}/atom.xml" rel="self"/>
+  <link href="${this.config.site.url}/"/>
+  <updated>${updated}</updated>
+  <id>${this.config.site.url}/</id>
+  <author>
+    <name>${this.config.site.author}</name>
+  </author>
+${this.posts.map(post => `  <entry>
+    <title>${post.title}</title>
+    <link href="${this.config.site.url}/posts/${post.slug}/"/>
+    <updated>${this.formatDateISO(post.date)}</updated>
+    <id>${this.config.site.url}/posts/${post.slug}/</id>
+    <summary>${post.excerpt}</summary>
+  </entry>`).join('\n')}
+</feed>`;
+
+    await fs.writeFile(
+      path.join(__dirname, '..', this.config.output, 'atom.xml'),
+      feed
+    );
+  }
+
   async copyAssets() {
     const srcAssets = path.join(__dirname, 'assets');
     const dstAssets = path.join(__dirname, '..', this.config.output, 'assets');
