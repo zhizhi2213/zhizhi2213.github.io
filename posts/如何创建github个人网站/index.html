@@ -45,10 +45,10 @@
 <h4>1. 配置SSH密钥</h4><ol><li>生成SSH密钥：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">   ssh-keygen -t rsa -C "你的邮箱地址"
-</code></pre><ol><li>查看公钥内容：</li>
+</code></pre></p><ol><li>查看公钥内容：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">   cat ~/.ssh/id_rsa.pub  # Windows系统使用: type C:\Users\用户名\.ssh\id_rsa.pub
-</code></pre><ol><li>复制公钥内容，前往访问 GitHub SSH设置</li>
+</code></pre></p><ol><li>复制公钥内容，前往访问 GitHub SSH设置</li>
 </ol>
 <ul><ol><li>访问 GitHub SSH设置</li>
 <li>点击 “New SSH key”</li>
@@ -59,7 +59,7 @@
 <ol><li>测试SSH连接：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">    ssh -T git@github.com
-</code></pre><h4>2. 创建GitHub Pages仓库</h4><ol><li>登录GitHub，点击右上角 “+” 号，选择 “New repository”</li>
+</code></pre></p><h4>2. 创建GitHub Pages仓库</h4><ol><li>登录GitHub，点击右上角 “+” 号，选择 “New repository”</li>
 <li>仓库名称必须为：你的用户名.github.io</li>
 <li>选择 “Public”</li>
 <li>点击 “Create repository”</li>
@@ -76,7 +76,7 @@
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">   npm install hexo-deployer-git --save
    npm install hexo-renderer-pug hexo-renderer-stylus --save
-</code></pre><h4>4. 配置Hexo</h4><ol><li>编辑根目录下的 _config.yml，修改以下配置：</li>
+</code></pre></p><h4>4. 配置Hexo</h4><ol><li>编辑根目录下的 _config.yml，修改以下配置：</li>
 </ol>
 <pre class="language-yaml" data-lang="yaml"><code class="language-yaml"># Site
 title: 你的网站标题
@@ -86,30 +86,34 @@ keywords: 关键词
 author: 作者名
 language: zh-CN
 timezone: Asia/Shanghai
-<h1>URL</h1>
+# URL
 url: https://你的用户名.github.io
-<h1>Deployment</h1>
+# Deployment
 deploy:
   type: git
   repo: git@github.com:你的用户名/你的用户名.github.io.git
   branch: main
-</code></pre><h4>5. 安装Butterfly主题</h4><ol><li>下载主题：</li>
+</code></pre></p><h4>5. 安装Butterfly主题</h4><ol><li>下载主题：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">    #最好开启小飞机，还有问题开启TUN模式
     git clone https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
-</code></pre><ol><li>修改Hexo配置文件 <code>_config.yml</code>：</li>
+</code></pre></p><ol><li>修改Hexo配置文件 <code>_config.yml</code>：</li>
 </ol>
 <pre class="language-yaml" data-lang="yaml"><code class="language-yaml">   theme: butterfly
-</code></pre><ol><li>创建主题配置文件：</li>
+</code></pre></p><ol><li>创建主题配置文件：</li>
 </ol>
 <pre class="language-text" data-lang="text"><code class="language-text"># 在博客根目录创建文件：_config.butterfly.yml
-<h1>从主题目录 themes/butterfly/_config.yml 复制配置到 _config.butterfly.yml</h1>
-</code></pre><h4>6. 创建GitHub Actions自动部署</h4><ol><li>在博客根目录创建 .github/workflows/deploy.yml：</li>
+# 从主题目录 themes/butterfly/_config.yml 复制配置到 _config.butterfly.yml
+</code></pre></p><h4>6. 创建GitHub Actions自动部署</h4><ol><li>在博客根目录创建 .github/workflows/deploy.yml：</li>
 </ol>
-<pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Deploy</p><p>on:
+<pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Deploy
+
+on:
   push:
     branches:
-      - main</p><p>jobs:
+      - main
+
+jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -124,15 +128,15 @@ deploy:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-</code></pre><h4>7. 本地预览与部署</h4><ol><li>本地预览：</li>
+</code></pre></p><h4>7. 本地预览与部署</h4><ol><li>本地预览：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">   hexo clean   # 清除缓存
    hexo server  # 启动本地服务器
-</code></pre><p>访问 http://localhost:4000 预览效果</p><ol><li>部署到GitHub：</li>
+</code></pre></p><p>访问 http://localhost:4000 预览效果</p><ol><li>部署到GitHub：</li>
 </ol>
 <pre class="language-shell" data-lang="shell"><code class="language-shell">   hexo clean # 清除缓存
    hexo deploy # 部署到GitHub
-</code></pre><h4>8. 自定义域名（可选）</h4>
+</code></pre></p><h4>8. 自定义域名（可选）</h4>
     1. 在你的域名服务商处添加DNS记录：
         - 类型：CNAME
         - 主机记录：www 或 @
