@@ -48,7 +48,7 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
  2. 配置Java环境 settings.json文件
 json
 {
-  "java.import.gradle.java.home": "C:\\P...</summary>
+  &quot;java.import.gradle.java.home&quot;: &quot;C:\\P...</summary>
   </entry>
   <entry>
     <title>欢迎来到我的博客</title>
@@ -77,7 +77,7 @@ json
     <id>https://zhizhi2213.github.io/posts/为什么Java中只有值传递/</id>
     <summary>为什么Java中只有值传递？
 
- 形参&实参
+ 形参&amp;实参
 
 方法的定义可能会用到 参数，参数在程序语言中分为：
 
@@ -116,7 +116,7 @@ St...</summary>
 
  编程哲学
 
-> "简单是复杂的终极境界。" - 达芬奇
+&gt; &quot;简单是复杂的终极境界。&quot; - 达芬奇
 
 好的代码应该：
 - 易于理解
@@ -126,7 +126,7 @@ St...</summary>
 
 javascript
 function fibonacci(n) {
-  if (n <= 1) return n...</summary>
+  if (n &lt;= 1) return n...</summary>
   </entry>
   <entry>
     <title>首页美化教程</title>
