@@ -15,6 +15,7 @@ class BlogGenerator {
     await this.generateIndex();
     await this.generatePosts();
     await this.generateArchives();
+    await this.generateFeed();
     await this.copyAssets();
     console.log('✨ Blog generated successfully!');
   }
@@ -256,6 +257,10 @@ ${post.content}`;
   formatDate(dateStr) {
     const date = new Date(dateStr);
     return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+
+  formatDateISO(dateStr) {
+    return new Date(dateStr).toISOString();
   }
 
   async generateIndex() {
