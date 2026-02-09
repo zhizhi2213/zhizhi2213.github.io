@@ -323,22 +323,31 @@ ${post.content}`;
   async generateFeed() {
     const updated = this.posts.length > 0 ? this.formatDateISO(this.posts[0].date) : new Date().toISOString();
     
+    const escapeXml = (text) => {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    };
+    
     const feed = `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>${this.config.site.title}</title>
+  <title>${escapeXml(this.config.site.title)}</title>
   <link href="${this.config.site.url}/atom.xml" rel="self"/>
   <link href="${this.config.site.url}/"/>
   <updated>${updated}</updated>
   <id>${this.config.site.url}/</id>
   <author>
-    <name>${this.config.site.author}</name>
+    <name>${escapeXml(this.config.site.author)}</name>
   </author>
 ${this.posts.map(post => `  <entry>
-    <title>${post.title}</title>
+    <title>${escapeXml(post.title)}</title>
     <link href="${this.config.site.url}/posts/${post.slug}/"/>
     <updated>${this.formatDateISO(post.date)}</updated>
     <id>${this.config.site.url}/posts/${post.slug}/</id>
-    <summary>${post.excerpt}</summary>
+    <summary>${escapeXml(post.excerpt)}</summary>
   </entry>`).join('\n')}
 </feed>`;
 
