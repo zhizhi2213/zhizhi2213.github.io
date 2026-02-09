@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>吱吱的博客</title>
+  <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
+  <link href="https://zhizhi2213.github.io/"/>
+  <updated>2026-02-09T00:00:00.000Z</updated>
+  <id>https://zhizhi2213.github.io/</id>
+  <author>
+    <name>zhizhi2213</name>
+  </author>
+  <entry>
+    <title>HashMap源码分析</title>
+    <link href="https://zhizhi2213.github.io/posts/HashMap源码分析/"/>
+    <updated>2026-02-09T00:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/HashMap源码分析/</id>
+    <summary>HashMap 源码分析
+
+ 一、HashMap 简介
+
+HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提供了快速的键值对存储和查找功能。HashMap 允许使用 null 键和 null 值，并且不保证映射的顺序。
+
+ 主要特点
+
+- 键值对存储，基于哈希表实现
+- 允许 ...</summary>
+  </entry>
+  <entry>
+    <title>java语法糖详解</title>
+    <link href="https://zhizhi2213.github.io/posts/java语法糖详解/"/>
+    <updated>2026-01-26T19:33:32.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/java语法糖详解/</id>
+    <summary>Java 语法糖
+
+原文(https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw)
+
+ 什么是语法糖？
+
+语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法...</summary>
+  </entry>
+  <entry>
+    <title>Trae-Java环境配置</title>
+    <link href="https://zhizhi2213.github.io/posts/Trae-Java环境配置/"/>
+    <updated>2026-01-26T19:01:35.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/Trae-Java环境配置/</id>
+    <summary>配置Java环境
+ 1. 安装Java环境配置包 Java Extension Pack ,Spring Boot Extension Pack
+
+ 2. 配置Java环境 settings.json文件
+json
+{
+  "java.import.gradle.java.home": "C:\\P...</summary>
+  </entry>
+  <entry>
+    <title>欢迎来到我的博客</title>
+    <link href="https://zhizhi2213.github.io/posts/欢迎来到我的博客/"/>
+    <updated>2026-01-26T00:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/欢迎来到我的博客/</id>
+    <summary>欢迎来到我的博客
+
+这是使用全新的静态博客生成器创建的第一篇文章。
+
+ 特点
+
+这个博客生成器具有以下特点：
+
+- 简洁设计：极简主义风格
+- 快速加载：纯静态页面
+- 响应式：适配所有设备
+- 暗色模式：保护你的眼睛
+
+希望你喜欢这个全新的博客设计！</summary>
+  </entry>
+  <entry>
+    <title>为什么Java中只有值传递？</title>
+    <link href="https://zhizhi2213.github.io/posts/为什么Java中只有值传递/"/>
+    <updated>2026-01-25T19:38:04.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/为什么Java中只有值传递/</id>
+    <summary>为什么Java中只有值传递？
+
+ 形参&实参
+
+方法的定义可能会用到 参数，参数在程序语言中分为：
+
+- 实参（实际参数，Arguments）：用于传递给函数/方法的参数，必须有确定的值。
+- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需要有确定的值。
+
+java
+St...</summary>
+  </entry>
+  <entry>
+    <title>关于技术分享</title>
+    <link href="https://zhizhi2213.github.io/posts/关于技术分享/"/>
+    <updated>2026-01-25T00:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/关于技术分享/</id>
+    <summary>关于技术分享
+
+技术是不断进步的，分享让知识流动得更快。
+
+ 学习方式
+
+1. 实践是最好的老师
+2. 记录学习笔记
+3. 与他人交流讨论
+4. 持续迭代改进
+
+让我们一起在技术的道路上前行！</summary>
+  </entry>
+  <entry>
+    <title>代码之美</title>
+    <link href="https://zhizhi2213.github.io/posts/代码之美/"/>
+    <updated>2026-01-24T00:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/代码之美/</id>
+    <summary>代码之美
+
+优雅的代码就像诗歌一样令人愉悦。
+
+ 编程哲学
+
+> "简单是复杂的终极境界。" - 达芬奇
+
+好的代码应该：
+- 易于理解
+- 易于维护
+- 高效运行
+- 遵循最佳实践
+
+javascript
+function fibonacci(n) {
+  if (n <= 1) return n...</summary>
+  </entry>
+  <entry>
+    <title>首页美化教程</title>
+    <link href="https://zhizhi2213.github.io/posts/首页美化教程/"/>
+    <updated>2026-01-23T18:55:54.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/首页美化教程/</id>
+    <summary>参考教程(https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页)
+
+参考主页(https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun))
+
+ 1. ctrl+c ...</summary>
+  </entry>
+  <entry>
+    <title>如何创建GitHub个人网站</title>
+    <link href="https://zhizhi2213.github.io/posts/如何创建GitHub个人网站/"/>
+    <updated>2026-01-22T19:08:14.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/如何创建GitHub个人网站/</id>
+    <summary>如何创建GitHub个人网站
+
+本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。
+
+ 准备工作
+
+在开始之前，请确保你的电脑已经安装以下工具：
+
+- Node.js (建议选择LTS版本)
+- Git
+
+ 1. ...</summary>
+  </entry>
+</feed>
