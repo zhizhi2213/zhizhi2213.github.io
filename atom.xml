@@ -3,11 +3,24 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-02-09T00:00:00.000Z</updated>
+  <updated>2026-02-09T20:00:00.000Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
+  <entry>
+    <title>Spring源码中的设计模式详解</title>
+    <link href="https://zhizhi2213.github.io/posts/Spring源码中的设计模式详解/"/>
+    <updated>2026-02-09T20:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/Spring源码中的设计模式详解/</id>
+    <summary>Spring源码中的设计模式详解
+
+Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。
+
+ 什么是设计模式？
+
+设计模式是一套被反复使用、多数人知晓的、...</summary>
+  </entry>
   <entry>
     <title>HashMap源码分析</title>
     <link href="https://zhizhi2213.github.io/posts/HashMap源码分析/"/>
