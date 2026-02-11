@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-const config = require('../config.json');
+const config = require('./config.json');
 
 class BlogGenerator {
   constructor() {
@@ -21,43 +21,73 @@ class BlogGenerator {
   }
 
   async cleanOutput() {
-    const outputDir = path.join(__dirname, '..', this.config.output);
-    try {
-      await fs.rm(outputDir, { recursive: true, force: true });
-    } catch (e) {}
-    await fs.mkdir(outputDir, { recursive: true });
-    await fs.mkdir(path.join(outputDir, 'posts'), { recursive: true });
-    await fs.mkdir(path.join(outputDir, 'archives'), { recursive: true });
+    const rootDir = path.join(__dirname, '..');
+    const filesToClean = ['index.html', 'atom.xml'];
+    const dirsToClean = ['static'];
+
+    for (const file of filesToClean) {
+      const filePath = path.join(rootDir, file);
+      try {
+        await fs.unlink(filePath);
+      } catch (e) {}
+    }
+
+    for (const dir of dirsToClean) {
+      const dirPath = path.join(rootDir, dir);
+      try {
+        await fs.rm(dirPath, { recursive: true, force: true });
+      } catch (e) {}
+    }
   }
 
   async loadPosts() {
-    const postsDir = path.join(__dirname, '..', this.config.posts.directory);
+    const postsDir = path.join(__dirname, this.config.posts.directory);
     
     try {
-      const files = await fs.readdir(postsDir);
-      const markdownFiles = files.filter(f => f.endsWith('.md'));
-      
-      for (const file of markdownFiles) {
-        const filePath = path.join(postsDir, file);
-        const content = await fs.readFile(filePath, 'utf-8');
-        const { attributes, body } = this.parseFrontMatter(content);
-        
-        const post = {
-          ...attributes,
-          content: this.parseMarkdown(body),
-          slug: this.slugify(attributes.title || file.replace('.md', '')),
-          date: attributes.date || new Date().toISOString(),
-          excerpt: this.createExcerpt(body)
-        };
-        
-        this.posts.push(post);
-      }
-      
-      this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      await fs.access(postsDir);
     } catch (e) {
-      console.log('No posts directory found, creating sample posts...');
+      console.log('Posts directory not found, creating sample posts...');
       await this.createSamplePosts();
+      return;
     }
+
+    const markdownFiles = await this.findMarkdownFiles(postsDir);
+    
+    for (const file of markdownFiles) {
+      const content = await fs.readFile(file, 'utf-8');
+      const { attributes, body } = this.parseFrontMatter(content);
+      
+      const relativePath = path.relative(postsDir, file);
+      
+      const post = {
+        ...attributes,
+        content: this.parseMarkdown(body),
+        slug: this.slugify(attributes.title || path.basename(file, '.md')),
+        date: attributes.date || new Date().toISOString(),
+        excerpt: this.createExcerpt(body),
+        path: relativePath
+      };
+      
+      this.posts.push(post);
+    }
+    
+    this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  async findMarkdownFiles(dir, files = []) {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        await this.findMarkdownFiles(fullPath, files);
+      } else if (entry.isFile() && entry.name.endsWith('.md')) {
+        files.push(fullPath);
+      }
+    }
+    
+    return files;
   }
 
   parseFrontMatter(content) {
@@ -236,7 +266,8 @@ ${post.content}`;
         content: this.parseMarkdown(parsed.body),
         slug: this.slugify(post.title),
         date: post.date,
-        excerpt: this.createExcerpt(parsed.body)
+        excerpt: this.createExcerpt(parsed.body),
+        path: filename
       });
     }
     
@@ -271,7 +302,7 @@ ${post.content}`;
     });
     
     await fs.writeFile(
-      path.join(__dirname, '..', this.config.output, 'index.html'),
+      path.join(__dirname, '..', 'index.html'),
       html
     );
   }
@@ -286,7 +317,7 @@ ${post.content}`;
         formatDate: this.formatDate.bind(this)
       });
       
-      const postDir = path.join(__dirname, '..', this.config.output, 'posts', post.slug);
+      const postDir = path.join(__dirname, '..', 'static', 'posts', post.slug);
       await fs.mkdir(postDir, { recursive: true });
       await fs.writeFile(path.join(postDir, 'index.html'), html);
     }
@@ -314,10 +345,9 @@ ${post.content}`;
       formatDate: this.formatDate.bind(this)
     });
     
-    await fs.writeFile(
-      path.join(__dirname, '..', this.config.output, 'archives', 'index.html'),
-      html
-    );
+    const archivesDir = path.join(__dirname, '..', 'static', 'archives');
+    await fs.mkdir(archivesDir, { recursive: true });
+    await fs.writeFile(path.join(archivesDir, 'index.html'), html);
   }
 
   async generateFeed() {
@@ -344,22 +374,22 @@ ${post.content}`;
   </author>
 ${this.posts.map(post => `  <entry>
     <title>${escapeXml(post.title)}</title>
-    <link href="${this.config.site.url}/posts/${post.slug}/"/>
+    <link href="${this.config.site.url}/static/posts/${post.slug}/"/>
     <updated>${this.formatDateISO(post.date)}</updated>
-    <id>${this.config.site.url}/posts/${post.slug}/</id>
+    <id>${this.config.site.url}/static/posts/${post.slug}/</id>
     <summary>${escapeXml(post.excerpt)}</summary>
   </entry>`).join('\n')}
 </feed>`;
 
     await fs.writeFile(
-      path.join(__dirname, '..', this.config.output, 'atom.xml'),
+      path.join(__dirname, '..', 'atom.xml'),
       feed
     );
   }
 
   async copyAssets() {
     const srcAssets = path.join(__dirname, 'assets');
-    const dstAssets = path.join(__dirname, '..', this.config.output, 'assets');
+    const dstAssets = path.join(__dirname, '..', 'static', 'assets');
     
     try {
       await fs.mkdir(dstAssets, { recursive: true });
@@ -389,14 +419,14 @@ ${this.posts.map(post => `  <entry>
       <article class="post-card">
         <div class="post-card-inner">
           <h2 class="post-title">
-            <a href="/posts/${post.slug}/">${post.title}</a>
+            <a href="/static/posts/${post.slug}/">${post.title}</a>
           </h2>
           <div class="post-meta">
             <span class="post-date">${data.formatDate(post.date)}</span>
             ${post.tags ? post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('') : ''}
           </div>
           <p class="post-excerpt">${post.excerpt}</p>
-          <a href="/posts/${post.slug}/" class="read-more">阅读全文 →</a>
+          <a href="/static/posts/${post.slug}/" class="read-more">阅读全文 →</a>
         </div>
       </article>
     `;
@@ -416,7 +446,7 @@ ${this.posts.map(post => `  <entry>
             ${posts.map(post => `
               <li class="archive-item">
                 <span class="archive-date">${data.formatDate(post.date)}</span>
-                <a href="/posts/${post.slug}/" class="archive-title">${post.title}</a>
+                <a href="/static/posts/${post.slug}/" class="archive-title">${post.title}</a>
               </li>
             `).join('')}
           </ul>
