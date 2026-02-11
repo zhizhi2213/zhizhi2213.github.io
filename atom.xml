@@ -3,11 +3,26 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-02-09T20:00:00.000Z</updated>
+  <updated>2026-02-10T14:00:00.000Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
+  <entry>
+    <title>Spring IOC与AOP详解</title>
+    <link href="https://zhizhi2213.github.io/posts/Spring-IOC与AOP详解/"/>
+    <updated>2026-02-10T14:00:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/posts/Spring-IOC与AOP详解/</id>
+    <summary>Spring IOC与AOP详解
+
+Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。
+
+ 第一部分：IOC（控制反转）
+
+ 什么是IOC？
+
+IOC（Inversion of Control...</summary>
+  </entry>
   <entry>
     <title>Spring源码中的设计模式详解</title>
     <link href="https://zhizhi2213.github.io/posts/Spring源码中的设计模式详解/"/>
