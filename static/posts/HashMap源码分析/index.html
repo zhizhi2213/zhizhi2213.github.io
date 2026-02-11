@@ -39,405 +39,563 @@
         </div>
         
         <div class="post-content">
-          <h1>HashMap 源码分析</h1><h2>一、HashMap 简介</h2><p>HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提供了快速的键值对存储和查找功能。HashMap 允许使用 null 键和 null 值，并且不保证映射的顺序。</p><h3>主要特点</h3><ul><ol><li>键值对存储，基于哈希表实现</li>
+          <h1>HashMap 源码分析</h1>
+<h2 id="一、hashmap-简介" tabindex="-1">一、HashMap 简介</h2>
+<p>HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提供了快速的键值对存储和查找功能。HashMap 允许使用 null 键和 null 值，并且不保证映射的顺序。</p>
+<h3 id="主要特点" tabindex="-1">主要特点</h3>
+<ul>
+<li>键值对存储，基于哈希表实现</li>
 <li>允许 null 键和 null 值</li>
 <li>非线程安全，适用于单线程环境</li>
 <li>默认初始容量为 16，默认负载因子为 0.75</li>
 <li>扩容时容量变为原来的 2 倍</li>
 <li>时间复杂度：平均 O(1)，最坏 O(n)</li>
-</ol></ul>
-<h2>二、核心数据结构</h2><h3>2.1 Node 节点</h3><p>HashMap 的每个元素都是一个 Node 对象，Node 是 HashMap 的静态内部类：</p><p><pre class="language-java" data-lang="java"><code class="language-java">static class Node&lt;K,V&gt; implements Map.Entry&lt;K,V&gt; {
-    final int hash;
-    final K key;
+</ul>
+<h2 id="二、核心数据结构" tabindex="-1">二、核心数据结构</h2>
+<h3 id="2.1-node-节点" tabindex="-1">2.1 Node 节点</h3>
+<p>HashMap 的每个元素都是一个 Node 对象，Node 是 HashMap 的静态内部类：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Node</span>&lt;K,V&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Map</span>.Entry&lt;K,V&gt; {
+    <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> hash;
+    <span class="hljs-keyword">final</span> K key;
     V value;
     Node&lt;K,V&gt; next;
 
-    Node(int hash, K key, V value, Node&lt;K,V&gt; next) {
-        this.hash = hash;
-        this.key = key;
-        this.value = value;
-        this.next = next;
+    Node(<span class="hljs-type">int</span> hash, K key, V value, Node&lt;K,V&gt; next) {
+        <span class="hljs-built_in">this</span>.hash = hash;
+        <span class="hljs-built_in">this</span>.key = key;
+        <span class="hljs-built_in">this</span>.value = value;
+        <span class="hljs-built_in">this</span>.next = next;
     }
 
-    public final K getKey() { return key; }
-    public final V getValue() { return value; }
-    public final String toString() { return key + "=" + value; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> K <span class="hljs-title function_">getKey</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> key; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> V <span class="hljs-title function_">getValue</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> value; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> key + <span class="hljs-string">&quot;=&quot;</span> + value; }
 
-    public final int hashCode() {
-        return Objects.hashCode(key) ^ Objects.hashCode(value);
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">hashCode</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> Objects.hashCode(key) ^ Objects.hashCode(value);
     }
 
-    public final V setValue(V newValue) {
-        V oldValue = value;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> V <span class="hljs-title function_">setValue</span><span class="hljs-params">(V newValue)</span> {
+        <span class="hljs-type">V</span> <span class="hljs-variable">oldValue</span> <span class="hljs-operator">=</span> value;
         value = newValue;
-        return oldValue;
+        <span class="hljs-keyword">return</span> oldValue;
     }
 
-    public final boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (o instanceof Map.Entry) {
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object o)</span> {
+        <span class="hljs-keyword">if</span> (o == <span class="hljs-built_in">this</span>)
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">if</span> (o <span class="hljs-keyword">instanceof</span> Map.Entry) {
             Map.Entry&lt;?,?&gt; e = (Map.Entry&lt;?,?&gt;)o;
-            if (Objects.equals(key, e.getKey()) &amp;&amp;
+            <span class="hljs-keyword">if</span> (Objects.equals(key, e.getKey()) &amp;&amp;
                 Objects.equals(value, e.getValue()))
-                return true;
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
         }
-        return false;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
     }
 }
-</code></pre></p><h3>2.2 底层结构</h3><p>HashMap 的底层结构是一个数组 + 链表 + 红黑树：</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class HashMap&lt;K,V&gt; extends AbstractMap&lt;K,V&gt;
-    implements Map&lt;K,V&gt;, Cloneable, Serializable {
+</code></pre>
+<h3 id="2.2-底层结构" tabindex="-1">2.2 底层结构</h3>
+<p>HashMap 的底层结构是一个数组 + 链表 + 红黑树：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HashMap</span>&lt;K,V&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractMap</span>&lt;K,V&gt;
+    <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Map</span>&lt;K,V&gt;, Cloneable, Serializable {
 
-    transient Node&lt;K,V&gt;[] table;  // 哈希桶数组
+    <span class="hljs-keyword">transient</span> Node&lt;K,V&gt;[] table;  <span class="hljs-comment">// 哈希桶数组</span>
 
-    transient Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet;
+    <span class="hljs-keyword">transient</span> Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet;
 
-    transient int size;  // 实际存储的键值对数量
+    <span class="hljs-keyword">transient</span> <span class="hljs-type">int</span> size;  <span class="hljs-comment">// 实际存储的键值对数量</span>
 
-    transient int modCount;  // 结构性修改次数
+    <span class="hljs-keyword">transient</span> <span class="hljs-type">int</span> modCount;  <span class="hljs-comment">// 结构性修改次数</span>
 
-    final float loadFactor;  // 负载因子
+    <span class="hljs-keyword">final</span> <span class="hljs-type">float</span> loadFactor;  <span class="hljs-comment">// 负载因子</span>
 
-    int threshold;  // 扩容阈值 = capacity * loadFactor
+    <span class="hljs-type">int</span> threshold;  <span class="hljs-comment">// 扩容阈值 = capacity * loadFactor</span>
 }
-</code></pre></p><h2>三、关键参数</h2><h3>3.1 初始参数</h3><p><pre class="language-java" data-lang="java"><code class="language-java">static final int DEFAULT_INITIAL_CAPACITY = 1 &lt;&lt; 4;  // 默认初始容量 16
-static final int MAXIMUM_CAPACITY = 1 &lt;&lt; 30;  // 最大容量
-static final float DEFAULT_LOAD_FACTOR = 0.75f;  // 默认负载因子
-static final int TREEIFY_THRESHOLD = 8;  // 链表转红黑树的阈值
-static final int UNTREEIFY_THRESHOLD = 6;  // 红黑树转链表的阈值
-static final int MIN_TREEIFY_CAPACITY = 64;  // 桶转树的最小容量
-</code></pre></p><h3>3.2 构造方法</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public HashMap(int initialCapacity, float loadFactor) {
-    if (initialCapacity &lt; 0)
-        throw new IllegalArgumentException("Illegal initial capacity: " +
+</code></pre>
+<h2 id="三、关键参数" tabindex="-1">三、关键参数</h2>
+<h3 id="3.1-初始参数" tabindex="-1">3.1 初始参数</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_INITIAL_CAPACITY</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">4</span>;  <span class="hljs-comment">// 默认初始容量 16</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MAXIMUM_CAPACITY</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">30</span>;  <span class="hljs-comment">// 最大容量</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">float</span> <span class="hljs-variable">DEFAULT_LOAD_FACTOR</span> <span class="hljs-operator">=</span> <span class="hljs-number">0.75f</span>;  <span class="hljs-comment">// 默认负载因子</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">TREEIFY_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">8</span>;  <span class="hljs-comment">// 链表转红黑树的阈值</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">UNTREEIFY_THRESHOLD</span> <span class="hljs-operator">=</span> <span class="hljs-number">6</span>;  <span class="hljs-comment">// 红黑树转链表的阈值</span>
+<span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">MIN_TREEIFY_CAPACITY</span> <span class="hljs-operator">=</span> <span class="hljs-number">64</span>;  <span class="hljs-comment">// 桶转树的最小容量</span>
+</code></pre>
+<h3 id="3.2-构造方法" tabindex="-1">3.2 构造方法</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-title function_">HashMap</span><span class="hljs-params">(<span class="hljs-type">int</span> initialCapacity, <span class="hljs-type">float</span> loadFactor)</span> {
+    <span class="hljs-keyword">if</span> (initialCapacity &lt; <span class="hljs-number">0</span>)
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Illegal initial capacity: &quot;</span> +
                                            initialCapacity);
-    if (initialCapacity &gt; MAXIMUM_CAPACITY)
+    <span class="hljs-keyword">if</span> (initialCapacity &gt; MAXIMUM_CAPACITY)
         initialCapacity = MAXIMUM_CAPACITY;
-    if (loadFactor &lt;= 0 || Float.isNaN(loadFactor))
-        throw new IllegalArgumentException("Illegal load factor: " +
+    <span class="hljs-keyword">if</span> (loadFactor &lt;= <span class="hljs-number">0</span> || Float.isNaN(loadFactor))
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalArgumentException</span>(<span class="hljs-string">&quot;Illegal load factor: &quot;</span> +
                                            loadFactor);
-    this.loadFactor = loadFactor;
-    this.threshold = tableSizeFor(initialCapacity);
+    <span class="hljs-built_in">this</span>.loadFactor = loadFactor;
+    <span class="hljs-built_in">this</span>.threshold = tableSizeFor(initialCapacity);
 }
 
-public HashMap(int initialCapacity) {
-    this(initialCapacity, DEFAULT_LOAD_FACTOR);
+<span class="hljs-keyword">public</span> <span class="hljs-title function_">HashMap</span><span class="hljs-params">(<span class="hljs-type">int</span> initialCapacity)</span> {
+    <span class="hljs-built_in">this</span>(initialCapacity, DEFAULT_LOAD_FACTOR);
 }
 
-public HashMap() {
-    this.loadFactor = DEFAULT_LOAD_FACTOR;
+<span class="hljs-keyword">public</span> <span class="hljs-title function_">HashMap</span><span class="hljs-params">()</span> {
+    <span class="hljs-built_in">this</span>.loadFactor = DEFAULT_LOAD_FACTOR;
 }
-</code></pre></p><h3>3.3 tableSizeFor 方法</h3><p>这个方法用于将给定的容量调整为 2 的 n 次幂：</p><p><pre class="language-java" data-lang="java"><code class="language-java">static final int tableSizeFor(int cap) {
-    int n = cap - 1;
-    n |= n &gt;&gt;&gt; 1;
-    n |= n &gt;&gt;&gt; 2;
-    n |= n &gt;&gt;&gt; 4;
-    n |= n &gt;&gt;&gt; 8;
-    n |= n &gt;&gt;&gt; 16;
-    return (n &lt; 0) ? 1 : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+</code></pre>
+<h3 id="3.3-tablesizefor-方法" tabindex="-1">3.3 tableSizeFor 方法</h3>
+<p>这个方法用于将给定的容量调整为 2 的 n 次幂：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">tableSizeFor</span><span class="hljs-params">(<span class="hljs-type">int</span> cap)</span> {
+    <span class="hljs-type">int</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> cap - <span class="hljs-number">1</span>;
+    n |= n &gt;&gt;&gt; <span class="hljs-number">1</span>;
+    n |= n &gt;&gt;&gt; <span class="hljs-number">2</span>;
+    n |= n &gt;&gt;&gt; <span class="hljs-number">4</span>;
+    n |= n &gt;&gt;&gt; <span class="hljs-number">8</span>;
+    n |= n &gt;&gt;&gt; <span class="hljs-number">16</span>;
+    <span class="hljs-keyword">return</span> (n &lt; <span class="hljs-number">0</span>) ? <span class="hljs-number">1</span> : (n &gt;= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + <span class="hljs-number">1</span>;
 }
-</code></pre></p><p>这个方法通过一系列的位运算，将最高位的 1 后面的所有位都置为 1，然后加 1，得到一个 2 的 n 次幂。</p><h2>四、Hash 算法</h2><h3>4.1 hash 方法</h3><p>HashMap 通过 hash 方法计算 key 的哈希值：</p><p><pre class="language-java" data-lang="java"><code class="language-java">static final int hash(Object key) {
-    int h;
-    return (key == null) ? 0 : (h = key.hashCode()) ^ (h &gt;&gt;&gt; 16);
+</code></pre>
+<p>这个方法通过一系列的位运算，将最高位的 1 后面的所有位都置为 1，然后加 1，得到一个 2 的 n 次幂。</p>
+<h2 id="四、hash-算法" tabindex="-1">四、Hash 算法</h2>
+<h3 id="4.1-hash-方法" tabindex="-1">4.1 hash 方法</h3>
+<p>HashMap 通过 hash 方法计算 key 的哈希值：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-title function_">hash</span><span class="hljs-params">(Object key)</span> {
+    <span class="hljs-type">int</span> h;
+    <span class="hljs-keyword">return</span> (key == <span class="hljs-literal">null</span>) ? <span class="hljs-number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="hljs-number">16</span>);
 }
-</code></pre></p><p><strong>为什么要进行异或操作？</strong></p><ul><ol><li><code>h >>> 16</code> 将哈希值的高 16 位无符号右移 16 位</li>
+</code></pre>
+<p><strong>为什么要进行异或操作？</strong></p>
+<ul>
+<li><code>h &gt;&gt;&gt; 16</code> 将哈希值的高 16 位无符号右移 16 位</li>
 <li><code>^</code> 操作将高 16 位和低 16 位进行异或</li>
 <li>这样做的好处是让高位的特征也能参与到低位的运算中，减少哈希冲突</li>
-</ol></ul>
-<h3>4.2 索引计算</h3><p>通过 hash 值计算在数组中的索引位置：</p><p><pre class="language-java" data-lang="java"><code class="language-java">index = (n - 1) &amp; hash
-</code></pre></p><p>其中 n 是数组长度，必须是 2 的 n 次幂。</p><p><strong>为什么使用位运算而不是取模？</strong></p><ul><ol><li>位运算效率更高</li>
-<li>当 n 是 2 的 n 次幂时，<code>(n - 1) & hash</code> 等价于 <code>hash % n</code></li>
+</ul>
+<h3 id="4.2-索引计算" tabindex="-1">4.2 索引计算</h3>
+<p>通过 hash 值计算在数组中的索引位置：</p>
+<pre><code class="hljs language-java">index = (n - <span class="hljs-number">1</span>) &amp; hash
+</code></pre>
+<p>其中 n 是数组长度，必须是 2 的 n 次幂。</p>
+<p><strong>为什么使用位运算而不是取模？</strong></p>
+<ul>
+<li>位运算效率更高</li>
+<li>当 n 是 2 的 n 次幂时，<code>(n - 1) &amp; hash</code> 等价于 <code>hash % n</code></li>
 <li><code>(n - 1)</code> 的二进制表示是全 1，如 16-1=15，二进制为 1111</li>
-</ol></ul>
-<h2>五、put 方法源码分析</h2><h3>5.1 put 方法入口</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public V put(K key, V value) {
-    return putVal(hash(key), key, value, false, true);
+</ul>
+<h2 id="五、put-方法源码分析" tabindex="-1">五、put 方法源码分析</h2>
+<h3 id="5.1-put-方法入口" tabindex="-1">5.1 put 方法入口</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> V <span class="hljs-title function_">put</span><span class="hljs-params">(K key, V value)</span> {
+    <span class="hljs-keyword">return</span> putVal(hash(key), key, value, <span class="hljs-literal">false</span>, <span class="hljs-literal">true</span>);
 }
-</code></pre></p><h3>5.2 putVal 方法详解</h3><p><pre class="language-java" data-lang="java"><code class="language-java">final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
-               boolean evict) {
+</code></pre>
+<h3 id="5.2-putval-方法详解" tabindex="-1">5.2 putVal 方法详解</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">final</span> V <span class="hljs-title function_">putVal</span><span class="hljs-params">(<span class="hljs-type">int</span> hash, K key, V value, <span class="hljs-type">boolean</span> onlyIfAbsent,
+               <span class="hljs-type">boolean</span> evict)</span> {
     Node&lt;K,V&gt;[] tab;
     Node&lt;K,V&gt; p;
-    int n, i;
+    <span class="hljs-type">int</span> n, i;
 
-    // 1. 如果 table 为空或长度为 0，进行初始化
-    if ((tab = table) == null || (n = tab.length) == 0)
+    <span class="hljs-comment">// 1. 如果 table 为空或长度为 0，进行初始化</span>
+    <span class="hljs-keyword">if</span> ((tab = table) == <span class="hljs-literal">null</span> || (n = tab.length) == <span class="hljs-number">0</span>)
         n = (tab = resize()).length;
 
-    // 2. 计算索引位置，如果该位置为空，直接插入新节点
-    if ((p = tab[i = (n - 1) &amp; hash]) == null)
-        tab[i] = newNode(hash, key, value, null);
-    else {
+    <span class="hljs-comment">// 2. 计算索引位置，如果该位置为空，直接插入新节点</span>
+    <span class="hljs-keyword">if</span> ((p = tab[i = (n - <span class="hljs-number">1</span>) &amp; hash]) == <span class="hljs-literal">null</span>)
+        tab[i] = newNode(hash, key, value, <span class="hljs-literal">null</span>);
+    <span class="hljs-keyword">else</span> {
         Node&lt;K,V&gt; e;
         K k;
 
-        // 3. 判断该位置的第一个节点是否与要插入的 key 相同
-        if (p.hash == hash &amp;&amp;
-            ((k = p.key) == key || (key != null &amp;&amp; key.equals(k))))
+        <span class="hljs-comment">// 3. 判断该位置的第一个节点是否与要插入的 key 相同</span>
+        <span class="hljs-keyword">if</span> (p.hash == hash &amp;&amp;
+            ((k = p.key) == key || (key != <span class="hljs-literal">null</span> &amp;&amp; key.equals(k))))
             e = p;
 
-        // 4. 如果是红黑树节点，调用红黑树的插入方法
-        else if (p instanceof TreeNode)
-            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(this, tab, hash, key, value);
+        <span class="hljs-comment">// 4. 如果是红黑树节点，调用红黑树的插入方法</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (p <span class="hljs-keyword">instanceof</span> TreeNode)
+            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="hljs-built_in">this</span>, tab, hash, key, value);
 
-        // 5. 否则是链表，遍历链表
-        else {
-            for (int binCount = 0; ; ++binCount) {
-                // 到达链表尾部，插入新节点
-                if ((e = p.next) == null) {
-                    p.next = newNode(hash, key, value, null);
-                    // 链表长度达到 8，转为红黑树
-                    if (binCount &gt;= TREEIFY_THRESHOLD - 1)
+        <span class="hljs-comment">// 5. 否则是链表，遍历链表</span>
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">binCount</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; ; ++binCount) {
+                <span class="hljs-comment">// 到达链表尾部，插入新节点</span>
+                <span class="hljs-keyword">if</span> ((e = p.next) == <span class="hljs-literal">null</span>) {
+                    p.next = newNode(hash, key, value, <span class="hljs-literal">null</span>);
+                    <span class="hljs-comment">// 链表长度达到 8，转为红黑树</span>
+                    <span class="hljs-keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="hljs-number">1</span>)
                         treeifyBin(tab, hash);
-                    break;
+                    <span class="hljs-keyword">break</span>;
                 }
 
-                // 找到相同的 key
-                if (e.hash == hash &amp;&amp;
-                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
-                    break;
+                <span class="hljs-comment">// 找到相同的 key</span>
+                <span class="hljs-keyword">if</span> (e.hash == hash &amp;&amp;
+                    ((k = e.key) == key || (key != <span class="hljs-literal">null</span> &amp;&amp; key.equals(k))))
+                    <span class="hljs-keyword">break</span>;
 
                 p = e;
             }
         }
 
-        // 6. 如果找到相同的 key，覆盖旧值
-        if (e != null) {
-            V oldValue = e.value;
-            if (!onlyIfAbsent || oldValue == null)
+        <span class="hljs-comment">// 6. 如果找到相同的 key，覆盖旧值</span>
+        <span class="hljs-keyword">if</span> (e != <span class="hljs-literal">null</span>) {
+            <span class="hljs-type">V</span> <span class="hljs-variable">oldValue</span> <span class="hljs-operator">=</span> e.value;
+            <span class="hljs-keyword">if</span> (!onlyIfAbsent || oldValue == <span class="hljs-literal">null</span>)
                 e.value = value;
             afterNodeAccess(e);
-            return oldValue;
+            <span class="hljs-keyword">return</span> oldValue;
         }
     }
 
     ++modCount;
-    // 7. 判断是否需要扩容
-    if (++size &gt; threshold)
+    <span class="hljs-comment">// 7. 判断是否需要扩容</span>
+    <span class="hljs-keyword">if</span> (++size &gt; threshold)
         resize();
     afterNodeInsertion(evict);
-    return null;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
 }
-</code></pre></p><h2>六、get 方法源码分析</h2><h3>6.1 get 方法入口</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public V get(Object key) {
+</code></pre>
+<h2 id="六、get-方法源码分析" tabindex="-1">六、get 方法源码分析</h2>
+<h3 id="6.1-get-方法入口" tabindex="-1">6.1 get 方法入口</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> V <span class="hljs-title function_">get</span><span class="hljs-params">(Object key)</span> {
     Node&lt;K,V&gt; e;
-    return (e = getNode(hash(key), key)) == null ? null : e.value;
+    <span class="hljs-keyword">return</span> (e = getNode(hash(key), key)) == <span class="hljs-literal">null</span> ? <span class="hljs-literal">null</span> : e.value;
 }
-</code></pre></p><h3>6.2 getNode 方法详解</h3><p><pre class="language-java" data-lang="java"><code class="language-java">final Node&lt;K,V&gt; getNode(int hash, Object key) {
+</code></pre>
+<h3 id="6.2-getnode-方法详解" tabindex="-1">6.2 getNode 方法详解</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">final</span> Node&lt;K,V&gt; <span class="hljs-title function_">getNode</span><span class="hljs-params">(<span class="hljs-type">int</span> hash, Object key)</span> {
     Node&lt;K,V&gt;[] tab;
     Node&lt;K,V&gt; first, e;
-    int n;
+    <span class="hljs-type">int</span> n;
     K k;
 
-    // 1. 检查 table 是否为空
-    if ((tab = table) != null &amp;&amp; (n = tab.length) &gt; 0 &amp;&amp;
-        (first = tab[(n - 1) &amp; hash]) != null) {
+    <span class="hljs-comment">// 1. 检查 table 是否为空</span>
+    <span class="hljs-keyword">if</span> ((tab = table) != <span class="hljs-literal">null</span> &amp;&amp; (n = tab.length) &gt; <span class="hljs-number">0</span> &amp;&amp;
+        (first = tab[(n - <span class="hljs-number">1</span>) &amp; hash]) != <span class="hljs-literal">null</span>) {
 
-        // 2. 检查第一个节点是否匹配
-        if (first.hash == hash &amp;&amp;
-            ((k = first.key) == key || (key != null &amp;&amp; key.equals(k))))
-            return first;
+        <span class="hljs-comment">// 2. 检查第一个节点是否匹配</span>
+        <span class="hljs-keyword">if</span> (first.hash == hash &amp;&amp;
+            ((k = first.key) == key || (key != <span class="hljs-literal">null</span> &amp;&amp; key.equals(k))))
+            <span class="hljs-keyword">return</span> first;
 
-        // 3. 检查后续节点
-        if ((e = first.next) != null) {
-            // 如果是红黑树，在红黑树中查找
-            if (first instanceof TreeNode)
-                return ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);
+        <span class="hljs-comment">// 3. 检查后续节点</span>
+        <span class="hljs-keyword">if</span> ((e = first.next) != <span class="hljs-literal">null</span>) {
+            <span class="hljs-comment">// 如果是红黑树，在红黑树中查找</span>
+            <span class="hljs-keyword">if</span> (first <span class="hljs-keyword">instanceof</span> TreeNode)
+                <span class="hljs-keyword">return</span> ((TreeNode&lt;K,V&gt;)first).getTreeNode(hash, key);
 
-            // 在链表中查找
-            do {
-                if (e.hash == hash &amp;&amp;
-                    ((k = e.key) == key || (key != null &amp;&amp; key.equals(k))))
-                    return e;
-            } while ((e = e.next) != null);
+            <span class="hljs-comment">// 在链表中查找</span>
+            <span class="hljs-keyword">do</span> {
+                <span class="hljs-keyword">if</span> (e.hash == hash &amp;&amp;
+                    ((k = e.key) == key || (key != <span class="hljs-literal">null</span> &amp;&amp; key.equals(k))))
+                    <span class="hljs-keyword">return</span> e;
+            } <span class="hljs-keyword">while</span> ((e = e.next) != <span class="hljs-literal">null</span>);
         }
     }
-    return null;
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
 }
-</code></pre></p><h2>七、扩容机制（resize）</h2><h3>7.1 resize 方法详解</h3><p><pre class="language-java" data-lang="java"><code class="language-java">final Node&lt;K,V&gt;[] resize() {
+</code></pre>
+<h2 id="七、扩容机制（resize）" tabindex="-1">七、扩容机制（resize）</h2>
+<h3 id="7.1-resize-方法详解" tabindex="-1">7.1 resize 方法详解</h3>
+<pre><code class="hljs language-java"><span class="hljs-keyword">final</span> Node&lt;K,V&gt;[] resize() {
     Node&lt;K,V&gt;[] oldTab = table;
-    int oldCap = (oldTab == null) ? 0 : oldTab.length;
-    int oldThr = threshold;
-    int newCap, newThr = 0;
+    <span class="hljs-type">int</span> <span class="hljs-variable">oldCap</span> <span class="hljs-operator">=</span> (oldTab == <span class="hljs-literal">null</span>) ? <span class="hljs-number">0</span> : oldTab.length;
+    <span class="hljs-type">int</span> <span class="hljs-variable">oldThr</span> <span class="hljs-operator">=</span> threshold;
+    <span class="hljs-type">int</span> newCap, newThr = <span class="hljs-number">0</span>;
 
-    // 1. 计算新容量和新阈值
-    if (oldCap &gt; 0) {
-        if (oldCap &gt;= MAXIMUM_CAPACITY) {
+    <span class="hljs-comment">// 1. 计算新容量和新阈值</span>
+    <span class="hljs-keyword">if</span> (oldCap &gt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">if</span> (oldCap &gt;= MAXIMUM_CAPACITY) {
             threshold = Integer.MAX_VALUE;
-            return oldTab;
+            <span class="hljs-keyword">return</span> oldTab;
         }
-        else if ((newCap = oldCap &lt;&lt; 1) &lt; MAXIMUM_CAPACITY &amp;&amp;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((newCap = oldCap &lt;&lt; <span class="hljs-number">1</span>) &lt; MAXIMUM_CAPACITY &amp;&amp;
                  oldCap &gt;= DEFAULT_INITIAL_CAPACITY)
-            newThr = oldThr &lt;&lt; 1;
+            newThr = oldThr &lt;&lt; <span class="hljs-number">1</span>;
     }
-    else if (oldThr &gt; 0)
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (oldThr &gt; <span class="hljs-number">0</span>)
         newCap = oldThr;
-    else {
+    <span class="hljs-keyword">else</span> {
         newCap = DEFAULT_INITIAL_CAPACITY;
-        newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+        newThr = (<span class="hljs-type">int</span>)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
     }
 
-    if (newThr == 0) {
-        float ft = (float)newCap * loadFactor;
+    <span class="hljs-keyword">if</span> (newThr == <span class="hljs-number">0</span>) {
+        <span class="hljs-type">float</span> <span class="hljs-variable">ft</span> <span class="hljs-operator">=</span> (<span class="hljs-type">float</span>)newCap * loadFactor;
         newThr = (newCap &lt; MAXIMUM_CAPACITY &amp;&amp; ft &lt; MAXIMUM_CAPACITY ?
-                  (int)ft : Integer.MAX_VALUE);
+                  (<span class="hljs-type">int</span>)ft : Integer.MAX_VALUE);
     }
     threshold = newThr;
 
-    // 2. 创建新数组
-    @SuppressWarnings({"rawtypes","unchecked"})
-    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])new Node[newCap];
+    <span class="hljs-comment">// 2. 创建新数组</span>
+    <span class="hljs-meta">@SuppressWarnings({&quot;rawtypes&quot;,&quot;unchecked&quot;})</span>
+    Node&lt;K,V&gt;[] newTab = (Node&lt;K,V&gt;[])<span class="hljs-keyword">new</span> <span class="hljs-title class_">Node</span>[newCap];
     table = newTab;
 
-    // 3. 迁移旧数组中的元素
-    if (oldTab != null) {
-        for (int j = 0; j &lt; oldCap; ++j) {
+    <span class="hljs-comment">// 3. 迁移旧数组中的元素</span>
+    <span class="hljs-keyword">if</span> (oldTab != <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">j</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; j &lt; oldCap; ++j) {
             Node&lt;K,V&gt; e;
-            if ((e = oldTab[j]) != null) {
-                oldTab[j] = null;
-                if (e.next == null)
-                    newTab[e.hash &amp; (newCap - 1)] = e;
-                else if (e instanceof TreeNode)
-                    ((TreeNode&lt;K,V&gt;)e).split(this, newTab, j, oldCap);
-                else {
-                    // 链表优化：将链表分为原索引和原索引+oldCap两个位置
-                    Node&lt;K,V&gt; loHead = null, loTail = null;
-                    Node&lt;K,V&gt; hiHead = null, hiTail = null;
+            <span class="hljs-keyword">if</span> ((e = oldTab[j]) != <span class="hljs-literal">null</span>) {
+                oldTab[j] = <span class="hljs-literal">null</span>;
+                <span class="hljs-keyword">if</span> (e.next == <span class="hljs-literal">null</span>)
+                    newTab[e.hash &amp; (newCap - <span class="hljs-number">1</span>)] = e;
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (e <span class="hljs-keyword">instanceof</span> TreeNode)
+                    ((TreeNode&lt;K,V&gt;)e).split(<span class="hljs-built_in">this</span>, newTab, j, oldCap);
+                <span class="hljs-keyword">else</span> {
+                    <span class="hljs-comment">// 链表优化：将链表分为原索引和原索引+oldCap两个位置</span>
+                    Node&lt;K,V&gt; loHead = <span class="hljs-literal">null</span>, loTail = <span class="hljs-literal">null</span>;
+                    Node&lt;K,V&gt; hiHead = <span class="hljs-literal">null</span>, hiTail = <span class="hljs-literal">null</span>;
                     Node&lt;K,V&gt; next;
-                    do {
+                    <span class="hljs-keyword">do</span> {
                         next = e.next;
-                        if ((e.hash &amp; oldCap) == 0) {
-                            if (loTail == null)
+                        <span class="hljs-keyword">if</span> ((e.hash &amp; oldCap) == <span class="hljs-number">0</span>) {
+                            <span class="hljs-keyword">if</span> (loTail == <span class="hljs-literal">null</span>)
                                 loHead = e;
-                            else
+                            <span class="hljs-keyword">else</span>
                                 loTail.next = e;
                             loTail = e;
                         }
-                        else {
-                            if (hiTail == null)
+                        <span class="hljs-keyword">else</span> {
+                            <span class="hljs-keyword">if</span> (hiTail == <span class="hljs-literal">null</span>)
                                 hiHead = e;
-                            else
+                            <span class="hljs-keyword">else</span>
                                 hiTail.next = e;
                             hiTail = e;
                         }
-                    } while ((e = next) != null);
+                    } <span class="hljs-keyword">while</span> ((e = next) != <span class="hljs-literal">null</span>);
 
-                    if (loTail != null) {
-                        loTail.next = null;
+                    <span class="hljs-keyword">if</span> (loTail != <span class="hljs-literal">null</span>) {
+                        loTail.next = <span class="hljs-literal">null</span>;
                         newTab[j] = loHead;
                     }
-                    if (hiTail != null) {
-                        hiTail.next = null;
+                    <span class="hljs-keyword">if</span> (hiTail != <span class="hljs-literal">null</span>) {
+                        hiTail.next = <span class="hljs-literal">null</span>;
                         newTab[j + oldCap] = hiHead;
                     }
                 }
             }
         }
     }
-    return newTab;
+    <span class="hljs-keyword">return</span> newTab;
 }
-</code></pre></p><h3>7.2 扩容优化</h3><p>JDK 1.8 对扩容进行了优化：</p><ul><ol><li>使用 <code>(e.hash & oldCap)</code> 判断元素是在原位置还是移动到 <code>原位置 + oldCap</code></li>
+</code></pre>
+<h3 id="7.2-扩容优化" tabindex="-1">7.2 扩容优化</h3>
+<p>JDK 1.8 对扩容进行了优化：</p>
+<ul>
+<li>使用 <code>(e.hash &amp; oldCap)</code> 判断元素是在原位置还是移动到 <code>原位置 + oldCap</code></li>
 <li>这样可以避免重新计算 hash，提高效率</li>
-<li>例如：原容量 16（10000），扩容后 32（100000）</li>
-</ol></ul>  - 如果 <code>(e.hash & 16) == 0</code>，索引不变
-  - 如果 <code>(e.hash & 16) != 0</code>，索引 = 原索引 + 16</p><h2>八、红黑树转换</h2><h3>8.1 treeifyBin 方法</h3><p>当链表长度达到 8 时，尝试将链表转为红黑树：</p><p><pre class="language-java" data-lang="java"><code class="language-java">final void treeifyBin(Node&lt;K,V&gt;[] tab, int hash) {
-    int n, index;
+<li>例如：原容量 16（10000），扩容后 32（100000）
+<ul>
+<li>如果 <code>(e.hash &amp; 16) == 0</code>，索引不变</li>
+<li>如果 <code>(e.hash &amp; 16) != 0</code>，索引 = 原索引 + 16</li>
+</ul>
+</li>
+</ul>
+<h2 id="八、红黑树转换" tabindex="-1">八、红黑树转换</h2>
+<h3 id="8.1-treeifybin-方法" tabindex="-1">8.1 treeifyBin 方法</h3>
+<p>当链表长度达到 8 时，尝试将链表转为红黑树：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">final</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">treeifyBin</span><span class="hljs-params">(Node&lt;K,V&gt;[] tab, <span class="hljs-type">int</span> hash)</span> {
+    <span class="hljs-type">int</span> n, index;
     Node&lt;K,V&gt; e;
 
-    // 如果数组长度小于 64，先扩容而不是转树
-    if (tab == null || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)
+    <span class="hljs-comment">// 如果数组长度小于 64，先扩容而不是转树</span>
+    <span class="hljs-keyword">if</span> (tab == <span class="hljs-literal">null</span> || (n = tab.length) &lt; MIN_TREEIFY_CAPACITY)
         resize();
 
-    else if ((e = tab[index = (n - 1) &amp; hash]) != null) {
-        TreeNode&lt;K,V&gt; hd = null, tl = null;
-        do {
-            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, null);
-            if (tl == null)
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> ((e = tab[index = (n - <span class="hljs-number">1</span>) &amp; hash]) != <span class="hljs-literal">null</span>) {
+        TreeNode&lt;K,V&gt; hd = <span class="hljs-literal">null</span>, tl = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">do</span> {
+            TreeNode&lt;K,V&gt; p = replacementTreeNode(e, <span class="hljs-literal">null</span>);
+            <span class="hljs-keyword">if</span> (tl == <span class="hljs-literal">null</span>)
                 hd = p;
-            else {
+            <span class="hljs-keyword">else</span> {
                 p.prev = tl;
                 tl.next = p;
             }
             tl = p;
-        } while ((e = e.next) != null);
+        } <span class="hljs-keyword">while</span> ((e = e.next) != <span class="hljs-literal">null</span>);
 
-        if ((tab[index] = hd) != null)
+        <span class="hljs-keyword">if</span> ((tab[index] = hd) != <span class="hljs-literal">null</span>)
             hd.treeify(tab);
     }
 }
-</code></pre></p><h3>8.2 为什么是 8 和 6？</h3><ul><ol><li><strong>8 转 16</strong>：链表转红黑树</li>
+</code></pre>
+<h3 id="8.2-为什么是-8-和-6？" tabindex="-1">8.2 为什么是 8 和 6？</h3>
+<ul>
+<li><strong>8 转 16</strong>：链表转红黑树</li>
 <li><strong>6 转 16</strong>：红黑树转链表</li>
-</ol></ul>
-这样设计是为了避免频繁转换：</p><ul><ol><li>根据泊松分布，链表长度达到 8 的概率非常小（0.00000006）</li>
+</ul>
+<p>这样设计是为了避免频繁转换：</p>
+<ul>
+<li>根据泊松分布，链表长度达到 8 的概率非常小（0.00000006）</li>
 <li>当长度在 6-8 之间波动时，不会频繁转换</li>
 <li>这是一种空间和时间的权衡</li>
-</ol></ul>
-<h2>九、线程安全问题</h2><p>HashMap 是非线程安全的，在多线程环境下会出现以下问题：</p><h3>9.1 并发扩容问题</h3><p>JDK 1.7 中使用头插法，并发扩容可能导致链表形成环：</p><p><pre class="language-java" data-lang="java"><code class="language-java">void transfer(Entry[] newTable, boolean rehash) {
-    int newCapacity = newTable.length;
-    for (Entry&lt;K,V&gt; e : table) {
-        while(null != e) {
+</ul>
+<h2 id="九、线程安全问题" tabindex="-1">九、线程安全问题</h2>
+<p>HashMap 是非线程安全的，在多线程环境下会出现以下问题：</p>
+<h3 id="9.1-并发扩容问题" tabindex="-1">9.1 并发扩容问题</h3>
+<p>JDK 1.7 中使用头插法，并发扩容可能导致链表形成环：</p>
+<pre><code class="hljs language-java"><span class="hljs-keyword">void</span> <span class="hljs-title function_">transfer</span><span class="hljs-params">(Entry[] newTable, <span class="hljs-type">boolean</span> rehash)</span> {
+    <span class="hljs-type">int</span> <span class="hljs-variable">newCapacity</span> <span class="hljs-operator">=</span> newTable.length;
+    <span class="hljs-keyword">for</span> (Entry&lt;K,V&gt; e : table) {
+        <span class="hljs-keyword">while</span>(<span class="hljs-literal">null</span> != e) {
             Entry&lt;K,V&gt; next = e.next;
-            if (rehash) {
-                e.hash = null == e.key ? 0 : hash(e.key);
+            <span class="hljs-keyword">if</span> (rehash) {
+                e.hash = <span class="hljs-literal">null</span> == e.key ? <span class="hljs-number">0</span> : hash(e.key);
             }
-            int i = indexFor(e.hash, newCapacity);
+            <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> indexFor(e.hash, newCapacity);
             e.next = newTable[i];
             newTable[i] = e;
             e = next;
         }
     }
 }
-</code></pre></p><h3>9.2 JDK 1.8 的改进</h3><ul><ol><li>改用尾插法，避免了链表环的问题</li>
+</code></pre>
+<h3 id="9.2-jdk-1.8-的改进" tabindex="-1">9.2 JDK 1.8 的改进</h3>
+<ul>
+<li>改用尾插法，避免了链表环的问题</li>
 <li>但仍然存在数据丢失和覆盖的问题</li>
-</ol></ul>
-<h3>9.3 解决方案</h3><p>如果需要在多线程环境下使用，可以使用：</p><ul><ol><li><strong>ConcurrentHashMap</strong>：线程安全的 HashMap</li>
-<li><strong>Collections.synchronizedMap(new HashMap<>())</strong>：使用同步包装器</li>
+</ul>
+<h3 id="9.3-解决方案" tabindex="-1">9.3 解决方案</h3>
+<p>如果需要在多线程环境下使用，可以使用：</p>
+<ul>
+<li><strong>ConcurrentHashMap</strong>：线程安全的 HashMap</li>
+<li><strong>Collections.synchronizedMap(new HashMap&lt;&gt;())</strong>：使用同步包装器</li>
 <li><strong>Hashtable</strong>：线程安全的遗留类（不推荐）</li>
-</ol></ul>
-<h2>十、常见面试题</h2><h3>1. HashMap 的底层数据结构？</h3><p>JDK 1.7：数组 + 链表
-JDK 1.8：数组 + 链表 + 红黑树</p><h3>2. 为什么 JDK 1.8 要引入红黑树？</h3><p>为了解决链表过长导致的查询效率问题。当链表长度超过 8 时，查询时间复杂度从 O(n) 降低到 O(log n)。</p><h3>3. HashMap 的扩容机制是什么？</h3><ul><ol><li>当 size > threshold（capacity * loadFactor）时触发扩容</li>
+</ul>
+<h2 id="十、常见面试题" tabindex="-1">十、常见面试题</h2>
+<h3 id="1.-hashmap-的底层数据结构？" tabindex="-1">1. HashMap 的底层数据结构？</h3>
+<p>JDK 1.7：数组 + 链表<br>
+JDK 1.8：数组 + 链表 + 红黑树</p>
+<h3 id="2.-为什么-jdk-1.8-要引入红黑树？" tabindex="-1">2. 为什么 JDK 1.8 要引入红黑树？</h3>
+<p>为了解决链表过长导致的查询效率问题。当链表长度超过 8 时，查询时间复杂度从 O(n) 降低到 O(log n)。</p>
+<h3 id="3.-hashmap-的扩容机制是什么？" tabindex="-1">3. HashMap 的扩容机制是什么？</h3>
+<ul>
+<li>当 size &gt; threshold（capacity * loadFactor）时触发扩容</li>
 <li>扩容后容量变为原来的 2 倍</li>
 <li>扩容时需要重新计算所有元素的位置（JDK 1.8 有优化）</li>
-</ol></ul>
-<h3>4. 为什么 HashMap 的容量必须是 2 的 n 次幂？</h3><ul><ol><li>方便使用位运算代替取模运算，提高效率</li>
+</ul>
+<h3 id="4.-为什么-hashmap-的容量必须是-2-的-n-次幂？" tabindex="-1">4. 为什么 HashMap 的容量必须是 2 的 n 次幂？</h3>
+<ul>
+<li>方便使用位运算代替取模运算，提高效率</li>
 <li>使 hash 分布更均匀</li>
 <li>便于扩容时的元素迁移</li>
-</ol></ul>
-<h3>5. HashMap 的负载因子为什么是 0.75？</h3><p>这是时间和空间的权衡：</p><ul><ol><li>太小：空间利用率低，频繁扩容</li>
+</ul>
+<h3 id="5.-hashmap-的负载因子为什么是-0.75？" tabindex="-1">5. HashMap 的负载因子为什么是 0.75？</h3>
+<p>这是时间和空间的权衡：</p>
+<ul>
+<li>太小：空间利用率低，频繁扩容</li>
 <li>太大：哈希冲突增多，查询效率降低</li>
 <li>0.75 是经过数学计算的最优值</li>
-</ol></ul>
-<h3>6. HashMap 是线程安全的吗？</h3><p>不是，HashMap 是非线程安全的。多线程环境下会存在：</p><ul><ol><li>数据丢失</li>
+</ul>
+<h3 id="6.-hashmap-是线程安全的吗？" tabindex="-1">6. HashMap 是线程安全的吗？</h3>
+<p>不是，HashMap 是非线程安全的。多线程环境下会存在：</p>
+<ul>
+<li>数据丢失</li>
 <li>数据覆盖</li>
 <li>JDK 1.7 可能出现死循环</li>
-</ol></ul>
-<h3>7. HashMap 中 key 为 null 时怎么处理？</h3><p>HashMap 允许一个 null 键，null 键的 hash 值为 0，存放在数组的第 0 个位置。</p><h3>8. HashMap 和 ConcurrentHashMap 的区别？</h3><p>| 特性 | HashMap | ConcurrentHashMap |
-|------|---------|-------------------|
-| 线程安全 | 否 | 是 |
-| 实现方式 | 数组+链表+红黑树 | 数组+链表+红黑树 + CAS + synchronized |
-| null 键值 | 允许 | 不允许 |
-| 迭代器 | fail-fast | weakly consistent |</p><h3>9. HashMap 和 Hashtable 的区别？</h3><p>| 特性 | HashMap | Hashtable |
-|------|---------|-----------|
-| 线程安全 | 否 | 是 |
-| null 键值 | 允许 | 不允许 |
-| 继承 | AbstractMap | Dictionary |
-| 效率 | 高 | 低 |</p><h3>10. 如何优化 HashMap 的性能？</h3><ul><ol><li>设置合适的初始容量，避免频繁扩容</li>
+</ul>
+<h3 id="7.-hashmap-中-key-为-null-时怎么处理？" tabindex="-1">7. HashMap 中 key 为 null 时怎么处理？</h3>
+<p>HashMap 允许一个 null 键，null 键的 hash 值为 0，存放在数组的第 0 个位置。</p>
+<h3 id="8.-hashmap-和-concurrenthashmap-的区别？" tabindex="-1">8. HashMap 和 ConcurrentHashMap 的区别？</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>HashMap</th>
+<th>ConcurrentHashMap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线程安全</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>实现方式</td>
+<td>数组+链表+红黑树</td>
+<td>数组+链表+红黑树 + CAS + synchronized</td>
+</tr>
+<tr>
+<td>null 键值</td>
+<td>允许</td>
+<td>不允许</td>
+</tr>
+<tr>
+<td>迭代器</td>
+<td>fail-fast</td>
+<td>weakly consistent</td>
+</tr>
+</tbody>
+</table>
+<h3 id="9.-hashmap-和-hashtable-的区别？" tabindex="-1">9. HashMap 和 Hashtable 的区别？</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>HashMap</th>
+<th>Hashtable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线程安全</td>
+<td>否</td>
+<td>是</td>
+</tr>
+<tr>
+<td>null 键值</td>
+<td>允许</td>
+<td>不允许</td>
+</tr>
+<tr>
+<td>继承</td>
+<td>AbstractMap</td>
+<td>Dictionary</td>
+</tr>
+<tr>
+<td>效率</td>
+<td>高</td>
+<td>低</td>
+</tr>
+</tbody>
+</table>
+<h3 id="10.-如何优化-hashmap-的性能？" tabindex="-1">10. 如何优化 HashMap 的性能？</h3>
+<ul>
+<li>设置合适的初始容量，避免频繁扩容</li>
 <li>选择合适的负载因子</li>
 <li>使用不可变对象作为 key</li>
 <li>重写 hashCode 和 equals 方法</li>
-</ol></ul>
-<h2>十一、使用建议</h2><h3>11.1 初始化容量</h3><p>如果知道大概的元素数量，可以设置初始容量：</p><p><pre class="language-java" data-lang="java"><code class="language-java">int expectedSize = 10000;
-HashMap&lt;String, String&gt; map = new HashMap&lt;&gt;(expectedSize * 4 / 3 + 1);
-</code></pre></p><h3>11.2 选择合适的负载因子</h3><p>默认 0.75 适用于大多数场景，如果：</p><ul><ol><li>内存紧张：可以增大负载因子（如 0.85）</li>
+</ul>
+<h2 id="十一、使用建议" tabindex="-1">十一、使用建议</h2>
+<h3 id="11.1-初始化容量" tabindex="-1">11.1 初始化容量</h3>
+<p>如果知道大概的元素数量，可以设置初始容量：</p>
+<pre><code class="hljs language-java"><span class="hljs-type">int</span> <span class="hljs-variable">expectedSize</span> <span class="hljs-operator">=</span> <span class="hljs-number">10000</span>;
+HashMap&lt;String, String&gt; map = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;(expectedSize * <span class="hljs-number">4</span> / <span class="hljs-number">3</span> + <span class="hljs-number">1</span>);
+</code></pre>
+<h3 id="11.2-选择合适的负载因子" tabindex="-1">11.2 选择合适的负载因子</h3>
+<p>默认 0.75 适用于大多数场景，如果：</p>
+<ul>
+<li>内存紧张：可以增大负载因子（如 0.85）</li>
 <li>查询性能要求高：可以减小负载因子（如 0.5）</li>
-</ol></ul>
-<h3>11.3 避免大对象作为 key</h3><p>大对象的 hashCode 计算成本高，建议使用：</p><ul><ol><li>基本类型包装类</li>
+</ul>
+<h3 id="11.3-避免大对象作为-key" tabindex="-1">11.3 避免大对象作为 key</h3>
+<p>大对象的 hashCode 计算成本高，建议使用：</p>
+<ul>
+<li>基本类型包装类</li>
 <li>String</li>
 <li>自定义的不可变对象</li>
-</ol></ul>
-<h2>十二、总结</h2><p>HashMap 是 Java 集合框架中最重要的类之一，其设计体现了以下思想：</p><ol><li><strong>哈希表的精妙设计</strong>：通过 hash 算法和位运算实现快速查找</li>
+</ul>
+<h2 id="十二、总结" tabindex="-1">十二、总结</h2>
+<p>HashMap 是 Java 集合框架中最重要的类之一，其设计体现了以下思想：</p>
+<ol>
+<li><strong>哈希表的精妙设计</strong>：通过 hash 算法和位运算实现快速查找</li>
 <li><strong>动态扩容机制</strong>：平衡了时间和空间的效率</li>
 <li><strong>红黑树优化</strong>：解决了链表过长的问题</li>
 <li><strong>位运算优化</strong>：使用位运算代替取模，提高效率</li>
 </ol>
-理解 HashMap 的源码不仅有助于面试，更能帮助我们写出更高效的代码。
-</p>
+<p>理解 HashMap 的源码不仅有助于面试，更能帮助我们写出更高效的代码。</p>
+
         </div>
       </article>
     </div>

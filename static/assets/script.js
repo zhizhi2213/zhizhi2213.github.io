@@ -83,43 +83,53 @@
     lastScrollTop = scrollTop;
   });
   
-  const preBlocks = document.querySelectorAll('pre code');
-  preBlocks.forEach(block => {
-    const pre = block.parentElement;
+  const preBlocks = document.querySelectorAll('pre');
+  preBlocks.forEach(pre => {
+    const code = pre.querySelector('code');
+    if (!code) return;
+    
+    const lang = pre.getAttribute('data-lang') || 'text';
+    
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    
+    const langLabel = document.createElement('span');
+    langLabel.className = 'code-lang';
+    langLabel.textContent = lang;
+    header.appendChild(langLabel);
+    
     const button = document.createElement('button');
     button.textContent = '复制';
     button.className = 'copy-button';
-    button.style.cssText = `
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      padding: 0.25rem 0.75rem;
-      background: var(--accent-color);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: opacity 0.3s;
-      opacity: 0;
-    `;
+    header.appendChild(button);
     
-    pre.style.position = 'relative';
-    pre.appendChild(button);
+    pre.appendChild(header);
     
-    pre.addEventListener('mouseenter', () => {
-      button.style.opacity = '1';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-wrapper';
+    
+    const linesContainer = document.createElement('div');
+    linesContainer.className = 'code-lines';
+    
+    const codeLines = code.textContent.split('\n');
+    codeLines.forEach((_, index) => {
+      const lineNum = document.createElement('div');
+      lineNum.textContent = index + 1;
+      linesContainer.appendChild(lineNum);
     });
     
-    pre.addEventListener('mouseleave', () => {
-      button.style.opacity = '0';
-    });
+    wrapper.appendChild(linesContainer);
+    pre.appendChild(wrapper);
+    
+    code.style.paddingLeft = '60px';
     
     button.addEventListener('click', () => {
-      navigator.clipboard.writeText(block.textContent).then(() => {
+      navigator.clipboard.writeText(code.textContent).then(() => {
         button.textContent = '已复制!';
+        button.classList.add('copied');
         setTimeout(() => {
           button.textContent = '复制';
+          button.classList.remove('copied');
         }, 2000);
       });
     });

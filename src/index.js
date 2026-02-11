@@ -1,7 +1,28 @@
 const fs = require('fs').promises;
 const path = require('path');
+const MarkdownIt = require('markdown-it');
+const hljs = require('markdown-it-highlightjs');
+const anchor = require('markdown-it-anchor');
+const taskLists = require('markdown-it-task-lists');
 
 const config = require('./config.json');
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  breaks: true
+})
+.use(hljs)
+.use(anchor, {
+  level: 2,
+  slugify: (s) => s.trim().toLowerCase().replace(/\s+/g, '-')
+})
+.use(taskLists, {
+  enabled: true,
+  label: true,
+  labelAfter: true
+});
 
 class BlogGenerator {
   constructor() {
@@ -119,62 +140,7 @@ class BlogGenerator {
   }
 
   parseMarkdown(content) {
-    let html = content;
-    
-    const codeBlocks = [];
-    html = html.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (match, lang, code) => {
-      const langName = lang || 'text';
-      const index = codeBlocks.length;
-      code = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      codeBlocks.push({ lang: langName, code });
-      return `__CODEBLOCK_${index}__`;
-    });
-    
-    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-    
-    html = html.replace(/^###### (.*$)/gm, '<h6>$1</h6>');
-    html = html.replace(/^##### (.*$)/gm, '<h5>$1</h5>');
-    html = html.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-    
-    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
-    
-    html = html.replace(/^> (.*)$/gm, '<blockquote>$1</blockquote>');
-    
-    html = html.replace(/^- (.*)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
-    
-    html = html.replace(/^\d+\. (.*)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n?)+/g, '<ol>$&</ol>');
-    
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-    
-    html = html.replace(/\n\n/g, '</p><p>');
-    html = '<p>' + html + '</p>';
-    
-    html = html.replace(/<p>(<h[1-6]>)/g, '$1');
-    html = html.replace(/(<\/h[1-6]>)<\/p>/g, '$1');
-    html = html.replace(/<p>(<ul>|<ol>|<pre>|<blockquote>)/g, '$1');
-    html = html.replace(/(<\/ul>|<\/ol>|<\/pre>|<\/blockquote>)<\/p>/g, '$1');
-    html = html.replace(/<p>\s*<\/p>/g, '');
-    html = html.replace(/<li>([^<]*)<\/li>/g, (match, content) => {
-      if (!content.includes('<')) {
-        return `<li>${content.replace(/\n/g, '<br>')}</li>`;
-      }
-      return match;
-    });
-    
-    html = html.replace(/__CODEBLOCK_(\d+)__/g, (match, index) => {
-      const block = codeBlocks[index];
-      return `<pre class="language-${block.lang}" data-lang="${block.lang}"><code class="language-${block.lang}">${block.code}</code></pre>`;
-    });
-    
-    return html;
+    return md.render(content);
   }
 
   async createSamplePosts() {
