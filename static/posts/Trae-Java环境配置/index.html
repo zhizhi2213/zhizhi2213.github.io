@@ -40,16 +40,12 @@
         
         <div class="post-content">
           <h2>配置Java环境</h2>
-<h3>1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3>
-
-<h3>2. 配置Java环境 settings.json文件</h3>
+<h3>1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3><h3>2. 配置Java环境 settings.json文件</h3>
 <pre class="language-json" data-lang="json"><code class="language-json">{
   "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"
 }
  
-</code></pre>
-
-
+</code></pre></p><p>
 <h3>3.配置maven环境 settings.json文件</h3>
 <pre class="language-json" data-lang="json"><code class="language-json">{
   "java.configuration.maven.globalSettings": "C:\\work\\apache-maven-3.9.12\\conf\\all.xml",
@@ -99,9 +95,7 @@ launch.json
     }
   ]
 }
-</code></pre>
-
-
+</code></pre></p><p>
 ps:
 cursor 配置文件 settings.json
 <pre class="language-json" data-lang="json"><code class="language-json">{
@@ -142,10 +136,8 @@ cursor 配置文件 settings.json
   }
 }
 </code></pre>
-<h3>可能遇到的问题</h3>
-
-<ol><li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件</li></ol>
-   blocked 设置 false
+<h3>可能遇到的问题</h3><ol><li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件</li>
+</ol>   blocked 设置 false
 <pre class="language-xml" data-lang="xml"><code class="language-xml">    &lt;mirror&gt;
        ...
       &lt;blocked&gt;false&lt;/blocked&gt;

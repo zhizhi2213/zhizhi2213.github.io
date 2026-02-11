@@ -39,90 +39,70 @@
         </div>
         
         <div class="post-content">
-          <p><a href="https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页">参考教程</a>
-
-<a href="https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun">参考主页</a>)
-
-<h3>1. ctrl+c and ctrl+v 复制参考主页的代码</h3>
+          <p><a href="https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页">参考教程</a></p><p><a href="https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun">参考主页</a>)</p><h3>1. ctrl+c and ctrl+v 复制参考主页的代码</h3>
 创建一个与用户名同名的仓库，然后将这个代码推到我们刚刚建立的仓库里面去。
 注意要先打开仓库权限
-<ul><ol><li>仓库 Settings → Actions → General → Workflow permissions</li></ol></ul>
-<ul><ol><li>选 Read and write permissions</li></ol></ul>
-<ul><ol><li>如果看到 “Allow GitHub Actions to create and approve pull requests”，也勾上</li></ol></ul>
-
+<ul><ol><li>仓库 Settings → Actions → General → Workflow permissions</li>
+<li>选 Read and write permissions</li>
+<li>如果看到 “Allow GitHub Actions to create and approve pull requests”，也勾上</li>
+</ol></ul>
 <h3>2. WakaTime Token 配置</h3>
 这个主要作用是用来记录与统计我们的编程时间的。
 我们需要到<a href="https://wakatime.com/">WakaTime</a>网站注册一个账号，然后在设置里面找到API Key，复制下来。
-<ol><li>需要在你的编辑器中安装WakaTime插件 并设置API Key</li></ol>
-
-<ol><li>在 GitHub 仓库里添加 Secrets</li></ol>
-<ul><ol><li>打开你的仓库 → 点上方菜单里的 Settings</li></ol></ul>
-<ul><ol><li>左边栏找到 Secrets and variables → Actions</li></ol></ul>
-<ul><ol><li>点 New repository secret</li></ol></ul>
-<ul><ol><li>Name 填：WAKATIME_API_KEY</li></ol></ul>
-<ul><ol><li>Value 填：刚才复制的那串 key</li></ol></ul>
-<ul><ol><li>保存</li></ol></ul>
-
+<ol><li>需要在你的编辑器中安装WakaTime插件 并设置API Key</li>
+</ol>
+<ol><li>在 GitHub 仓库里添加 Secrets</li>
+</ol><ul><ol><li>打开你的仓库 → 点上方菜单里的 Settings</li>
+<li>左边栏找到 Secrets and variables → Actions</li>
+<li>点 New repository secret</li>
+<li>Name 填：WAKATIME_API_KEY</li>
+<li>Value 填：刚才复制的那串 key</li>
+<li>保存</li>
+</ol></ul>
 这个WAKATIME_API_KEY就是我们.github/workflows/waka.yml文件里面的那个环境变量。
 <pre class="language-markdown" data-lang="markdown"><code class="language-markdown">&lt;!--START_SECTION:waka--&gt;
 &lt;!--END_SECTION:waka--&gt;
 </code></pre>
-Action 每次跑，会自动把数据填充在这两行之间。
-
-<h3>3. 配置Token</h3>
-<ol><li>生成 PAT</li></ol>
-   - 去 GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+Action 每次跑，会自动把数据填充在这两行之间。</p><h3>3. 配置Token</h3>
+<ol><li>生成 PAT</li>
+</ol>   - 去 GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
    - 点击「Generate new token (classic)」
    - 勾选最少的权限：
       -  repo
       - read:user
       - read:org（如果你要展示组织/私有仓库信息）
       - workflow
-   - 复制生成的 token（格式是 ghp_XXXXXXXXX...）
-
-<ol><li>配置插件变量</li></ol>
-   - 打开你的仓库
+   - 复制生成的 token（格式是 ghp_XXXXXXXXX...）</p><ol><li>配置插件变量</li>
+</ol>   - 打开你的仓库
    - Settings → Secrets and variables → Actions → New repository secret
    - Name 填：GH_TOKEN（插件所需变量就是.github/workflows/xxx.yml文件里面的那个环境变量）
-   - Value 填：刚才生成的 PAT
-
-   一般有以下几个变量
+   - Value 填：刚才生成的 PAT</p><p>   一般有以下几个变量
    - GH_TOKEN
    - ACCESS_TOKEN
    - METRICS_TOKEN
-   - GITHUB_TOKEN
-
-<h3>4. Repobeats 配置</h3>
+   - GITHUB_TOKEN</p><h3>4. Repobeats 配置</h3>
 <pre class="language-md" data-lang="md"><code class="language-md">&lt;img width="120%" src="https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg" /&gt;
 </code></pre>
-这一行是 Repobeats 服务，自动生成一张仓库贡献的动态分析图。比如提交数、活跃度、PR、issue 等，会显示成五颜六色的曲线图。这个 Repobeats 图，它并不是记录你的「整个 GitHub 账号」，而是记录某一个具体仓库的活动情况。
-
-你只需要在 <a href="https://repobeats.axiom.co/">Repobeats</a> 这个网页中登录你的 Github 账号，然后选择需要记录的仓库，就会有一句这样的话：
+这一行是 Repobeats 服务，自动生成一张仓库贡献的动态分析图。比如提交数、活跃度、PR、issue 等，会显示成五颜六色的曲线图。这个 Repobeats 图，它并不是记录你的「整个 GitHub 账号」，而是记录某一个具体仓库的活动情况。</p><p>你只需要在 <a href="https://repobeats.axiom.co/">Repobeats</a> 这个网页中登录你的 Github 账号，然后选择需要记录的仓库，就会有一句这样的话：
 <pre class="language-text" data-lang="text"><code class="language-text">// Add the following to your README.md to embed Repobeats
 
 ![Alt](https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image")
 </code></pre>
 替换掉这个地址就ok了。
-<h3>5. readme-streak-stats配置</h3>
-
-<a href="https://github.com/DenverCoder1/github-readme-streak-stats?tab=readme-ov-file">github-readme-streak-stats 项目地址</a>
-<ol><li>参考项目地址部署配置</li></ol>
-<ol><li>readme 修改 user 与 域名（主题、语言等都可以修改，具体参考项目介绍）</li></ol>
-<pre class="language-markdown" data-lang="markdown"><code class="language-markdown">&lt;picture&gt;
+<h3>5. readme-streak-stats配置</h3><p><a href="https://github.com/DenverCoder1/github-readme-streak-stats?tab=readme-ov-file">github-readme-streak-stats 项目地址</a>
+<ol><li>参考项目地址部署配置</li>
+<li>readme 修改 user 与 域名（主题、语言等都可以修改，具体参考项目介绍）</li>
+</ol><pre class="language-markdown" data-lang="markdown"><code class="language-markdown">&lt;picture&gt;
   &lt;source media="(prefers-color-scheme: dark)" srcset="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=dark&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y" /&gt;
   &lt;source media="(prefers-color-scheme: light)" srcset="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=light&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y" /&gt;
   &lt;img src="https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=dark&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y" /&gt;
 &lt;/picture&gt;
-</code></pre>
-
-<h3>6. Hexo blog 配置</h3>
-<ol><li>Hexo 生成 RSS</li></ol>
-   - 在你的 Hexo 博客目录（有 source/、themes/ 的那个根目录）里执行：
+</code></pre></p><h3>6. Hexo blog 配置</h3>
+<ol><li>Hexo 生成 RSS</li>
+</ol>   - 在你的 Hexo 博客目录（有 source/、themes/ 的那个根目录）里执行：
 <pre class="language-shell" data-lang="shell"><code class="language-shell">      npm install hexo-generator-feed --save=hexo-generator-feed@3.0.0
-</code></pre>
-
-<ol><li>修改 根目录 _config.yml</li></ol>
-
+</code></pre></p><ol><li>修改 根目录 _config.yml</li>
+</ol>
 <pre class="language-yaml" data-lang="yaml"><code class="language-yaml"># 站点基本信息（确保正确，影响 feed 的链接）
 url: https://wenjiew-astro.github.io
 root: /
@@ -135,15 +115,11 @@ feed:
    limit: 10             # 列出最近 N 篇
    hub:
    content: true         # 是否包含全文（true/false）
-</code></pre>
-
-<ol><li>使用hexo启动 本地预览 提交</li></ol>
-
-   http://localhost:4000/atom.xml
-
-
-<ol><li>修改 GitHub Actions</li></ol>
-<pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Recent Blog
+</code></pre></p><ol><li>使用hexo启动 本地预览 提交</li>
+</ol>
+   http://localhost:4000/atom.xml</p><p>
+<ol><li>修改 GitHub Actions</li>
+</ol><pre class="language-yaml" data-lang="yaml"><code class="language-yaml">name: Recent Blog
 
 on:
    schedule:
@@ -166,8 +142,8 @@ jobs:
          - uses: sarisia/actions-commit@master
 
 </code></pre>
-<ol><li>修改readme</li></ol>
-   在 README.md 里加：
+<ol><li>修改readme</li>
+</ol>   在 README.md 里加：
 <pre class="language-markdown" data-lang="markdown"><code class="language-markdown">## 📝 最近更新
 &lt;!--START_SECTION:feed--&gt;
 &lt;!--END_SECTION:feed--&gt;

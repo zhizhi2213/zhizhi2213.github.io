@@ -39,19 +39,7 @@
         </div>
         
         <div class="post-content">
-          <h1>Spring IOC与AOP详解</h1>
-
-Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。
-
-<h2>第一部分：IOC（控制反转）</h2>
-
-<h3>什么是IOC？</h3>
-
-IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对象的创建、管理和依赖关系的维护交给Spring容器来处理，而不是由对象自己管理。
-
-<h4>传统开发方式的问题</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
+          <h1>Spring IOC与AOP详解</h1><p>Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。</p><h2>第一部分：IOC（控制反转）</h2><h3>什么是IOC？</h3><p>IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对象的创建、管理和依赖关系的维护交给Spring容器来处理，而不是由对象自己管理。</p><h4>传统开发方式的问题</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
     private UserDao userDao;
 
     public UserService() {
@@ -63,16 +51,12 @@ IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对
         userDao.save(user);
     }
 }
-</code></pre>
-
-这种方式的问题：
-<ul><ol><li>耦合度高，难以替换实现</li></ol></ul>
-<ul><ol><li>不便于单元测试</li></ol></ul>
-<ul><ol><li>对象生命周期难以管理</li></ol></ul>
-
-<h4>IOC的解决方案</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
+</code></pre></p><p>这种方式的问题：
+<ul><ol><li>耦合度高，难以替换实现</li>
+<li>不便于单元测试</li>
+<li>对象生命周期难以管理</li>
+</ol></ul>
+<h4>IOC的解决方案</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
     private UserDao userDao;
 
     // 通过构造函数注入依赖
@@ -84,18 +68,10 @@ IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对
         userDao.save(user);
     }
 }
-</code></pre>
-
-<h3>IOC容器</h3>
-
-Spring提供了两种IOC容器：
-
-<ol><li><strong>BeanFactory</strong>：基础容器，提供基本的IOC功能</li></ol>
-<ol><li><strong>ApplicationContext</strong>：高级容器，提供更多企业级特性</li></ol>
-
-<h4>BeanFactory</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// BeanFactory接口定义
+</code></pre></p><h3>IOC容器</h3><p>Spring提供了两种IOC容器：</p><ol><li><strong>BeanFactory</strong>：基础容器，提供基本的IOC功能</li>
+<li><strong>ApplicationContext</strong>：高级容器，提供更多企业级特性</li>
+</ol>
+<h4>BeanFactory</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// BeanFactory接口定义
 public interface BeanFactory {
 
     // 根据名称获取Bean
@@ -110,11 +86,7 @@ public interface BeanFactory {
     // 判断Bean是否是单例
     boolean isSingleton(String name) throws NoSuchBeanDefinitionException;
 }
-</code></pre>
-
-<h4>ApplicationContext</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// 常用的ApplicationContext实现
+</code></pre></p><h4>ApplicationContext</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 常用的ApplicationContext实现
 // 1. ClassPathXmlApplicationContext：从类路径加载配置
 ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
@@ -125,13 +97,7 @@ ApplicationContext context = new FileSystemXmlApplicationContext("D:/config/appl
 ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
 // 4. WebApplicationContext：Web应用的容器（在Spring MVC中使用）
-</code></pre>
-
-<h3>依赖注入（DI）的三种方式</h3>
-
-<h4>1. 构造函数注入（推荐）</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Service
+</code></pre></p><h3>依赖注入（DI）的三种方式</h3><h4>1. 构造函数注入（推荐）</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
 public class UserService {
     private final UserDao userDao;
     private final EmailService emailService;
@@ -147,11 +113,7 @@ public class UserService {
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-
-<h4>2. Setter方法注入</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Service
+</code></pre></p><h4>2. Setter方法注入</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
 public class UserService {
     private UserDao userDao;
     private EmailService emailService;
@@ -171,11 +133,7 @@ public class UserService {
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-
-<h4>3. 字段注入（不推荐）</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Service
+</code></pre></p><h4>3. 字段注入（不推荐）</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
 public class UserService {
     @Autowired
     private UserDao userDao;
@@ -188,19 +146,13 @@ public class UserService {
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-
-<strong>为什么推荐构造函数注入？</strong>
-<ul><ol><li>保证依赖不可变（final）</li></ol></ul>
-<ul><ol><li>明确表达类的依赖关系</li></ol></ul>
-<ul><ol><li>便于单元测试（可以轻松mock依赖）</li></ol></ul>
-<ul><ol><li>避免循环依赖</li></ol></ul>
-
-<h3>Bean的配置方式</h3>
-
-<h4>XML配置方式</h4>
-
-<pre class="language-xml" data-lang="xml"><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+</code></pre></p><p><strong>为什么推荐构造函数注入？</strong>
+<ul><ol><li>保证依赖不可变（final）</li>
+<li>明确表达类的依赖关系</li>
+<li>便于单元测试（可以轻松mock依赖）</li>
+<li>避免循环依赖</li>
+</ol></ul>
+<h3>Bean的配置方式</h3><h4>XML配置方式</h4><p><pre class="language-xml" data-lang="xml"><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -220,11 +172,7 @@ public class UserService {
         &lt;constructor-arg ref="userDao"/&gt;
     &lt;/bean&gt;
 &lt;/beans&gt;
-</code></pre>
-
-<h4>注解配置方式</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Configuration
+</code></pre></p><h4>注解配置方式</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Configuration
 @ComponentScan("com.example")
 public class AppConfig {
 
@@ -238,11 +186,7 @@ public class AppConfig {
         return new UserService(userDao);
     }
 }
-</code></pre>
-
-<h4>自动装配注解</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// @Component：通用的组件注解
+</code></pre></p><h4>自动装配注解</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// @Component：通用的组件注解
 @Component
 public class UserDaoImpl implements UserDao {
     // 实现代码
@@ -279,13 +223,7 @@ public class UserService {
     @Resource(name = "userDaoImpl") // JSR-250注解
     private UserDao userDao3;
 }
-</code></pre>
-
-<h3>Bean的生命周期</h3>
-
-Spring Bean的生命周期可以分为以下几个阶段：
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Component
+</code></pre></p><h3>Bean的生命周期</h3><p>Spring Bean的生命周期可以分为以下几个阶段：</p><p><pre class="language-java" data-lang="java"><code class="language-java">@Component
 public class LifeCycleBean implements BeanNameAware, BeanFactoryAware,
         InitializingBean, DisposableBean {
 
@@ -348,11 +286,7 @@ public class LifeCycleBean implements BeanNameAware, BeanFactoryAware,
         System.out.println("10. DisposableBean.destroy");
     }
 }
-</code></pre>
-
-<h3>Bean的作用域</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// Singleton（默认）：单例，整个容器中只有一个实例
+</code></pre></p><h3>Bean的作用域</h3><p><pre class="language-java" data-lang="java"><code class="language-java">// Singleton（默认）：单例，整个容器中只有一个实例
 @Service
 @Scope("singleton")
 public class SingletonBean {
@@ -379,17 +313,7 @@ public class RequestBean {
 public class SessionBean {
     // 实现代码
 }
-</code></pre>
-
-<h2>第二部分：AOP（面向切面编程）</h2>
-
-<h3>什么是AOP？</h3>
-
-AOP（Aspect-Oriented Programming，面向切面编程）是一种编程范式，它将横切关注点（如日志、事务、安全等）从业务逻辑中分离出来，提高代码的模块化程度。
-
-<h4>AOP的核心概念</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// 1. 切面（Aspect）：横切关注点的模块化
+</code></pre></p><h2>第二部分：AOP（面向切面编程）</h2><h3>什么是AOP？</h3><p>AOP（Aspect-Oriented Programming，面向切面编程）是一种编程范式，它将横切关注点（如日志、事务、安全等）从业务逻辑中分离出来，提高代码的模块化程度。</p><h4>AOP的核心概念</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 1. 切面（Aspect）：横切关注点的模块化
 @Aspect
 @Component
 public class LoggingAspect {
@@ -442,13 +366,7 @@ public class LoggingAspect {
         }
     }
 }
-</code></pre>
-
-<h3>切点表达式详解</h3>
-
-<h4>execution表达式</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">// 语法：execution(修饰符 返回值类型 包名.类名.方法名(参数) 异常)
+</code></pre></p><h3>切点表达式详解</h3><h4>execution表达式</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 语法：execution(修饰符 返回值类型 包名.类名.方法名(参数) 异常)
 
 // 1. 匹配所有public方法
 @Pointcut("execution(public * *(..))")
@@ -477,11 +395,7 @@ public void firstParamString() {}
 // 7. 匹配返回值为void的方法
 @Pointcut("execution(void com.example.service.*.*(..))")
 public void voidMethods() {}
-</code></pre>
-
-<h4>其他表达式类型</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+</code></pre></p><h4>其他表达式类型</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
 @Component
 public class VariousPointcuts {
 
@@ -524,13 +438,7 @@ public class VariousPointcuts {
     @Pointcut("servicePackage() || controllerMethods()")
     public void serviceOrController() {}
 }
-</code></pre>
-
-<h3>AOP的实际应用场景</h3>
-
-<h4>1. 日志记录</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+</code></pre></p><h3>AOP的实际应用场景</h3><h4>1. 日志记录</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
 @Component
 @Slf4j
 public class LoggingAspect {
@@ -573,11 +481,7 @@ public class UserService {
         // 业务逻辑
     }
 }
-</code></pre>
-
-<h4>2. 性能监控</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+</code></pre></p><h4>2. 性能监控</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
 @Component
 public class PerformanceAspect {
 
@@ -605,11 +509,7 @@ public class PerformanceAspect {
             System.out.println(method + ": 总耗时 " + totalTime + "ms"));
     }
 }
-</code></pre>
-
-<h4>3. 缓存</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+</code></pre></p><h4>3. 缓存</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
 @Component
 public class CacheAspect {
 
@@ -657,11 +557,7 @@ public class UserService {
         return userRepository.findById(id);
     }
 }
-</code></pre>
-
-<h4>4. 事务管理</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+</code></pre></p><h4>4. 事务管理</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
 @Component
 public class TransactionAspect {
 
@@ -697,13 +593,7 @@ public class UserService {
         // 转账逻辑
     }
 }
-</code></pre>
-
-<h3>Spring AOP的实现原理</h3>
-
-Spring AOP主要通过动态代理实现：
-
-<pre class="language-java" data-lang="java"><code class="language-java">// JDK动态代理（基于接口）
+</code></pre></p><h3>Spring AOP的实现原理</h3><p>Spring AOP主要通过动态代理实现：</p><p><pre class="language-java" data-lang="java"><code class="language-java">// JDK动态代理（基于接口）
 public interface UserService {
     void saveUser(User user);
 }
@@ -764,13 +654,7 @@ public class UserServiceCglibProxy implements MethodInterceptor {
         return result;
     }
 }
-</code></pre>
-
-<h3>IOC与AOP的综合应用</h3>
-
-下面是一个完整的综合示例：
-
-<pre class="language-java" data-lang="java"><code class="language-java">// 1. 定义实体类
+</code></pre></p><h3>IOC与AOP的综合应用</h3><p>下面是一个完整的综合示例：</p><p><pre class="language-java" data-lang="java"><code class="language-java">// 1. 定义实体类
 @Data
 public class User {
     private Long id;
@@ -896,47 +780,33 @@ public class Application {
         User foundUser = userService.getUserById(1L);
     }
 }
-</code></pre>
-
-<h2>总结</h2>
-
-<h3>IOC的优势</h3>
-
-<ol><li><strong>降低耦合</strong>：通过依赖注入降低组件之间的耦合度</li></ol>
-<ol><li><strong>便于测试</strong>：可以轻松mock依赖进行单元测试</li></ol>
-<ol><li><strong>集中管理</strong>：统一管理Bean的生命周期和配置</li></ol>
-<ol><li><strong>提高可维护性</strong>：代码结构清晰，易于理解和维护</li></ol>
-
-<h3>AOP的优势</h3>
-
-<ol><li><strong>关注点分离</strong>：将横切关注点从业务逻辑中分离</li></ol>
-<ol><li><strong>代码复用</strong>：避免重复的横切逻辑代码</li></ol>
-<ol><li><strong>灵活配置</strong>：通过切点表达式灵活地定义切面</li></ol>
-<ol><li><strong>增强功能</strong>：在不修改原有代码的情况下增强功能</li></ol>
-
-<h3>最佳实践</h3>
-
-<ol><li><strong>优先使用构造函数注入</strong></li></ol>
-<ol><li><strong>合理使用注解，避免过度使用</strong></li></ol>
-<ol><li><strong>AOP切面保持简单，避免复杂逻辑</strong></li></ol>
-<ol><li><strong>合理定义Bean的作用域</strong></li></ol>
-<ol><li><strong>注意循环依赖问题</strong></li></ol>
-<ol><li><strong>性能敏感的代码慎用AOP</strong></li></ol>
-
-<h3>学习建议</h3>
-
-<ol><li>从简单的例子开始，逐步理解IOC和AOP的概念</li></ol>
-<ol><li>阅读Spring源码，了解底层实现原理</li></ol>
-<ol><li>在实际项目中应用，积累经验</li></ol>
-<ol><li>学习设计模式，理解IOC和AOP的设计思想</li></ol>
-
-<h2>参考资源</h2>
-
-<ul><ol><li>Spring Framework官方文档</li></ol></ul>
-<ul><ol><li>《Spring源码深度解析》</li></ol></ul>
-<ul><ol><li>《Spring实战》</li></ol></ul>
-<ul><ol><li>《Effective Java》</li></ol></ul>
-</p>
+</code></pre></p><h2>总结</h2><h3>IOC的优势</h3><ol><li><strong>降低耦合</strong>：通过依赖注入降低组件之间的耦合度</li>
+<li><strong>便于测试</strong>：可以轻松mock依赖进行单元测试</li>
+<li><strong>集中管理</strong>：统一管理Bean的生命周期和配置</li>
+<li><strong>提高可维护性</strong>：代码结构清晰，易于理解和维护</li>
+</ol>
+<h3>AOP的优势</h3><ol><li><strong>关注点分离</strong>：将横切关注点从业务逻辑中分离</li>
+<li><strong>代码复用</strong>：避免重复的横切逻辑代码</li>
+<li><strong>灵活配置</strong>：通过切点表达式灵活地定义切面</li>
+<li><strong>增强功能</strong>：在不修改原有代码的情况下增强功能</li>
+</ol>
+<h3>最佳实践</h3><ol><li><strong>优先使用构造函数注入</strong></li>
+<li><strong>合理使用注解，避免过度使用</strong></li>
+<li><strong>AOP切面保持简单，避免复杂逻辑</strong></li>
+<li><strong>合理定义Bean的作用域</strong></li>
+<li><strong>注意循环依赖问题</strong></li>
+<li><strong>性能敏感的代码慎用AOP</strong></li>
+</ol>
+<h3>学习建议</h3><ol><li>从简单的例子开始，逐步理解IOC和AOP的概念</li>
+<li>阅读Spring源码，了解底层实现原理</li>
+<li>在实际项目中应用，积累经验</li>
+<li>学习设计模式，理解IOC和AOP的设计思想</li>
+</ol>
+<h2>参考资源</h2><ul><ol><li>Spring Framework官方文档</li>
+<li>《Spring源码深度解析》</li>
+<li>《Spring实战》</li>
+<li>《Effective Java》</li>
+</ol></ul>
         </div>
       </article>
     </div>

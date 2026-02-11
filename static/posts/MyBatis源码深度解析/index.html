@@ -39,25 +39,13 @@
         </div>
         
         <div class="post-content">
-          <h1>MyBatis 源码深度解析</h1>
-
-<h2>一、MyBatis 简介</h2>
-
-MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。
-
-<h3>核心特点</h3>
-
-<ul><ol><li>基于 SQL 映射的持久层框架</li></ol></ul>
-<ul><ol><li>支持动态 SQL 语句</li></ol></ul>
-<ul><ol><li>支持缓存机制</li></ol></ul>
-<ul><ol><li>提供了与 Spring 的无缝集成</li></ol></ul>
-<ul><ol><li>灵活的映射配置（XML 或注解）</li></ol></ul>
-
-<h2>二、MyBatis 核心架构</h2>
-
-MyBatis 的核心架构由以下几个层次组成：
-
-<pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────────────┐
+          <h1>MyBatis 源码深度解析</h1><h2>一、MyBatis 简介</h2><p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。</p><h3>核心特点</h3><ul><ol><li>基于 SQL 映射的持久层框架</li>
+<li>支持动态 SQL 语句</li>
+<li>支持缓存机制</li>
+<li>提供了与 Spring 的无缝集成</li>
+<li>灵活的映射配置（XML 或注解）</li>
+</ol></ul>
+<h2>二、MyBatis 核心架构</h2><p>MyBatis 的核心架构由以下几个层次组成：</p><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────────────┐
 │         API Interface Layer             │
 │  (SqlSession, Mapper Interface)         │
 ├─────────────────────────────────────────┤
@@ -70,11 +58,7 @@ MyBatis 的核心架构由以下几个层次组成：
 │       Core Supporting Layer             │
 │  (Configuration, XMLConfigBuilder)      │
 └─────────────────────────────────────────┘
-</code></pre>
-
-<h3>2.1 核心组件</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class Configuration {
+</code></pre></p><h3>2.1 核心组件</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class Configuration {
     protected Environment environment;
     protected boolean safeRowBoundsEnabled;
     protected boolean safeResultHandlerEnabled;
@@ -98,13 +82,7 @@ MyBatis 的核心架构由以下几个层次组成：
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
     protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
 }
-</code></pre>
-
-<h2>三、MyBatis 初始化流程</h2>
-
-<h3>3.1 整体初始化流程图</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">┌─────────────┐
+</code></pre></p><h2>三、MyBatis 初始化流程</h2><h3>3.1 整体初始化流程图</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────┐
 │  加载配置文件  │
 │ mybatis.xml │
 └──────┬──────┘
@@ -138,13 +116,7 @@ MyBatis 的核心架构由以下几个层次组成：
 │  DefaultSqlSession  │
 │   Factory          │
 └─────────────────────┘
-</code></pre>
-
-<h3>3.2 初始化源码分析</h3>
-
-<h4>3.2.1 SqlSessionFactory 构建</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class SqlSessionFactoryBuilder {
+</code></pre></p><h3>3.2 初始化源码分析</h3><h4>3.2.1 SqlSessionFactory 构建</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class SqlSessionFactoryBuilder {
     
     public SqlSessionFactory build(InputStream inputStream) {
         return build(inputStream, null, null);
@@ -170,11 +142,7 @@ MyBatis 的核心架构由以下几个层次组成：
         return new DefaultSqlSessionFactory(config);
     }
 }
-</code></pre>
-
-<h4>3.2.2 XMLConfigBuilder 解析配置</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class XMLConfigBuilder extends BaseBuilder {
+</code></pre></p><h4>3.2.2 XMLConfigBuilder 解析配置</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class XMLConfigBuilder extends BaseBuilder {
     
     private boolean parsed;
     private final XPathParser parser;
@@ -208,11 +176,7 @@ MyBatis 的核心架构由以下几个层次组成：
         }
     }
 }
-</code></pre>
-
-<h4>3.2.3 Mapper 解析</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class XMLMapperBuilder extends BaseBuilder {
+</code></pre></p><h4>3.2.3 Mapper 解析</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class XMLMapperBuilder extends BaseBuilder {
     
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
@@ -243,13 +207,7 @@ MyBatis 的核心架构由以下几个层次组成：
         }
     }
 }
-</code></pre>
-
-<h2>四、SQL 执行核心流程</h2>
-
-<h3>4.1 SQL 执行完整流程图</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">┌──────────────┐
+</code></pre></p><h2>四、SQL 执行核心流程</h2><h3>4.1 SQL 执行完整流程图</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌──────────────┐
 │  获取 Mapper  │
 │   接口实例    │
 └──────┬───────┘
@@ -296,11 +254,7 @@ MyBatis 的核心架构由以下几个层次组成：
 │  Handler         │
 │  (结果集处理)     │
 └──────────────────┘
-</code></pre>
-
-<h3>4.2 Mapper 动态代理机制</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class MapperProxy&lt;T&gt; implements InvocationHandler {
+</code></pre></p><h3>4.2 Mapper 动态代理机制</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class MapperProxy&lt;T&gt; implements InvocationHandler {
     
     private final SqlSession sqlSession;
     private final Class&lt;T&gt; mapperInterface;
@@ -330,11 +284,7 @@ MyBatis 的核心架构由以下几个层次组成：
         return mapperMethod;
     }
 }
-</code></pre>
-
-<h3>4.3 MapperMethod 执行逻辑</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class MapperMethod {
+</code></pre></p><h3>4.3 MapperMethod 执行逻辑</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class MapperMethod {
     
     private final SqlCommand command;
     private final MethodSignature method;
@@ -385,11 +335,7 @@ MyBatis 的核心架构由以下几个层次组成：
         return result;
     }
 }
-</code></pre>
-
-<h3>4.4 SqlSession 执行流程</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class DefaultSqlSession implements SqlSession {
+</code></pre></p><h3>4.4 SqlSession 执行流程</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class DefaultSqlSession implements SqlSession {
     
     private final Configuration configuration;
     private final Executor executor;
@@ -418,13 +364,7 @@ MyBatis 的核心架构由以下几个层次组成：
         }
     }
 }
-</code></pre>
-
-<h2>五、Executor 执行器</h2>
-
-<h3>5.1 Executor 继承体系</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">        ┌──────────────┐
+</code></pre></p><h2>五、Executor 执行器</h2><h3>5.1 Executor 继承体系</h3><p><pre class="language-text" data-lang="text"><code class="language-text">        ┌──────────────┐
         │   Executor   │
         └──────┬───────┘
                │
@@ -440,11 +380,7 @@ MyBatis 的核心架构由以下几个层次组成：
 │Simple│Reuse│Batch│Closed│
 │Executor│Executor│Executor│Executor│
 └───┘└─────┘└─────┘└────────┘
-</code></pre>
-
-<h3>5.2 BaseExecutor 核心实现</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public abstract class BaseExecutor implements Executor {
+</code></pre></p><h3>5.2 BaseExecutor 核心实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public abstract class BaseExecutor implements Executor {
     
     protected Transaction transaction;
     protected Wrapper wrapper;
@@ -514,11 +450,7 @@ MyBatis 的核心架构由以下几个层次组成：
     
     protected abstract &lt;E&gt; List&lt;E&gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException;
 }
-</code></pre>
-
-<h3>5.3 SimpleExecutor 实现</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class SimpleExecutor extends BaseExecutor {
+</code></pre></p><h3>5.3 SimpleExecutor 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class SimpleExecutor extends BaseExecutor {
     
     @Override
     public &lt;E&gt; List&lt;E&gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
@@ -541,13 +473,7 @@ MyBatis 的核心架构由以下几个层次组成：
         return stmt;
     }
 }
-</code></pre>
-
-<h2>六、StatementHandler 语句处理器</h2>
-
-<h3>6.1 StatementHandler 继承体系</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">         ┌──────────────────┐
+</code></pre></p><h2>六、StatementHandler 语句处理器</h2><h3>6.1 StatementHandler 继承体系</h3><p><pre class="language-text" data-lang="text"><code class="language-text">         ┌──────────────────┐
          │ StatementHandler│
          └────────┬─────────┘
                   │
@@ -566,11 +492,7 @@ MyBatis 的核心架构由以下几个层次组成：
 │Statement│dStatement│Handler │Handler │
 │Handler│Handler│Handler │Handler │
 └────┘└─────┘└────────┘└────────┘
-</code></pre>
-
-<h3>6.2 PreparedStatementHandler 实现</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class PreparedStatementHandler extends BaseStatementHandler {
+</code></pre></p><h3>6.2 PreparedStatementHandler 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class PreparedStatementHandler extends BaseStatementHandler {
     
     @Override
     public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHandler) throws SQLException {
@@ -601,11 +523,7 @@ MyBatis 的核心架构由以下几个层次组成：
         parameterHandler.setParameters((PreparedStatement) statement);
     }
 }
-</code></pre>
-
-<h3>6.3 ParameterHandler 参数处理器</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public interface ParameterHandler {
+</code></pre></p><h3>6.3 ParameterHandler 参数处理器</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface ParameterHandler {
     Object getParameterObject();
     void setParameters(PreparedStatement ps) throws SQLException;
 }
@@ -655,11 +573,7 @@ public class DefaultParameterHandler implements ParameterHandler {
         }
     }
 }
-</code></pre>
-
-<h3>6.4 ResultSetHandler 结果集处理器</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public interface ResultSetHandler {
+</code></pre></p><h3>6.4 ResultSetHandler 结果集处理器</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface ResultSetHandler {
     &lt;E&gt; List&lt;E&gt; handleResultSets(Statement stmt) throws SQLException;
     &lt;E&gt; Cursor&lt;E&gt; handleCursorResultSets(Statement stmt) throws SQLException;
     void handleOutputParameters(CallableStatement cs) throws SQLException;
@@ -721,13 +635,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         }
     }
 }
-</code></pre>
-
-<h2>七、缓存机制</h2>
-
-<h3>7.1 MyBatis 缓存结构</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────┐
+</code></pre></p><h2>七、缓存机制</h2><h3>7.1 MyBatis 缓存结构</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────┐
 │      Cache 接口                 │
 └────────────┬────────────────────┘
              │
@@ -745,11 +653,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 │  SoftCache / WeakCache     │
 │  LoggingCache / SyncCache  │
 └───────────────────────────┘
-</code></pre>
-
-<h3>7.2 缓存实现</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class PerpetualCache implements Cache {
+</code></pre></p><h3>7.2 缓存实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class PerpetualCache implements Cache {
     
     private final String id;
     private Map&lt;Object, Object&gt; cache = new HashMap&lt;&gt;();
@@ -788,13 +692,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         cache.clear();
     }
 }
-</code></pre>
-
-<h2>八、动态 SQL 机制</h2>
-
-<h3>8.1 动态 SQL 执行流程</h3>
-
-<pre class="language-text" data-lang="text"><code class="language-text">┌──────────────────┐
+</code></pre></p><h2>八、动态 SQL 机制</h2><h3>8.1 动态 SQL 执行流程</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌──────────────────┐
 │  解析 XML        │
 │  动态 SQL 标签   │
 └────────┬─────────┘
@@ -822,11 +720,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 │  BoundSql        │
 │  (绑定 SQL)      │
 └──────────────────┘
-</code></pre>
-
-<h3>8.2 SqlNode 实现</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public interface SqlNode {
+</code></pre></p><h3>8.2 SqlNode 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface SqlNode {
     boolean apply(DynamicContext context);
 }
 
@@ -892,13 +786,7 @@ public class ForEachSqlNode implements SqlNode {
         return true;
     }
 }
-</code></pre>
-
-<h2>九、插件机制</h2>
-
-<h3>9.1 拦截器链</h3>
-
-<pre class="language-java" data-lang="java"><code class="language-java">public interface Interceptor {
+</code></pre></p><h2>九、插件机制</h2><h3>9.1 拦截器链</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface Interceptor {
     Object intercept(Invocation invocation) throws Throwable;
     Object plugin(Object target);
     void setProperties(Properties properties);
@@ -962,35 +850,21 @@ public class Plugin implements InvocationHandler {
         }
     }
 }
-</code></pre>
-
-<h2>十、总结</h2>
-
-<h3>10.1 MyBatis 核心流程总结</h3>
-
-<ol><li><strong>初始化阶段</strong>：</li></ol>
-   - 解析配置文件（XMLConfigBuilder）
+</code></pre></p><h2>十、总结</h2><h3>10.1 MyBatis 核心流程总结</h3><ol><li><strong>初始化阶段</strong>：</li>
+</ol>   - 解析配置文件（XMLConfigBuilder）
    - 解析 Mapper 文件（XMLMapperBuilder）
    - 构建 Configuration 对象
-   - 创建 SqlSessionFactory
-
-<ol><li><strong>执行阶段</strong>：</li></ol>
-   - 通过 MapperProxy 动态代理执行方法
+   - 创建 SqlSessionFactory</p><ol><li><strong>执行阶段</strong>：</li>
+</ol>   - 通过 MapperProxy 动态代理执行方法
    - MapperMethod 封装方法调用
    - SqlSession 管理会话
    - Executor 执行 SQL
    - StatementHandler 处理语句
    - ParameterHandler 设置参数
-   - ResultSetHandler 处理结果集
-
-<ol><li><strong>扩展机制</strong>：</li></ol>
-   - 插件机制（Interceptor + Plugin）
+   - ResultSetHandler 处理结果集</p><ol><li><strong>扩展机制</strong>：</li>
+</ol>   - 插件机制（Interceptor + Plugin）
    - 缓存机制（Cache 接口 + 装饰器）
-   - 动态 SQL（SqlNode + DynamicContext）
-
-<h3>10.2 设计模式总结</h3>
-
-| 设计模式 | 应用场景 | 典型类 |
+   - 动态 SQL（SqlNode + DynamicContext）</p><h3>10.2 设计模式总结</h3><p>| 设计模式 | 应用场景 | 典型类 |
 |---------|---------|--------|
 | 工厂模式 | 创建 SqlSessionFactory | SqlSessionFactoryBuilder |
 | 建造者模式 | 构建复杂对象 | XMLConfigBuilder, XMLMapperBuilder |
@@ -998,22 +872,18 @@ public class Plugin implements InvocationHandler {
 | 策略模式 | 不同的执行器 | SimpleExecutor, ReuseExecutor, BatchExecutor |
 | 装饰器模式 | 缓存功能增强 | LruCache, FifoCache |
 | 模板方法模式 | 执行器基类 | BaseExecutor |
-| 责任链模式 | 插件拦截 | InterceptorChain |
-
-<h3>10.3 学习建议</h3>
-
-<ol><li>从简单示例入手，理解基本用法</li></ol>
-<ol><li>重点理解初始化流程和执行流程</li></ol>
-<ol><li>深入研究动态 SQL 的实现机制</li></ol>
-<ol><li>学习插件机制和缓存机制</li></ol>
-<ol><li>结合源码调试，加深理解</li></ol>
-
+| 责任链模式 | 插件拦截 | InterceptorChain |</p><h3>10.3 学习建议</h3><ol><li>从简单示例入手，理解基本用法</li>
+<li>重点理解初始化流程和执行流程</li>
+<li>深入研究动态 SQL 的实现机制</li>
+<li>学习插件机制和缓存机制</li>
+<li>结合源码调试，加深理解</li>
+</ol>
 通过本文的学习，你应该能够：
-<ul><ol><li>理解 MyBatis 的整体架构和核心组件</li></ol></ul>
-<ul><ol><li>掌握 MyBatis 的初始化和执行流程</li></ol></ul>
-<ul><ol><li>了解动态 SQL、缓存、插件等核心机制的实现原理</li></ol></ul>
-<ul><ol><li>具备阅读和深入 MyBatis 源码的能力</li></ol></ul>
-</p>
+<ul><ol><li>理解 MyBatis 的整体架构和核心组件</li>
+<li>掌握 MyBatis 的初始化和执行流程</li>
+<li>了解动态 SQL、缓存、插件等核心机制的实现原理</li>
+<li>具备阅读和深入 MyBatis 源码的能力</li>
+</ol></ul>
         </div>
       </article>
     </div>

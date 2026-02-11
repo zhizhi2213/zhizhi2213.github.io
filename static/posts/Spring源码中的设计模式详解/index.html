@@ -39,35 +39,13 @@
         </div>
         
         <div class="post-content">
-          <h1>Spring源码中的设计模式详解</h1>
-
-Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。
-
-<h2>什么是设计模式？</h2>
-
-设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。
-
-<h2>1. 代理模式（Proxy Pattern）</h2>
-
-<h3>什么是代理模式？</h3>
-
-代理模式为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。
-
-<h3>Spring中的应用</h3>
-
-Spring中最经典的代理模式应用就是<strong>AOP（面向切面编程）</strong>的实现。
-
-<h4>动态代理示例</h4>
-
-Spring AOP主要通过两种方式实现动态代理：
-
-<ol><li><strong>JDK动态代理</strong>（基于接口）</li></ol>
-<ol><li><strong>CGLIB代理</strong>（基于类）</li></ol>
-
+          <h1>Spring源码中的设计模式详解</h1><p>Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。</p><h2>什么是设计模式？</h2><p>设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。</p><h2>1. 代理模式（Proxy Pattern）</h2><h3>什么是代理模式？</h3><p>代理模式为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p><h3>Spring中的应用</h3><p>Spring中最经典的代理模式应用就是<strong>AOP（面向切面编程）</strong>的实现。</p><h4>动态代理示例</h4><p>Spring AOP主要通过两种方式实现动态代理：</p><ol><li><strong>JDK动态代理</strong>（基于接口）</li>
+<li><strong>CGLIB代理</strong>（基于类）</li>
+</ol>
 Spring源码中的关键类：
-<ul><ol><li><code>org.springframework.aop.framework.JdkDynamicAopProxy</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.aop.framework.CglibAopProxy</code></li></ol></ul>
-
+<ul><ol><li><code>org.springframework.aop.framework.JdkDynamicAopProxy</code></li>
+<li><code>org.springframework.aop.framework.CglibAopProxy</code></li>
+</ol></ul>
 <pre class="language-java" data-lang="java"><code class="language-java">// Spring源码中的Jdk动态代理实现片段
 public class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializable {
 
@@ -107,11 +85,7 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializ
         }
     }
 }
-</code></pre>
-
-<h4>实际应用场景</h4>
-
-<pre class="language-java" data-lang="java"><code class="language-java">@Service
+</code></pre></p><h4>实际应用场景</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
 public class UserServiceImpl implements UserService {
 
     @Override
@@ -140,33 +114,15 @@ public class LoggingAspect {
         System.out.println("方法执行完毕: " + joinPoint.getSignature().getName());
     }
 }
-</code></pre>
-
-<h3>代理模式的优势</h3>
-
-<ol><li><strong>职责清晰</strong>：真实角色只需关注业务逻辑</li></ol>
-<ol><li><strong>高扩展性</strong>：代理对象可以在不修改真实对象的情况下增加额外功能</li></ol>
-<ol><li><strong>智能化</strong>：动态代理可以在运行时决定调用哪个对象</li></ol>
-
-<h2>2. 适配器模式（Adapter Pattern）</h2>
-
-<h3>什么是适配器模式？</h3>
-
-适配器模式将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。
-
-<h3>Spring中的应用</h3>
-
-Spring中适配器模式的应用非常广泛，主要体现在以下几个方面：
-
-<h4>2.1 Spring MVC中的适配器</h4>
-
-在Spring MVC中，不同的Controller类型（如注解@Controller、实现Controller接口、HttpRequestHandler等）通过适配器模式统一处理。
-
-关键类：
-<ul><ol><li><code>org.springframework.web.servlet.HandlerAdapter</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter</code></li></ol></ul>
-
+</code></pre></p><h3>代理模式的优势</h3><ol><li><strong>职责清晰</strong>：真实角色只需关注业务逻辑</li>
+<li><strong>高扩展性</strong>：代理对象可以在不修改真实对象的情况下增加额外功能</li>
+<li><strong>智能化</strong>：动态代理可以在运行时决定调用哪个对象</li>
+</ol>
+<h2>2. 适配器模式（Adapter Pattern）</h2><h3>什么是适配器模式？</h3><p>适配器模式将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</p><h3>Spring中的应用</h3><p>Spring中适配器模式的应用非常广泛，主要体现在以下几个方面：</p><h4>2.1 Spring MVC中的适配器</h4><p>在Spring MVC中，不同的Controller类型（如注解@Controller、实现Controller接口、HttpRequestHandler等）通过适配器模式统一处理。</p><p>关键类：
+<ul><ol><li><code>org.springframework.web.servlet.HandlerAdapter</code></li>
+<li><code>org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter</code></li>
+<li><code>org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter</code></li>
+</ol></ul>
 <pre class="language-java" data-lang="java"><code class="language-java">// HandlerAdapter接口定义
 public interface HandlerAdapter {
 
@@ -213,17 +169,11 @@ public class HttpRequestHandlerAdapter implements HandlerAdapter {
         return null;
     }
 }
-</code></pre>
-
-<h4>2.2 Spring AOP中的适配器</h4>
-
-Spring AOP通过适配器模式将不同的Advice（通知）类型适配到统一的拦截器链中。
-
-关键类：
-<ul><ol><li><code>org.springframework.aop.framework.adapter.AdvisorAdapter</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.aop.framework.adapter.MethodBeforeAdviceAdapter</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.aop.framework.adapter.AfterReturningAdviceAdapter</code></li></ol></ul>
-
+</code></pre></p><h4>2.2 Spring AOP中的适配器</h4><p>Spring AOP通过适配器模式将不同的Advice（通知）类型适配到统一的拦截器链中。</p><p>关键类：
+<ul><ol><li><code>org.springframework.aop.framework.adapter.AdvisorAdapter</code></li>
+<li><code>org.springframework.aop.framework.adapter.MethodBeforeAdviceAdapter</code></li>
+<li><code>org.springframework.aop.framework.adapter.AfterReturningAdviceAdapter</code></li>
+</ol></ul>
 <pre class="language-java" data-lang="java"><code class="language-java">// AdvisorAdapter接口
 public interface AdvisorAdapter {
 
@@ -263,32 +213,14 @@ class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable {
         return mi.proceed();
     }
 }
-</code></pre>
-
-<h3>适配器模式的优势</h3>
-
-<ol><li><strong>解耦</strong>：将接口转换逻辑独立出来，不修改原有代码</li></ol>
-<ol><li><strong>复用</strong>：提高了类的复用性</li></ol>
-<ol><li><strong>灵活</strong>：可以灵活地添加新的适配器</li></ol>
-
-<h2>3. 装饰器模式（Decorator Pattern）</h2>
-
-<h3>什么是装饰器模式？</h3>
-
-装饰器模式动态地给一个对象添加一些额外的职责。就增加功能来说，装饰器模式相比生成子类更为灵活。
-
-<h3>Spring中的应用</h3>
-
-Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源处理中。
-
-<h4>3.1 BeanWrapper的装饰</h4>
-
-<code>BeanWrapper</code>是Spring中用于操作Bean属性的强大工具，它通过装饰器模式增强了基本的属性访问功能。
-
-关键类：
-<ul><ol><li><code>org.springframework.beans.BeanWrapper</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.beans.BeanWrapperImpl</code></li></ol></ul>
-
+</code></pre></p><h3>适配器模式的优势</h3><ol><li><strong>解耦</strong>：将接口转换逻辑独立出来，不修改原有代码</li>
+<li><strong>复用</strong>：提高了类的复用性</li>
+<li><strong>灵活</strong>：可以灵活地添加新的适配器</li>
+</ol>
+<h2>3. 装饰器模式（Decorator Pattern）</h2><h3>什么是装饰器模式？</h3><p>装饰器模式动态地给一个对象添加一些额外的职责。就增加功能来说，装饰器模式相比生成子类更为灵活。</p><h3>Spring中的应用</h3><p>Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源处理中。</p><h4>3.1 BeanWrapper的装饰</h4><p><code>BeanWrapper</code>是Spring中用于操作Bean属性的强大工具，它通过装饰器模式增强了基本的属性访问功能。</p><p>关键类：
+<ul><ol><li><code>org.springframework.beans.BeanWrapper</code></li>
+<li><code>org.springframework.beans.BeanWrapperImpl</code></li>
+</ol></ul>
 <pre class="language-java" data-lang="java"><code class="language-java">public class BeanWrapperImpl implements BeanWrapper {
 
     private Object wrappedObject;
@@ -325,13 +257,7 @@ Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源�
         return getPropertyValue(tokens);
     }
 }
-</code></pre>
-
-<h4>3.2 HttpServletResponseWrapper的装饰</h4>
-
-在Spring MVC中，通过装饰器模式包装原生HttpServletResponse对象。
-
-<pre class="language-java" data-lang="java"><code class="language-java">public class HttpServletResponseWrapper extends ServletResponseWrapper 
+</code></pre></p><h4>3.2 HttpServletResponseWrapper的装饰</h4><p>在Spring MVC中，通过装饰器模式包装原生HttpServletResponse对象。</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class HttpServletResponseWrapper extends ServletResponseWrapper 
         implements HttpServletResponse {
 
     private HttpServletResponse response;
@@ -356,33 +282,15 @@ Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源�
         this.response.setHeader(name, value);
     }
 }
-</code></pre>
-
-<h3>装饰器模式的优势</h3>
-
-<ol><li><strong>灵活扩展</strong>：可以在运行时动态地添加或撤销功能</li></ol>
-<ol><li><strong>避免类爆炸</strong>：相比继承，装饰器模式可以避免产生大量子类</li></ol>
-<ol><li><strong>单一职责</strong>：每个装饰器只关注一个特定的功能</li></ol>
-
-<h2>4. 工厂模式（Factory Pattern）</h2>
-
-<h3>什么是工厂模式？</h3>
-
-工厂模式提供了一种创建对象的最佳方式，在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。
-
-<h3>Spring中的应用</h3>
-
-Spring框架本身就是一个大型的工厂，<strong>IoC容器</strong>就是工厂模式的典型应用。
-
-<h4>4.1 BeanFactory（简单工厂+工厂方法）</h4>
-
-<code>BeanFactory</code>是Spring容器的核心接口，负责管理和配置Bean。
-
-关键类：
-<ul><ol><li><code>org.springframework.beans.factory.BeanFactory</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.beans.factory.xml.XmlBeanFactory</code></li></ol></ul>
-<ul><ol><li><code>org.springframework.beans.factory.support.DefaultListableBeanFactory</code></li></ol></ul>
-
+</code></pre></p><h3>装饰器模式的优势</h3><ol><li><strong>灵活扩展</strong>：可以在运行时动态地添加或撤销功能</li>
+<li><strong>避免类爆炸</strong>：相比继承，装饰器模式可以避免产生大量子类</li>
+<li><strong>单一职责</strong>：每个装饰器只关注一个特定的功能</li>
+</ol>
+<h2>4. 工厂模式（Factory Pattern）</h2><h3>什么是工厂模式？</h3><p>工厂模式提供了一种创建对象的最佳方式，在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。</p><h3>Spring中的应用</h3><p>Spring框架本身就是一个大型的工厂，<strong>IoC容器</strong>就是工厂模式的典型应用。</p><h4>4.1 BeanFactory（简单工厂+工厂方法）</h4><p><code>BeanFactory</code>是Spring容器的核心接口，负责管理和配置Bean。</p><p>关键类：
+<ul><ol><li><code>org.springframework.beans.factory.BeanFactory</code></li>
+<li><code>org.springframework.beans.factory.xml.XmlBeanFactory</code></li>
+<li><code>org.springframework.beans.factory.support.DefaultListableBeanFactory</code></li>
+</ol></ul>
 <pre class="language-java" data-lang="java"><code class="language-java">// BeanFactory接口
 public interface BeanFactory {
 
@@ -448,13 +356,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         this.beanDefinitionMap.put(beanName, beanDefinition);
     }
 }
-</code></pre>
-
-<h4>4.2 ApplicationContext（抽象工厂）</h4>
-
-<code>ApplicationContext</code>是<code>BeanFactory</code>的扩展，提供了更多企业级特性。
-
-<pre class="language-java" data-lang="java"><code class="language-java">// ApplicationContext接口
+</code></pre></p><h4>4.2 ApplicationContext（抽象工厂）</h4><p><code>ApplicationContext</code>是<code>BeanFactory</code>的扩展，提供了更多企业级特性。</p><p><pre class="language-java" data-lang="java"><code class="language-java">// ApplicationContext接口
 public interface ApplicationContext extends EnvironmentCapable, 
         ListableBeanFactory, HierarchicalBeanFactory,
         MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
@@ -495,13 +397,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
         return this.configLocations;
     }
 }
-</code></pre>
-
-<h4>4.3 FactoryBean（工厂Bean）</h4>
-
-<code>FactoryBean</code>是Spring中特殊的工厂Bean接口，用于创建复杂对象。
-
-<pre class="language-java" data-lang="java"><code class="language-java">// FactoryBean接口
+</code></pre></p><h4>4.3 FactoryBean（工厂Bean）</h4><p><code>FactoryBean</code>是Spring中特殊的工厂Bean接口，用于创建复杂对象。</p><p><pre class="language-java" data-lang="java"><code class="language-java">// FactoryBean接口
 public interface FactoryBean&lt;T&gt; {
 
     String OBJECT_TYPE_ATTRIBUTE = "factoryBeanObjectType";
@@ -551,42 +447,26 @@ public class ConnectionFactoryBean implements FactoryBean&lt;Connection&gt; {
         return false;
     }
 }
-</code></pre>
-
-配置文件中使用：
+</code></pre></p><p>配置文件中使用：
 <pre class="language-xml" data-lang="xml"><code class="language-xml">&lt;bean id="connection" class="com.example.ConnectionFactoryBean"&gt;
     &lt;property name="url" value="jdbc:mysql://localhost:3306/test"/&gt;
     &lt;property name="username" value="root"/&gt;
     &lt;property name="password" value="123456"/&gt;
 &lt;/bean&gt;
-</code></pre>
-
-<h3>工厂模式的优势</h3>
-
-<ol><li><strong>解耦</strong>：将对象的创建和使用分离</li></ol>
-<ol><li><strong>灵活</strong>：可以方便地切换不同的实现</li></ol>
-<ol><li><strong>统一管理</strong>：集中管理对象的创建逻辑</li></ol>
-<ol><li><strong>可扩展</strong>：容易扩展新的产品类型</li></ol>
-
-<h2>总结</h2>
-
-Spring框架通过对设计模式的巧妙运用，实现了高度的可扩展性和灵活性：
-
-| 设计模式 | Spring应用场景 | 核心类 |
+</code></pre></p><h3>工厂模式的优势</h3><ol><li><strong>解耦</strong>：将对象的创建和使用分离</li>
+<li><strong>灵活</strong>：可以方便地切换不同的实现</li>
+<li><strong>统一管理</strong>：集中管理对象的创建逻辑</li>
+<li><strong>可扩展</strong>：容易扩展新的产品类型</li>
+</ol>
+<h2>总结</h2><p>Spring框架通过对设计模式的巧妙运用，实现了高度的可扩展性和灵活性：</p><p>| 设计模式 | Spring应用场景 | 核心类 |
 |---------|--------------|--------|
 | 代理模式 | AOP实现、事务管理 | JdkDynamicAopProxy、CglibAopProxy |
 | 适配器模式 | MVC Handler适配、AOP Advice适配 | HandlerAdapter、AdvisorAdapter |
 | 装饰器模式 | BeanWrapper、HttpServletResponseWrapper | BeanWrapperImpl、HttpServletResponseWrapper |
-| 工厂模式 | IoC容器、Bean创建 | BeanFactory、ApplicationContext、FactoryBean |
-
-学习Spring源码中的设计模式应用，不仅能帮助我们更好地理解Spring框架的工作原理，更能提升我们自身的代码设计能力。在实际开发中，我们应该根据具体场景选择合适的设计模式，避免过度设计。
-
-<h2>参考资源</h2>
-
-<ul><ol><li>Spring Framework官方文档</li></ol></ul>
-<ul><ol><li>《Spring源码深度解析》</li></ol></ul>
-<ul><ol><li>《设计模式：可复用面向对象软件的基础》</li></ol></ul>
-</p>
+| 工厂模式 | IoC容器、Bean创建 | BeanFactory、ApplicationContext、FactoryBean |</p><p>学习Spring源码中的设计模式应用，不仅能帮助我们更好地理解Spring框架的工作原理，更能提升我们自身的代码设计能力。在实际开发中，我们应该根据具体场景选择合适的设计模式，避免过度设计。</p><h2>参考资源</h2><ul><ol><li>Spring Framework官方文档</li>
+<li>《Spring源码深度解析》</li>
+<li>《设计模式：可复用面向对象软件的基础》</li>
+</ol></ul>
         </div>
       </article>
     </div>
