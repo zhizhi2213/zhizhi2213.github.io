@@ -4,12 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>java语法糖详解 - 吱吱的博客</title>
-  <meta name="description" content="{{post.excerpt}}">
+  <meta name="description" content="Java 语法糖
+
+原文(https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw)
+
+ 什么是语法糖？
+
+语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="java语法糖详解">
+  <meta property="og:description" content="Java 语法糖
+
+原文(https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw)
+
+ 什么是语法糖？
+
+语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/java语法糖详解/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年1月26日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="java语法糖详解">
+  <meta name="twitter:description" content="Java 语法糖
+
+原文(https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw)
+
+ 什么是语法糖？
+
+语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法...">
   <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
   <div class="background-animation"></div>
   <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
     <div class="container">
@@ -18,33 +54,138 @@
         <div class="nav-links">
           <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
         </div>
-        <button class="theme-toggle" aria-label="切换主题">
-          <span class="theme-icon">🌙</span>
-        </button>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
       </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main class="main">
-    <div class="container">
-      <article class="post">
-        <div class="post-header">
-          <a href="/" class="back-link">← 返回首页</a>
-          <h1 class="post-title">java语法糖详解</h1>
-          <div class="post-meta">
-            <span class="post-date">2026年1月26日</span>
-            
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link active">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">java语法糖详解</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年1月26日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
           </div>
-        </div>
-        
-        <div class="post-content">
-          <p>Java 语法糖</p>
+
+          <div class="post-content">
+            <p>Java 语法糖</p>
 <p><a href="https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw">原文</a></p>
-<h3 id="什么是语法糖？" tabindex="-1">什么是语法糖？</h3>
+<h3 id="什么是语法糖">什么是语法糖？</h3>
 <p>语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法，<br>
 这种语法对语言的功能并没有影响，但是更方便程序员使用。简而言之，语法糖让程序更加简洁，有更高的可读性。</p>
-<h3 id="java-中有哪些常见的语法糖？" tabindex="-1">Java 中有哪些常见的语法糖？</h3>
+<h3 id="Java-中有哪些常见的语法糖">Java 中有哪些常见的语法糖？</h3>
 <p>Java 虚拟机并不支持这些语法糖,而是在编译阶段提供的语法糖,也就是说在编译阶段语法糖就会被还原成简单的基础语法结构，这个过程就是解语法糖</p>
 <blockquote>
 <p>说到编译，大家肯定都知道，Java 语言中，javac命令可以将后缀名为.java的源文件编译为后缀名为.class的可以运行于 Java<br>
@@ -54,7 +195,7 @@
 <p>Java 中最常用的语法糖主要有泛型、变长参数、条件编译、自动拆装箱、内部类等。</p>
 <p>通过 Decompilers online 对 Class 文件进行在线反编译。</p>
 <p>接下来都是javaguide对java常用语法糖讲解</p>
-<h3 id="switch-支持-string-与枚举" tabindex="-1">switch 支持 String 与枚举</h3>
+<h3 id="switch-支持-String-与枚举">switch 支持 String 与枚举</h3>
 <p>前面提到过，从 Java 7 开始，Java 语言中的语法糖在逐渐丰富，其中一个比较重要的就是 Java 7 中switch开始支持String。</p>
 <p>在开始之前先科普下，Java 中的switch自身原本就支持基本类型。比如int、char等。对于int类型，直接进行数值的比较。对于char类型则是比较其<br>
 ascii 码。所以，对于编译器来说，switch中其实只能使用整型，任何类型的比较都要转换成整型。比如byte。short，char(ascii 码是整型)<br>
@@ -107,7 +248,7 @@ ascii 码。所以，对于编译器来说，switch中其实只能使用整型�
 <p>看到这个代码，你知道原来 字符串的 switch 是通过equals()和hashCode()方法来实现的。 还好hashCode()方法返回的是int，而不是long。</p>
 <p>仔细看下可以发现，进行switch的实际是哈希值，然后通过使用equals方法比较进行安全检查，这个检查是必要的，因为哈希可能会发生碰撞。因此它的性能是不如使用枚举进行<br>
 switch 或者使用纯整数常量，但这也不是很差。</p>
-<h3 id="泛型" tabindex="-1">泛型</h3>
+<h3 id="泛型">泛型</h3>
 <p>我们都知道，很多语言都是支持泛型的，但是很多人不知道的是，不同的编译器对于泛型的处理方式是不同的，通常情况下，一个编译器处理泛型有两种方式：Code<br>
 specialization和Code sharing。C++和 C#是使用Code specialization的处理机制，而 Java 使用的是Code sharing的机制。</p>
 <p>Code sharing 方式为每个泛型类型创建唯一的字节码表示，并且将该泛型类型的实例都映射到这个唯一的字节码表示上。将多种泛型类形实例映射到唯一的字节码表示是通过类型擦除（type<br>
@@ -167,7 +308,7 @@ map<span class="token punctuation">.</span>
 </code></pre>
 <p>虚拟机中没有泛型，只有普通类和普通方法，所有泛型类的类型参数在编译时都会被擦除，泛型类并没有自己独有的Class类对象。比如并不存在List<String><br>
 .class或是List<Integer>.class，而只有List.class。</p>
-<h3 id="自动装箱与拆箱" tabindex="-1">自动装箱与拆箱</h3>
+<h3 id="自动装箱与拆箱">自动装箱与拆箱</h3>
 <p>自动装箱就是 Java 自动将原始类型值转换成对应的对象，比如将 int 的变量转换成 Integer 对象，这个过程叫做装箱，反之将 Integer<br>
 对象转换成 int 类型值，这个过程叫做拆箱。因为这里的装箱和拆箱是自动进行的非人为转换，所以就称作为自动装箱和拆箱。原始类型<br>
 byte, short, char, int, long, float, double 和 boolean 对应的封装类为 Byte, Short, Character, Integer, Long, Float,<br>
@@ -527,7 +668,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 <span class="token punctuation">}</span>
 </code></pre>
 <p>反编译后就是把_删除了。也就是说 编译器并不认识在数字字面量中的_，需要在编译阶段把他去掉。</p>
-<h3 id="for-each" tabindex="-1">for-each</h3>
+<h3 id="for-each">for-each</h3>
 <p>增强 for 循环（for-each）相信大家都不陌生，日常开发经常会用到的，他会比 for 循环要少写很多代码，那么这个语法糖背后是如何实现的呢？</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> strs <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token string">"Hollis"</span><span class="token punctuation">,</span> <span class="token string">"公众号：Hollis"</span><span class="token punctuation">,</span> <span class="token string">"博客：www.hollischuang.com"</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
@@ -561,7 +702,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 <span class="token punctuation">}</span>
 </code></pre>
 <p>代码很简单，for-each 的实现原理其实就是使用了普通的 for 循环和迭代器。</p>
-<h3 id="try-with-resource" tabindex="-1">try-with-resource</h3>
+<h3 id="try-with-resource">try-with-resource</h3>
 <p>Java 里，对于文件操作 IO 流、数据库连接等开销非常昂贵的资源，用完之后必须及时通过 close 方法将其关闭，否则资源会一直处于打开状态，可能会导致内存泄露等问题。</p>
 <p>关闭资源的常用方式就是在finally块里是释放，即调用close方法。比如，我们经常会写这样的代码：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -638,7 +779,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 <span class="token punctuation">}</span>
 </code></pre>
 <p>其实背后的原理也很简单，那些我们没有做的关闭资源的操作，编译器都帮我们做了。所以，再次印证了，语法糖的作用就是方便程序员的使用，但最终还是要转成编译器认识的语言。</p>
-<h3 id="lambda-表达式" tabindex="-1">Lambda 表达式</h3>
+<h3 id="Lambda-表达式">Lambda 表达式</h3>
 <p>关于 lambda 表达式，有人可能会有质疑，因为网上有人说他并不是语法糖。其实我想纠正下这个说法。Lambda<br>
 表达式不是匿名内部类的语法糖，但是他也是一个语法糖。实现方式其实是依赖了几个 JVM 底层提供的 lambda 相关 api。</p>
 <p>先来看一个简单的 lambda 表达式。遍历一个 list：</p>
@@ -702,8 +843,8 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 </code></pre>
 <p>两个 lambda 表达式分别调用了lambda$main$1和lambda$main$0两个方法。</p>
 <p>所以，lambda 表达式的实现其实是依赖了一些底层的 api，在编译阶段，编译器会把 lambda 表达式进行解糖，转换成调用内部 api 的方式。</p>
-<h2 id="可能遇到的坑" tabindex="-1">可能遇到的坑</h2>
-<h3 id="泛型-1" tabindex="-1">泛型</h3>
+<h2 id="可能遇到的坑">可能遇到的坑</h2>
+<h3 id="泛型">泛型</h3>
 <h4 id="一、当泛型遇到重载" tabindex="-1">一、当泛型遇到重载</h4>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">GenericTypes</span> <span class="token punctuation">{</span>
 
@@ -747,7 +888,7 @@ List，擦除动作导致这两个方法的特征签名变得一模一样。</p>
 <p>有些同学可能会误认为泛型类是不同的类，对应不同的字节码，其实<br>
 由于经过类型擦除，所有的泛型类实例都关联到同一份字节码上，泛型类的静态变量是共享的。上面例子里的GT<Integer>.var和GT<String><br>
 .var其实是一个变量。</p>
-<h3 id="自动装箱与拆箱-1" tabindex="-1">自动装箱与拆箱</h3>
+<h3 id="自动装箱与拆箱">自动装箱与拆箱</h3>
 <p>对象相等比较</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">Integer</span> a <span class="token operator">=</span> <span class="token number">1000</span><span class="token punctuation">;</span>
@@ -765,7 +906,7 @@ c == d is true
 <p>在 Java 5 中，在 Integer 的操作上引入了一个新功能来节省内存和提高性能。整型对象通过使用相同的对象引用实现了缓存和重用。</p>
 <p>适用于整数值区间-128 至 +127。</p>
 <p>只适用于自动装箱。使用构造函数创建对象不适用。</p>
-<h3 id="增强-for-循环" tabindex="-1">增强 for 循环</h3>
+<h3 id="增强-for-循环">增强 for 循环</h3>
 <pre class="language-plaintext"><code class="language-plaintext">for (Student stu : students) {
 if (stu.getId() == 2)
 students.remove(stu);
@@ -777,22 +918,118 @@ students.remove(stu);
 fail-fast 原则 Iterator 会马上抛出java.util.ConcurrentModificationException异常。</p>
 <p>所以 Iterator 在工作的时候是不允许被迭代的对象被改变的。但你可以使用 Iterator 本身的方法remove()<br>
 来删除对象，Iterator.remove() 方法会在删除当前迭代对象的同时维护索引的一致性。</p>
-<h2 id="总结" tabindex="-1">总结</h2>
+<h2 id="总结">总结</h2>
 <p>前面介绍了 12 种 Java 中常用的语法糖。所谓语法糖就是提供给开发人员便于开发的一种语法而已。但是这种语法只有开发人员认识。要想被执行，需要进行解糖，即转成<br>
 JVM 认识的语法。当我们把语法糖解糖之后，你就会发现其实我们日常使用的这些方便的语法，其实都是一些其他更简单的语法构成的。</p>
 <p>有了这些语法糖，我们在日常开发的时候可以大大提升效率，但是同时也要避过度使用。使用之前最好了解下原理，避免掉坑。</p>
 
-        </div>
-      </article>
+          </div>
+
+          <section class="share-section">
+            <h3 class="share-title">分享这篇文章</h3>
+            <div class="share-buttons">
+              <button class="share-button share-twitter" data-platform="twitter" aria-label="分享到 Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                <span>Twitter</span>
+              </button>
+              <button class="share-button share-weibo" data-platform="weibo" aria-label="分享到微博">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2C6.357 2 3 5.357 3 9.5c0 2.45 1.197 4.627 3.046 5.964-.042.533-.053 1.1.05 1.732.378 2.327 2.48 4.304 5.204 4.304 3.037 0 5.5-2.463 5.5-5.5 0-2.043-1.118-3.827-2.78-4.777.19-.615.3-1.268.3-1.948 0-3.643-2.857-6.5-6.5-6.5zm0 1.5c2.485 0 4.5 2.015 4.5 4.5 0 .405-.065.795-.18 1.167-.55-.125-1.125-.192-1.715-.192-3.59 0-6.5 2.91-6.5 6.5 0 .59.067 1.165.192 1.715-1.247-1.057-2.042-2.635-2.042-4.392 0-3.037 2.463-5.5 5.5-5.5 2.485 0 4.5 2.015 4.5 4.5 0 2.485-2.015 4.5-4.5 4.5-2.485 0-4.5-2.015-4.5-4.5 0-2.485 2.015-4.5 4.5-4.5zm5.5 7c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"></path></svg>
+                <span>微博</span>
+              </button>
+              <button class="share-button share-link" data-platform="link" aria-label="复制链接">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                <span>复制链接</span>
+              </button>
+            </div>
+            <div class="share-toast" id="shareToast">链接已复制到剪贴板</div>
+          </section>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOH-1Z7w"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOH-1Z784CfY7Q"
+                  data-mapping="pathname"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">MyBatis源码深度解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring IOC与AOP详解</h4>
+                  <time class="related-posts-item-date">2026年2月10日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#什么是语法糖" class="toc-item toc-level-3" style="padding-left: 1.5rem;">什么是语法糖？</a><a href="#Java-中有哪些常见的语法糖" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Java 中有哪些常见的语法糖？</a><a href="#switch-支持-String-与枚举" class="toc-item toc-level-3" style="padding-left: 1.5rem;">switch 支持 String 与枚举</a><a href="#泛型" class="toc-item toc-level-3" style="padding-left: 1.5rem;">泛型</a><a href="#自动装箱与拆箱" class="toc-item toc-level-3" style="padding-left: 1.5rem;">自动装箱与拆箱</a><a href="#for-each" class="toc-item toc-level-3" style="padding-left: 1.5rem;">for-each</a><a href="#try-with-resource" class="toc-item toc-level-3" style="padding-left: 1.5rem;">try-with-resource</a><a href="#Lambda-表达式" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Lambda 表达式</a><a href="#可能遇到的坑" class="toc-item toc-level-2" style="">可能遇到的坑</a><a href="#泛型" class="toc-item toc-level-3" style="padding-left: 1.5rem;">泛型</a><a href="#自动装箱与拆箱" class="toc-item toc-level-3" style="padding-left: 1.5rem;">自动装箱与拆箱</a><a href="#增强-for-循环" class="toc-item toc-level-3" style="padding-left: 1.5rem;">增强 for 循环</a><a href="#总结" class="toc-item toc-level-2" style="">总结</a>
+          </nav>
+        </aside>
+        
+      </div>
     </div>
   </main>
 
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
     </div>
   </footer>
 
-  <script src="/static/assets/script.js"></script>
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
 </body>
 </html>

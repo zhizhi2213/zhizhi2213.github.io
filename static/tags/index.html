@@ -3,24 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>吱吱的博客 - 分享技术与生活</title>
-  <meta name="description" content="一个简洁优雅的博客">
+  <title>标签 - 吱吱的博客</title>
   <meta name="theme-color" content="#6366f1">
-  <meta property="og:title" content="吱吱的博客 - 分享技术与生活">
-  <meta property="og:description" content="一个简洁优雅的博客">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://zhizhi2213.github.io">
-  <meta property="og:site_name" content="吱吱的博客">
-  <meta property="og:locale" content="zh_CN">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="吱吱的博客 - 分享技术与生活">
-  <meta name="twitter:description" content="一个简洁优雅的博客">
   <link rel="stylesheet" href="/static/assets/style.css">
 </head>
 <body>
-  <div class="background-animation"></div>
-  <div class="background-animation background-animation-2"></div>
-  
   <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
@@ -28,9 +15,9 @@
       <nav class="nav">
         <a href="/" class="logo">吱吱的博客</a>
         <div class="nav-links">
-          <a href="/" class="nav-link active">首页</a>
+          <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
-          <a href="/static/tags/" class="nav-link">标签</a>
+          <a href="/static/tags/" class="nav-link active">标签</a>
         </div>
         <div class="header-actions">
           <button class="search-toggle" aria-label="搜索">
@@ -79,15 +66,74 @@
 
   <main class="main" id="main-content">
     <div class="container">
-      <section class="hero">
-        <h1 class="hero-title">吱吱的博客</h1>
-        <p class="hero-subtitle">分享技术与生活</p>
-        <div class="hero-divider"></div>
-      </section>
+      
 
-      <section class="posts-section">
-        <div class="posts-grid">
-          
+      
+      <div class="page-header">
+        <h1 class="page-title">所有标签</h1>
+        <p class="page-description">点击标签查看相关文章</p>
+      </div>
+      <div class="tag-cloud">
+        
+        <a href="/static/tags/Spring/" class="tag-cloud-item" style="font-size: calc(1rem + 2 * 0.1rem);">
+          Spring
+          <span class="tag-count">2</span>
+        </a>
+      
+        <a href="/static/tags/Java/" class="tag-cloud-item" style="font-size: calc(1rem + 2 * 0.1rem);">
+          Java
+          <span class="tag-count">2</span>
+        </a>
+      
+        <a href="/static/tags/IOC/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          IOC
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/AOP/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          AOP
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/设计模式/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          设计模式
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/随笔/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          随笔
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/生活/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          生活
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/技术/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          技术
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/思考/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          思考
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/编程/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          编程
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/美学/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          美学
+          <span class="tag-count">1</span>
+        </a>
+      
+      </div>
+      
+
+      
       <article class="post-card">
         <div class="post-card-inner">
           <h2 class="post-title">
@@ -384,8 +430,6 @@ function fibonacci(n) {
         </div>
       </article>
     
-        </div>
-      </section>
     </div>
   </main>
 

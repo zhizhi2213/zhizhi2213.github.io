@@ -4,12 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyBatis源码深度解析 - 吱吱的博客</title>
-  <meta name="description" content="{{post.excerpt}}">
+  <meta name="description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="MyBatis源码深度解析">
+  <meta property="og:description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/MyBatis源码深度解析/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年2月11日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MyBatis源码深度解析">
+  <meta name="twitter:description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
   <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
   <div class="background-animation"></div>
   <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
     <div class="container">
@@ -18,31 +48,136 @@
         <div class="nav-links">
           <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
         </div>
-        <button class="theme-toggle" aria-label="切换主题">
-          <span class="theme-icon">🌙</span>
-        </button>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
       </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main class="main">
-    <div class="container">
-      <article class="post">
-        <div class="post-header">
-          <a href="/" class="back-link">← 返回首页</a>
-          <h1 class="post-title">MyBatis源码深度解析</h1>
-          <div class="post-meta">
-            <span class="post-date">2026年2月11日</span>
-            
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link active">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">MyBatis源码深度解析</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年2月11日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
           </div>
-        </div>
-        
-        <div class="post-content">
-          <h1>MyBatis 源码深度解析</h1>
-<h2 id="一、mybatis-简介" tabindex="-1">一、MyBatis 简介</h2>
+
+          <div class="post-content">
+            <h1>MyBatis 源码深度解析</h1>
+<h2 id="一-MyBatis-简介">一、MyBatis 简介</h2>
 <p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。</p>
-<h3 id="核心特点" tabindex="-1">核心特点</h3>
+<h3 id="核心特点">核心特点</h3>
 <ul>
 <li>基于 SQL 映射的持久层框架</li>
 <li>支持动态 SQL 语句</li>
@@ -50,7 +185,7 @@
 <li>提供了与 Spring 的无缝集成</li>
 <li>灵活的映射配置（XML 或注解）</li>
 </ul>
-<h2 id="二、mybatis-核心架构" tabindex="-1">二、MyBatis 核心架构</h2>
+<h2 id="二-MyBatis-核心架构">二、MyBatis 核心架构</h2>
 <p>MyBatis 的核心架构由以下几个层次组成：</p>
 <pre class="language-plaintext"><code class="language-plaintext">┌─────────────────────────────────────────┐
 │         API Interface Layer             │
@@ -66,7 +201,7 @@
 │  (Configuration, XMLConfigBuilder)      │
 └─────────────────────────────────────────┘
 </code></pre>
-<h3 id="2.1-核心组件" tabindex="-1">2.1 核心组件</h3>
+<h3 id="2-1-核心组件">2.1 核心组件</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Configuration</span> <span class="token punctuation">{</span>
     <span class="token keyword">protected</span> <span class="token class-name">Environment</span> environment<span class="token punctuation">;</span>
     <span class="token keyword">protected</span> <span class="token keyword">boolean</span> safeRowBoundsEnabled<span class="token punctuation">;</span>
@@ -92,8 +227,8 @@
     <span class="token keyword">protected</span> <span class="token class-name">ReflectorFactory</span> reflectorFactory <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultReflectorFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="三、mybatis-初始化流程" tabindex="-1">三、MyBatis 初始化流程</h2>
-<h3 id="3.1-整体初始化流程图" tabindex="-1">3.1 整体初始化流程图</h3>
+<h2 id="三-MyBatis-初始化流程">三、MyBatis 初始化流程</h2>
+<h3 id="3-1-整体初始化流程图">3.1 整体初始化流程图</h3>
 <pre class="language-plaintext"><code class="language-plaintext">┌─────────────┐
 │  加载配置文件  │
 │ mybatis.xml │
@@ -129,7 +264,7 @@
 │   Factory          │
 └─────────────────────┘
 </code></pre>
-<h3 id="3.2-初始化源码分析" tabindex="-1">3.2 初始化源码分析</h3>
+<h3 id="3-2-初始化源码分析">3.2 初始化源码分析</h3>
 <h4 id="3.2.1-sqlsessionfactory-构建" tabindex="-1">3.2.1 SqlSessionFactory 构建</h4>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SqlSessionFactoryBuilder</span> <span class="token punctuation">{</span>
     
@@ -227,8 +362,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="四、sql-执行核心流程" tabindex="-1">四、SQL 执行核心流程</h2>
-<h3 id="4.1-sql-执行完整流程图" tabindex="-1">4.1 SQL 执行完整流程图</h3>
+<h2 id="四-SQL-执行核心流程">四、SQL 执行核心流程</h2>
+<h3 id="4-1-SQL-执行完整流程图">4.1 SQL 执行完整流程图</h3>
 <pre class="language-plaintext"><code class="language-plaintext">┌──────────────┐
 │  获取 Mapper  │
 │   接口实例    │
@@ -277,7 +412,7 @@
 │  (结果集处理)     │
 └──────────────────┘
 </code></pre>
-<h3 id="4.2-mapper-动态代理机制" tabindex="-1">4.2 Mapper 动态代理机制</h3>
+<h3 id="4-2-Mapper-动态代理机制">4.2 Mapper 动态代理机制</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">MapperProxy</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> <span class="token keyword">implements</span> <span class="token class-name">InvocationHandler</span> <span class="token punctuation">{</span>
     
     <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlSession</span> sqlSession<span class="token punctuation">;</span>
@@ -309,7 +444,7 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h3 id="4.3-mappermethod-执行逻辑" tabindex="-1">4.3 MapperMethod 执行逻辑</h3>
+<h3 id="4-3-MapperMethod-执行逻辑">4.3 MapperMethod 执行逻辑</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">MapperMethod</span> <span class="token punctuation">{</span>
     
     <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlCommand</span> command<span class="token punctuation">;</span>
@@ -362,7 +497,7 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h3 id="4.4-sqlsession-执行流程" tabindex="-1">4.4 SqlSession 执行流程</h3>
+<h3 id="4-4-SqlSession-执行流程">4.4 SqlSession 执行流程</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DefaultSqlSession</span> <span class="token keyword">implements</span> <span class="token class-name">SqlSession</span> <span class="token punctuation">{</span>
     
     <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Configuration</span> configuration<span class="token punctuation">;</span>
@@ -393,8 +528,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="五、executor-执行器" tabindex="-1">五、Executor 执行器</h2>
-<h3 id="5.1-executor-继承体系" tabindex="-1">5.1 Executor 继承体系</h3>
+<h2 id="五-Executor-执行器">五、Executor 执行器</h2>
+<h3 id="5-1-Executor-继承体系">5.1 Executor 继承体系</h3>
 <pre class="language-plaintext"><code class="language-plaintext">        ┌──────────────┐
         │   Executor   │
         └──────┬───────┘
@@ -412,7 +547,7 @@
 │Executor│Executor│Executor│Executor│
 └───┘└─────┘└─────┘└────────┘
 </code></pre>
-<h3 id="5.2-baseexecutor-核心实现" tabindex="-1">5.2 BaseExecutor 核心实现</h3>
+<h3 id="5-2-BaseExecutor-核心实现">5.2 BaseExecutor 核心实现</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">BaseExecutor</span> <span class="token keyword">implements</span> <span class="token class-name">Executor</span> <span class="token punctuation">{</span>
     
     <span class="token keyword">protected</span> <span class="token class-name">Transaction</span> transaction<span class="token punctuation">;</span>
@@ -484,7 +619,7 @@
     <span class="token keyword">protected</span> <span class="token keyword">abstract</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">doQuery</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">,</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h3 id="5.3-simpleexecutor-实现" tabindex="-1">5.3 SimpleExecutor 实现</h3>
+<h3 id="5-3-SimpleExecutor-实现">5.3 SimpleExecutor 实现</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SimpleExecutor</span> <span class="token keyword">extends</span> <span class="token class-name">BaseExecutor</span> <span class="token punctuation">{</span>
     
     <span class="token annotation punctuation">@Override</span>
@@ -509,8 +644,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="六、statementhandler-语句处理器" tabindex="-1">六、StatementHandler 语句处理器</h2>
-<h3 id="6.1-statementhandler-继承体系" tabindex="-1">6.1 StatementHandler 继承体系</h3>
+<h2 id="六-StatementHandler-语句处理器">六、StatementHandler 语句处理器</h2>
+<h3 id="6-1-StatementHandler-继承体系">6.1 StatementHandler 继承体系</h3>
 <pre class="language-plaintext"><code class="language-plaintext">         ┌──────────────────┐
          │ StatementHandler│
          └────────┬─────────┘
@@ -531,7 +666,7 @@
 │Handler│Handler│Handler │Handler │
 └────┘└─────┘└────────┘└────────┘
 </code></pre>
-<h3 id="6.2-preparedstatementhandler-实现" tabindex="-1">6.2 PreparedStatementHandler 实现</h3>
+<h3 id="6-2-PreparedStatementHandler-实现">6.2 PreparedStatementHandler 实现</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">PreparedStatementHandler</span> <span class="token keyword">extends</span> <span class="token class-name">BaseStatementHandler</span> <span class="token punctuation">{</span>
     
     <span class="token annotation punctuation">@Override</span>
@@ -564,7 +699,7 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h3 id="6.3-parameterhandler-参数处理器" tabindex="-1">6.3 ParameterHandler 参数处理器</h3>
+<h3 id="6-3-ParameterHandler-参数处理器">6.3 ParameterHandler 参数处理器</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ParameterHandler</span> <span class="token punctuation">{</span>
     <span class="token class-name">Object</span> <span class="token function">getParameterObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">void</span> <span class="token function">setParameters</span><span class="token punctuation">(</span><span class="token class-name">PreparedStatement</span> ps<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
@@ -616,7 +751,7 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h3 id="6.4-resultsethandler-结果集处理器" tabindex="-1">6.4 ResultSetHandler 结果集处理器</h3>
+<h3 id="6-4-ResultSetHandler-结果集处理器">6.4 ResultSetHandler 结果集处理器</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ResultSetHandler</span> <span class="token punctuation">{</span>
     <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">handleResultSets</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> stmt<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
     <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">Cursor</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">handleCursorResultSets</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> stmt<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
@@ -680,8 +815,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="七、缓存机制" tabindex="-1">七、缓存机制</h2>
-<h3 id="7.1-mybatis-缓存结构" tabindex="-1">7.1 MyBatis 缓存结构</h3>
+<h2 id="七-缓存机制">七、缓存机制</h2>
+<h3 id="7-1-MyBatis-缓存结构">7.1 MyBatis 缓存结构</h3>
 <pre class="language-plaintext"><code class="language-plaintext">┌─────────────────────────────────┐
 │      Cache 接口                 │
 └────────────┬────────────────────┘
@@ -701,7 +836,7 @@
 │  LoggingCache / SyncCache  │
 └───────────────────────────┘
 </code></pre>
-<h3 id="7.2-缓存实现" tabindex="-1">7.2 缓存实现</h3>
+<h3 id="7-2-缓存实现">7.2 缓存实现</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">PerpetualCache</span> <span class="token keyword">implements</span> <span class="token class-name">Cache</span> <span class="token punctuation">{</span>
     
     <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> id<span class="token punctuation">;</span>
@@ -742,8 +877,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="八、动态-sql-机制" tabindex="-1">八、动态 SQL 机制</h2>
-<h3 id="8.1-动态-sql-执行流程" tabindex="-1">8.1 动态 SQL 执行流程</h3>
+<h2 id="八-动态-SQL-机制">八、动态 SQL 机制</h2>
+<h3 id="8-1-动态-SQL-执行流程">8.1 动态 SQL 执行流程</h3>
 <pre class="language-plaintext"><code class="language-plaintext">┌──────────────────┐
 │  解析 XML        │
 │  动态 SQL 标签   │
@@ -773,7 +908,7 @@
 │  (绑定 SQL)      │
 └──────────────────┘
 </code></pre>
-<h3 id="8.2-sqlnode-实现" tabindex="-1">8.2 SqlNode 实现</h3>
+<h3 id="8-2-SqlNode-实现">8.2 SqlNode 实现</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">SqlNode</span> <span class="token punctuation">{</span>
     <span class="token keyword">boolean</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">DynamicContext</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
@@ -841,8 +976,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="九、插件机制" tabindex="-1">九、插件机制</h2>
-<h3 id="9.1-拦截器链" tabindex="-1">9.1 拦截器链</h3>
+<h2 id="九-插件机制">九、插件机制</h2>
+<h3 id="9-1-拦截器链">9.1 拦截器链</h3>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Interceptor</span> <span class="token punctuation">{</span>
     <span class="token class-name">Object</span> <span class="token function">intercept</span><span class="token punctuation">(</span><span class="token class-name">Invocation</span> invocation<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span><span class="token punctuation">;</span>
     <span class="token class-name">Object</span> <span class="token function">plugin</span><span class="token punctuation">(</span><span class="token class-name">Object</span> target<span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -908,8 +1043,8 @@
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<h2 id="十、总结" tabindex="-1">十、总结</h2>
-<h3 id="10.1-mybatis-核心流程总结" tabindex="-1">10.1 MyBatis 核心流程总结</h3>
+<h2 id="十-总结">十、总结</h2>
+<h3 id="10-1-MyBatis-核心流程总结">10.1 MyBatis 核心流程总结</h3>
 <ol>
 <li>
 <p><strong>初始化阶段</strong>：</p>
@@ -941,7 +1076,7 @@
 </ul>
 </li>
 </ol>
-<h3 id="10.2-设计模式总结" tabindex="-1">10.2 设计模式总结</h3>
+<h3 id="10-2-设计模式总结">10.2 设计模式总结</h3>
 <table>
 <thead>
 <tr>
@@ -988,7 +1123,7 @@
 </tr>
 </tbody>
 </table>
-<h3 id="10.3-学习建议" tabindex="-1">10.3 学习建议</h3>
+<h3 id="10-3-学习建议">10.3 学习建议</h3>
 <ol>
 <li>从简单示例入手，理解基本用法</li>
 <li>重点理解初始化流程和执行流程</li>
@@ -1004,17 +1139,113 @@
 <li>具备阅读和深入 MyBatis 源码的能力</li>
 </ul>
 
-        </div>
-      </article>
+          </div>
+
+          <section class="share-section">
+            <h3 class="share-title">分享这篇文章</h3>
+            <div class="share-buttons">
+              <button class="share-button share-twitter" data-platform="twitter" aria-label="分享到 Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                <span>Twitter</span>
+              </button>
+              <button class="share-button share-weibo" data-platform="weibo" aria-label="分享到微博">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2C6.357 2 3 5.357 3 9.5c0 2.45 1.197 4.627 3.046 5.964-.042.533-.053 1.1.05 1.732.378 2.327 2.48 4.304 5.204 4.304 3.037 0 5.5-2.463 5.5-5.5 0-2.043-1.118-3.827-2.78-4.777.19-.615.3-1.268.3-1.948 0-3.643-2.857-6.5-6.5-6.5zm0 1.5c2.485 0 4.5 2.015 4.5 4.5 0 .405-.065.795-.18 1.167-.55-.125-1.125-.192-1.715-.192-3.59 0-6.5 2.91-6.5 6.5 0 .59.067 1.165.192 1.715-1.247-1.057-2.042-2.635-2.042-4.392 0-3.037 2.463-5.5 5.5-5.5 2.485 0 4.5 2.015 4.5 4.5 0 2.485-2.015 4.5-4.5 4.5-2.485 0-4.5-2.015-4.5-4.5 0-2.485 2.015-4.5 4.5-4.5zm5.5 7c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"></path></svg>
+                <span>微博</span>
+              </button>
+              <button class="share-button share-link" data-platform="link" aria-label="复制链接">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                <span>复制链接</span>
+              </button>
+            </div>
+            <div class="share-toast" id="shareToast">链接已复制到剪贴板</div>
+          </section>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOH-1Z7w"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOH-1Z784CfY7Q"
+                  data-mapping="pathname"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring IOC与AOP详解</h4>
+                  <time class="related-posts-item-date">2026年2月10日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring源码中的设计模式详解</h4>
+                  <time class="related-posts-item-date">2026年2月9日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#一-MyBatis-简介" class="toc-item toc-level-2" style="">一、MyBatis 简介</a><a href="#核心特点" class="toc-item toc-level-3" style="padding-left: 1.5rem;">核心特点</a><a href="#二-MyBatis-核心架构" class="toc-item toc-level-2" style="">二、MyBatis 核心架构</a><a href="#2-1-核心组件" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.1 核心组件</a><a href="#三-MyBatis-初始化流程" class="toc-item toc-level-2" style="">三、MyBatis 初始化流程</a><a href="#3-1-整体初始化流程图" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.1 整体初始化流程图</a><a href="#3-2-初始化源码分析" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.2 初始化源码分析</a><a href="#四-SQL-执行核心流程" class="toc-item toc-level-2" style="">四、SQL 执行核心流程</a><a href="#4-1-SQL-执行完整流程图" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.1 SQL 执行完整流程图</a><a href="#4-2-Mapper-动态代理机制" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.2 Mapper 动态代理机制</a><a href="#4-3-MapperMethod-执行逻辑" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.3 MapperMethod 执行逻辑</a><a href="#4-4-SqlSession-执行流程" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.4 SqlSession 执行流程</a><a href="#五-Executor-执行器" class="toc-item toc-level-2" style="">五、Executor 执行器</a><a href="#5-1-Executor-继承体系" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.1 Executor 继承体系</a><a href="#5-2-BaseExecutor-核心实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.2 BaseExecutor 核心实现</a><a href="#5-3-SimpleExecutor-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.3 SimpleExecutor 实现</a><a href="#六-StatementHandler-语句处理器" class="toc-item toc-level-2" style="">六、StatementHandler 语句处理器</a><a href="#6-1-StatementHandler-继承体系" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.1 StatementHandler 继承体系</a><a href="#6-2-PreparedStatementHandler-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.2 PreparedStatementHandler 实现</a><a href="#6-3-ParameterHandler-参数处理器" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.3 ParameterHandler 参数处理器</a><a href="#6-4-ResultSetHandler-结果集处理器" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.4 ResultSetHandler 结果集处理器</a><a href="#七-缓存机制" class="toc-item toc-level-2" style="">七、缓存机制</a><a href="#7-1-MyBatis-缓存结构" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.1 MyBatis 缓存结构</a><a href="#7-2-缓存实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.2 缓存实现</a><a href="#八-动态-SQL-机制" class="toc-item toc-level-2" style="">八、动态 SQL 机制</a><a href="#8-1-动态-SQL-执行流程" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.1 动态 SQL 执行流程</a><a href="#8-2-SqlNode-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.2 SqlNode 实现</a><a href="#九-插件机制" class="toc-item toc-level-2" style="">九、插件机制</a><a href="#9-1-拦截器链" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9.1 拦截器链</a><a href="#十-总结" class="toc-item toc-level-2" style="">十、总结</a><a href="#10-1-MyBatis-核心流程总结" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.1 MyBatis 核心流程总结</a><a href="#10-2-设计模式总结" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.2 设计模式总结</a><a href="#10-3-学习建议" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.3 学习建议</a>
+          </nav>
+        </aside>
+        
+      </div>
     </div>
   </main>
 
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
     </div>
   </footer>
 
-  <script src="/static/assets/script.js"></script>
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
 </body>
 </html>
