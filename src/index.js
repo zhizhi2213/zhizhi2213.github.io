@@ -369,6 +369,10 @@ ${this.posts.map(post => `  <entry>
         const dst = path.join(dstAssets, file);
         await fs.copyFile(src, dst);
       }
+      
+      const scriptSrc = path.join(__dirname, 'script.js');
+      const scriptDst = path.join(dstAssets, 'script.js');
+      await fs.copyFile(scriptSrc, scriptDst);
     } catch (e) {
       console.log('Assets directory not found');
     }
