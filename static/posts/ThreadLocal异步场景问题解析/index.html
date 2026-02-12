@@ -39,323 +39,201 @@
         </div>
         
         <div class="post-content">
-          <h1>ThreadLocal 异步场景问题解析</h1>
-<h2 id="问题引入" tabindex="-1">问题引入</h2>
-<p><strong>面试官问：ThreadLocal 在异步场景下有问题吗？</strong></p>
-<p>这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。</p>
-<h2 id="一、threadlocal-在异步场景下会失效吗？" tabindex="-1">一、ThreadLocal 在异步场景下会失效吗？</h2>
-<p><strong>答案：是的，ThreadLocal 在异步场景下会失效。</strong></p>
-<h3 id="1.1-失效原因" tabindex="-1">1.1 失效原因</h3>
-<p>ThreadLocal 的值默认是无法跨线程传递的，原因如下：</p>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Thread</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Runnable</span> {
-    ThreadLocal.<span class="hljs-type">ThreadLocalMap</span> <span class="hljs-variable">threadLocals</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
-    ThreadLocal.<span class="hljs-type">ThreadLocalMap</span> <span class="hljs-variable">inheritableThreadLocals</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
+          <h1>ThreadLocal 异步场景问题解析</h1><h2>问题引入</h2><p><strong>面试官问：ThreadLocal 在异步场景下有问题吗？</strong></p><p>这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。</p><h2>一、ThreadLocal 在异步场景下会失效吗？</h2><p><strong>答案：是的，ThreadLocal 在异步场景下会失效。</strong></p><h3>1.1 失效原因</h3><p>ThreadLocal 的值默认是无法跨线程传递的，原因如下：</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class Thread implements Runnable {
+    ThreadLocal.ThreadLocalMap threadLocals = null;
+    ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
 }
-</code></pre>
-<p>从 Thread 类的源码可以看出，每个 Thread 对象都有自己独立的 <code>ThreadLocalMap</code>。ThreadLocal 的值就存储在这个 Map 中，key 是 ThreadLocal 对象本身，value 是存储的数据。</p>
-<p><strong>核心问题：</strong></p>
-<ul>
-<li>父线程和子线程是两个不同的 Thread 对象</li>
+</code></pre></p><p>从 Thread 类的源码可以看出，每个 Thread 对象都有自己独立的 <code>ThreadLocalMap</code>。ThreadLocal 的值就存储在这个 Map 中，key 是 ThreadLocal 对象本身，value 是存储的数据。</p><p><strong>核心问题：</strong>
+<ul><ol><li>父线程和子线程是两个不同的 Thread 对象</li>
 <li>它们各自拥有独立的 ThreadLocalMap</li>
 <li>因此父线程中的 ThreadLocal 值无法自动传递给子线程</li>
-</ul>
-<h3 id="1.2-代码示例" tabindex="-1">1.2 代码示例</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThreadLocalDemo</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> ThreadLocal&lt;String&gt; threadLocal = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocal</span>&lt;&gt;();
+</ol></ul>
+<h3>1.2 代码示例</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class ThreadLocalDemo {
+    private static ThreadLocal&lt;String&gt; threadLocal = new ThreadLocal&lt;&gt;();
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
-        threadLocal.set(<span class="hljs-string">&quot;主线程的值&quot;</span>);
+    public static void main(String[] args) {
+        threadLocal.set("主线程的值");
 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(() -&gt; {
-            System.out.println(<span class="hljs-string">&quot;子线程获取到的值: &quot;</span> + threadLocal.get());
+        new Thread(() -&gt; {
+            System.out.println("子线程获取到的值: " + threadLocal.get());
         }).start();
 
-        System.out.println(<span class="hljs-string">&quot;主线程的值: &quot;</span> + threadLocal.get());
+        System.out.println("主线程的值: " + threadLocal.get());
     }
 }
-</code></pre>
-<p><strong>输出结果：</strong></p>
-<pre><code class="hljs"><span class="hljs-section">主线程的值: 主线程的值</span>
-<span class="hljs-section">子线程获取到的值: null</span>
-</code></pre>
-<p>可以看到，子线程中获取到的是 <code>null</code>，说明 ThreadLocal 的值没有传递到子线程。</p>
-<h2 id="二、如何跨线程传递-threadlocal-的值？" tabindex="-1">二、如何跨线程传递 ThreadLocal 的值？</h2>
-<p>针对这个问题，主要有两种解决方案：</p>
-<h3 id="2.1-方案一：jdk-的-inheritablethreadlocal" tabindex="-1">2.1 方案一：JDK 的 InheritableThreadLocal</h3>
-<p>InheritableThreadLocal 是 JDK 提供的一种特殊 ThreadLocal，可以在创建子线程时将父线程的值复制给子线程。</p>
-<h4 id="2.1.1-使用示例" tabindex="-1">2.1.1 使用示例</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InheritableThreadLocalDemo</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> InheritableThreadLocal&lt;String&gt; inheritableThreadLocal = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">InheritableThreadLocal</span>&lt;&gt;();
+</code></pre></p><p><strong>输出结果：</strong>
+<pre class="language-text" data-lang="text"><code class="language-text">主线程的值: 主线程的值
+子线程获取到的值: null
+</code></pre></p><p>可以看到，子线程中获取到的是 <code>null</code>，说明 ThreadLocal 的值没有传递到子线程。</p><h2>二、如何跨线程传递 ThreadLocal 的值？</h2><p>针对这个问题，主要有两种解决方案：</p><h3>2.1 方案一：JDK 的 InheritableThreadLocal</h3><p>InheritableThreadLocal 是 JDK 提供的一种特殊 ThreadLocal，可以在创建子线程时将父线程的值复制给子线程。</p><h4>2.1.1 使用示例</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class InheritableThreadLocalDemo {
+    private static InheritableThreadLocal&lt;String&gt; inheritableThreadLocal = 
+        new InheritableThreadLocal&lt;&gt;();
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
-        inheritableThreadLocal.set(<span class="hljs-string">&quot;主线程的值&quot;</span>);
+    public static void main(String[] args) {
+        inheritableThreadLocal.set("主线程的值");
 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Thread</span>(() -&gt; {
-            System.out.println(<span class="hljs-string">&quot;子线程获取到的值: &quot;</span> + inheritableThreadLocal.get());
+        new Thread(() -&gt; {
+            System.out.println("子线程获取到的值: " + inheritableThreadLocal.get());
         }).start();
 
-        System.out.println(<span class="hljs-string">&quot;主线程的值: &quot;</span> + inheritableThreadLocal.get());
+        System.out.println("主线程的值: " + inheritableThreadLocal.get());
     }
 }
-</code></pre>
-<p><strong>输出结果：</strong></p>
-<pre><code class="hljs"><span class="hljs-section">主线程的值: 主线程的值</span>
-<span class="hljs-section">子线程获取到的值: 主线程的值</span>
-</code></pre>
-<h4 id="2.1.2-原理分析" tabindex="-1">2.1.2 原理分析</h4>
-<p>InheritableThreadLocal 继承自 ThreadLocal，重写了三个核心方法：</p>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InheritableThreadLocal</span>&lt;T&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ThreadLocal</span>&lt;T&gt; {
+</code></pre></p><p><strong>输出结果：</strong>
+<pre class="language-text" data-lang="text"><code class="language-text">主线程的值: 主线程的值
+子线程获取到的值: 主线程的值
+</code></pre></p><h4>2.1.2 原理分析</h4><p>InheritableThreadLocal 继承自 ThreadLocal，重写了三个核心方法：</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class InheritableThreadLocal&lt;T&gt; extends ThreadLocal&lt;T&gt; {
     
-    <span class="hljs-keyword">protected</span> T <span class="hljs-title function_">childValue</span><span class="hljs-params">(T parentValue)</span> {
-        <span class="hljs-keyword">return</span> parentValue;
+    protected T childValue(T parentValue) {
+        return parentValue;
     }
 
-    ThreadLocalMap <span class="hljs-title function_">getMap</span><span class="hljs-params">(Thread t)</span> {
-        <span class="hljs-keyword">return</span> t.inheritableThreadLocals;
+    ThreadLocalMap getMap(Thread t) {
+        return t.inheritableThreadLocals;
     }
 
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">createMap</span><span class="hljs-params">(Thread t, T firstValue)</span> {
-        t.inheritableThreadLocals = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ThreadLocalMap</span>(<span class="hljs-built_in">this</span>, firstValue);
+    void createMap(Thread t, T firstValue) {
+        t.inheritableThreadLocals = new ThreadLocalMap(this, firstValue);
     }
 }
-</code></pre>
-<p><strong>核心机制：</strong></p>
-<ol>
-<li>Thread 类中有两个 ThreadLocalMap：<code>threadLocals</code> 和 <code>inheritableThreadLocals</code></li>
+</code></pre></p><p><strong>核心机制：</strong>
+<ol><li>Thread 类中有两个 ThreadLocalMap：<code>threadLocals</code> 和 <code>inheritableThreadLocals</code></li>
 <li>InheritableThreadLocal 使用 <code>inheritableThreadLocals</code> 来存储值</li>
-<li>当创建子线程时，Thread 的构造方法会调用 <code>Thread.init()</code> 方法：<pre><code class="hljs language-java"><span class="hljs-keyword">if</span> (parent.inheritableThreadLocals != <span class="hljs-literal">null</span>)
-    <span class="hljs-built_in">this</span>.inheritableThreadLocals = 
-        ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
-</code></pre>
-</li>
-</ol>
-<h4 id="2.1.3-线程池场景下的问题" tabindex="-1">2.1.3 线程池场景下的问题</h4>
-<p>InheritableThreadLocal 在线程池场景下会失效，原因如下：</p>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InheritableThreadLocalPoolDemo</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> InheritableThreadLocal&lt;String&gt; inheritableThreadLocal = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">InheritableThreadLocal</span>&lt;&gt;();
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> Executors.newFixedThreadPool(<span class="hljs-number">1</span>);
+<li>当创建子线程时，Thread 的构造方法会调用 <code>Thread.init()</code> 方法：</li>
+</ol>   <pre class="language-java" data-lang="java"><code class="language-java">   if (parent.inheritableThreadLocals != null)
+       this.inheritableThreadLocals = 
+           ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+   </code></pre></p><h4>2.1.3 线程池场景下的问题</h4><p>InheritableThreadLocal 在线程池场景下会失效，原因如下：</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class InheritableThreadLocalPoolDemo {
+    private static InheritableThreadLocal&lt;String&gt; inheritableThreadLocal = 
+        new InheritableThreadLocal&lt;&gt;();
+    private static ExecutorService executor = Executors.newFixedThreadPool(1);
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
-        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
-            inheritableThreadLocal.set(<span class="hljs-string">&quot;任务-&quot;</span> + i);
+    public static void main(String[] args) {
+        for (int i = 0; i &lt; 3; i++) {
+            inheritableThreadLocal.set("任务-" + i);
             
             executor.submit(() -&gt; {
-                System.out.println(<span class="hljs-string">&quot;线程名: &quot;</span> + Thread.currentThread().getName() + 
-                                 <span class="hljs-string">&quot;, 获取到的值: &quot;</span> + inheritableThreadLocal.get());
+                System.out.println("线程名: " + Thread.currentThread().getName() + 
+                                 ", 获取到的值: " + inheritableThreadLocal.get());
             });
         }
     }
 }
-</code></pre>
-<p><strong>可能输出：</strong></p>
-<pre><code class="hljs">线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-0</span>
-线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-0</span>
-线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-0</span>
-</code></pre>
-<p><strong>问题分析：</strong></p>
-<ul>
-<li>线程池会复用线程，不会每次都创建新线程</li>
+</code></pre></p><p><strong>可能输出：</strong>
+<pre class="language-text" data-lang="text"><code class="language-text">线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-0
+</code></pre></p><p><strong>问题分析：</strong>
+<ul><ol><li>线程池会复用线程，不会每次都创建新线程</li>
 <li>InheritableThreadLocal 只在线程创建时复制一次值</li>
 <li>后续复用线程时，仍然使用的是第一次复制过来的值</li>
 <li>这会导致线程拿到的可能是上一个任务传下来的脏数据</li>
-</ul>
-<h3 id="2.2-方案二：阿里的-transmittablethreadlocal-(ttl)" tabindex="-1">2.2 方案二：阿里的 TransmittableThreadLocal (TTL)</h3>
-<p>TransmittableThreadLocal 是阿里开源的 TTL 库提供的解决方案，专门解决线程池场景下 ThreadLocal 的传递问题。</p>
-<h4 id="2.2.1-使用示例" tabindex="-1">2.2.1 使用示例</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TransmittableThreadLocalDemo</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> TransmittableThreadLocal&lt;String&gt; transmittableThreadLocal = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransmittableThreadLocal</span>&lt;&gt;();
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-type">ExecutorService</span> <span class="hljs-variable">executor</span> <span class="hljs-operator">=</span> TtlExecutors.getTtlExecutorService(
-        Executors.newFixedThreadPool(<span class="hljs-number">1</span>));
+</ol></ul>
+<h3>2.2 方案二：阿里的 TransmittableThreadLocal (TTL)</h3><p>TransmittableThreadLocal 是阿里开源的 TTL 库提供的解决方案，专门解决线程池场景下 ThreadLocal 的传递问题。</p><h4>2.2.1 使用示例</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class TransmittableThreadLocalDemo {
+    private static TransmittableThreadLocal&lt;String&gt; transmittableThreadLocal = 
+        new TransmittableThreadLocal&lt;&gt;();
+    private static ExecutorService executor = TtlExecutors.getTtlExecutorService(
+        Executors.newFixedThreadPool(1));
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
-        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">3</span>; i++) {
-            transmittableThreadLocal.set(<span class="hljs-string">&quot;任务-&quot;</span> + i);
+    public static void main(String[] args) {
+        for (int i = 0; i &lt; 3; i++) {
+            transmittableThreadLocal.set("任务-" + i);
             
             executor.submit(() -&gt; {
-                System.out.println(<span class="hljs-string">&quot;线程名: &quot;</span> + Thread.currentThread().getName() + 
-                                 <span class="hljs-string">&quot;, 获取到的值: &quot;</span> + transmittableThreadLocal.get());
+                System.out.println("线程名: " + Thread.currentThread().getName() + 
+                                 ", 获取到的值: " + transmittableThreadLocal.get());
             });
         }
     }
 }
-</code></pre>
-<p><strong>输出结果：</strong></p>
-<pre><code class="hljs">线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-0</span>
-线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-1</span>
-线程名: pool<span class="hljs-string">-1</span>-thread<span class="hljs-string">-1</span>, 获取到的值: 任务<span class="hljs-string">-2</span>
-</code></pre>
-<p>可以看到，即使线程池复用线程，每个任务都能获取到正确的值。</p>
-<h4 id="2.2.2-原理分析" tabindex="-1">2.2.2 原理分析</h4>
-<p>TransmittableThreadLocal 的核心思想是：<strong>将 ThreadLocal 的值与任务绑定，而不是与线程绑定。</strong></p>
-<p><strong>工作流程：</strong></p>
-<ol>
-<li>
-<p><strong>捕获阶段：</strong> 在提交任务到线程池时，捕获父线程的 ThreadLocal 值</p>
-<pre><code class="hljs language-java"><span class="hljs-comment">// TtlRunnable 源码简化</span>
-<span class="hljs-keyword">public</span> <span class="hljs-title function_">TtlRunnable</span><span class="hljs-params">(Runnable runnable)</span> {
-    <span class="hljs-built_in">this</span>.captured = TransmittableThreadLocal.Transmitter.capture();
-    <span class="hljs-built_in">this</span>.runnable = runnable;
-}
-</code></pre>
-</li>
-<li>
-<p><strong>恢复阶段：</strong> 任务执行前，将捕获的值设置到当前线程</p>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">run</span><span class="hljs-params">()</span> {
-    <span class="hljs-type">Object</span> <span class="hljs-variable">backup</span> <span class="hljs-operator">=</span> TransmittableThreadLocal.Transmitter.replay(captured);
-    <span class="hljs-keyword">try</span> {
-        runnable.run();
-    } <span class="hljs-keyword">finally</span> {
-        TransmittableThreadLocal.Transmitter.restore(backup);
-    }
-}
-</code></pre>
-</li>
-<li>
-<p><strong>清理阶段：</strong> 任务执行完成后，恢复线程原来的值</p>
-</li>
+</code></pre></p><p><strong>输出结果：</strong>
+<pre class="language-text" data-lang="text"><code class="language-text">线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-1
+线程名: pool-1-thread-1, 获取到的值: 任务-2
+</code></pre></p><p>可以看到，即使线程池复用线程，每个任务都能获取到正确的值。</p><h4>2.2.2 原理分析</h4><p>TransmittableThreadLocal 的核心思想是：<strong>将 ThreadLocal 的值与任务绑定，而不是与线程绑定。</strong></p><p><strong>工作流程：</strong></p><ol><li><strong>捕获阶段：</strong> 在提交任务到线程池时，捕获父线程的 ThreadLocal 值</li>
+</ol>   <pre class="language-java" data-lang="java"><code class="language-java">   // TtlRunnable 源码简化
+   public TtlRunnable(Runnable runnable) {
+       this.captured = TransmittableThreadLocal.Transmitter.capture();
+       this.runnable = runnable;
+   }
+   </code></pre></p><ol><li><strong>恢复阶段：</strong> 任务执行前，将捕获的值设置到当前线程</li>
+</ol>   <pre class="language-java" data-lang="java"><code class="language-java">   public void run() {
+       Object backup = TransmittableThreadLocal.Transmitter.replay(captured);
+       try {
+           runnable.run();
+       } finally {
+           TransmittableThreadLocal.Transmitter.restore(backup);
+       }
+   }
+   </code></pre></p><ol><li><strong>清理阶段：</strong> 任务执行完成后，恢复线程原来的值</li>
 </ol>
-<p><strong>核心机制对比：</strong></p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>InheritableThreadLocal</th>
-<th>TransmittableThreadLocal</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>绑定对象</td>
-<td>线程</td>
-<td>任务</td>
-</tr>
-<tr>
-<td>复制时机</td>
-<td>线程创建时</td>
-<td>任务提交时</td>
-</tr>
-<tr>
-<td>线程池支持</td>
-<td>不支持</td>
-<td>支持</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>简单父子线程</td>
-<td>线程池、异步场景</td>
-</tr>
-</tbody>
-</table>
-<h2 id="三、面试回答总结" tabindex="-1">三、面试回答总结</h2>
-<p><strong>面试官：ThreadLocal 异步场景有问题吗？</strong></p>
-<p><strong>完整回答：</strong></p>
-<blockquote>
-<p>ThreadLocal 在异步场景下确实会有问题。它的值存储在每个线程独立的 ThreadLocalMap 中，父子线程是两个不同的对象，因此值无法自动传递。</p>
-<p>解决方案主要有两种：</p>
-<ol>
-<li>
-<p><strong>InheritableThreadLocal</strong>：JDK 提供的方案，在创建子线程时将父线程的值复制给子线程。但它在线程池场景下会失效，因为线程池会复用线程，导致线程拿到的可能是脏数据。</p>
-</li>
-<li>
-<p><strong>TransmittableThreadLocal</strong>：阿里开源的 TTL 库提供的方案。它的原理是在提交任务到线程池时，把父线程的 ThreadLocal 值捕获下来，和任务绑定在一起。等线程池里的某个线程要执行这个任务时，再把捕获的值设置到这个线程上，任务执行完再清理掉。</p>
-</li>
-</ol>
-<p>简单说，InheritableThreadLocal 是跟线程绑定的，只在创建时有效；而 TTL 是跟任务绑定的，完美支持线程池。</p>
-</blockquote>
-<h2 id="四、实际应用场景" tabindex="-1">四、实际应用场景</h2>
-<h3 id="4.1-分布式追踪" tabindex="-1">4.1 分布式追踪</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TraceContext</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> TransmittableThreadLocal&lt;String&gt; traceId = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransmittableThreadLocal</span>&lt;&gt;();
+<strong>核心机制对比：</strong></p><p>| 特性 | InheritableThreadLocal | TransmittableThreadLocal |
+|------|------------------------|--------------------------|
+| 绑定对象 | 线程 | 任务 |
+| 复制时机 | 线程创建时 | 任务提交时 |
+| 线程池支持 | 不支持 | 支持 |
+| 适用场景 | 简单父子线程 | 线程池、异步场景 |</p><h2>三、面试回答总结</h2><p><strong>面试官：ThreadLocal 异步场景有问题吗？</strong></p><p><strong>完整回答：</strong></p><blockquote>ThreadLocal 在异步场景下确实会有问题。它的值存储在每个线程独立的 ThreadLocalMap 中，父子线程是两个不同的对象，因此值无法自动传递。</blockquote>
+>
+<blockquote>解决方案主要有两种：</blockquote>
+>
+<blockquote>1. <strong>InheritableThreadLocal</strong>：JDK 提供的方案，在创建子线程时将父线程的值复制给子线程。但它在线程池场景下会失效，因为线程池会复用线程，导致线程拿到的可能是脏数据。</blockquote>
+>
+<blockquote>2. <strong>TransmittableThreadLocal</strong>：阿里开源的 TTL 库提供的方案。它的原理是在提交任务到线程池时，把父线程的 ThreadLocal 值捕获下来，和任务绑定在一起。等线程池里的某个线程要执行这个任务时，再把捕获的值设置到这个线程上，任务执行完再清理掉。</blockquote>
+>
+<blockquote>简单说，InheritableThreadLocal 是跟线程绑定的，只在创建时有效；而 TTL 是跟任务绑定的，完美支持线程池。</blockquote><h2>四、实际应用场景</h2><h3>4.1 分布式追踪</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class TraceContext {
+    private static final TransmittableThreadLocal&lt;String&gt; traceId = 
+        new TransmittableThreadLocal&lt;&gt;();
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setTraceId</span><span class="hljs-params">(String id)</span> {
+    public static void setTraceId(String id) {
         traceId.set(id);
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getTraceId</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> traceId.get();
+    public static String getTraceId() {
+        return traceId.get();
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clear</span><span class="hljs-params">()</span> {
+    public static void clear() {
         traceId.remove();
     }
 }
-</code></pre>
-<h3 id="4.2-用户上下文传递" tabindex="-1">4.2 用户上下文传递</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserContext</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> TransmittableThreadLocal&lt;User&gt; currentUser = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransmittableThreadLocal</span>&lt;&gt;();
+</code></pre></p><h3>4.2 用户上下文传递</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class UserContext {
+    private static final TransmittableThreadLocal&lt;User&gt; currentUser = 
+        new TransmittableThreadLocal&lt;&gt;();
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setCurrentUser</span><span class="hljs-params">(User user)</span> {
+    public static void setCurrentUser(User user) {
         currentUser.set(user);
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> User <span class="hljs-title function_">getCurrentUser</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> currentUser.get();
+    public static User getCurrentUser() {
+        return currentUser.get();
     }
 }
-</code></pre>
-<h3 id="4.3-数据库动态数据源切换" tabindex="-1">4.3 数据库动态数据源切换</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DataSourceContextHolder</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> TransmittableThreadLocal&lt;String&gt; dataSourceKey = 
-        <span class="hljs-keyword">new</span> <span class="hljs-title class_">TransmittableThreadLocal</span>&lt;&gt;();
+</code></pre></p><h3>4.3 数据库动态数据源切换</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class DataSourceContextHolder {
+    private static final TransmittableThreadLocal&lt;String&gt; dataSourceKey = 
+        new TransmittableThreadLocal&lt;&gt;();
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setDataSourceKey</span><span class="hljs-params">(String key)</span> {
+    public static void setDataSourceKey(String key) {
         dataSourceKey.set(key);
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> String <span class="hljs-title function_">getDataSourceKey</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> dataSourceKey.get();
+    public static String getDataSourceKey() {
+        return dataSourceKey.get();
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clearDataSourceKey</span><span class="hljs-params">()</span> {
+    public static void clearDataSourceKey() {
         dataSourceKey.remove();
     }
 }
-</code></pre>
-<h2 id="五、注意事项" tabindex="-1">五、注意事项</h2>
-<ol>
-<li><strong>内存泄漏风险</strong>：使用 ThreadLocal 后一定要调用 <code>remove()</code> 方法清理，否则可能导致内存泄漏</li>
+</code></pre></p><h2>五、注意事项</h2><ol><li><strong>内存泄漏风险</strong>：使用 ThreadLocal 后一定要调用 <code>remove()</code> 方法清理，否则可能导致内存泄漏</li>
 <li><strong>TTL 装饰器</strong>：使用 TTL 时，需要用 <code>TtlExecutors</code>、<code>TtlForkJoinPool</code> 等装饰器包装线程池</li>
 <li><strong>性能考虑</strong>：TTL 的捕获和恢复机制会带来一定的性能开销，在高并发场景下需要注意</li>
 <li><strong>值不可变</strong>：ThreadLocal 中存储的对象最好是不可变的，避免多线程修改带来的问题</li>
 </ol>
-<h2 id="六、总结" tabindex="-1">六、总结</h2>
-<table>
-<thead>
-<tr>
-<th>方案</th>
-<th>适用场景</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ThreadLocal</td>
-<td>单线程</td>
-<td>简单高效</td>
-<td>无法跨线程</td>
-</tr>
-<tr>
-<td>InheritableThreadLocal</td>
-<td>简单父子线程</td>
-<td>JDK 原生支持</td>
-<td>线程池失效</td>
-</tr>
-<tr>
-<td>TransmittableThreadLocal</td>
-<td>线程池、异步</td>
-<td>完美支持线程池</td>
-<td>需要引入依赖</td>
-</tr>
-</tbody>
-</table>
-<p>在实际项目中，推荐使用 TransmittableThreadLocal，因为它能够完美解决线程池场景下 ThreadLocal 传递的问题。</p>
-
+<h2>六、总结</h2><p>| 方案 | 适用场景 | 优点 | 缺点 |
+|------|---------|------|------|
+| ThreadLocal | 单线程 | 简单高效 | 无法跨线程 |
+| InheritableThreadLocal | 简单父子线程 | JDK 原生支持 | 线程池失效 |
+| TransmittableThreadLocal | 线程池、异步 | 完美支持线程池 | 需要引入依赖 |</p><p>在实际项目中，推荐使用 TransmittableThreadLocal，因为它能够完美解决线程池场景下 ThreadLocal 传递的问题。
+</p>
         </div>
       </article>
     </div>

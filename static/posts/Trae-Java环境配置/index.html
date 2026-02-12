@@ -39,116 +39,111 @@
         </div>
         
         <div class="post-content">
-          <h2 id="配置java环境" tabindex="-1">配置Java环境</h2>
-<h3 id="1.-安装java环境配置包-java-extension-pack-,spring-boot-extension-pack" tabindex="-1">1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3>
-<h3 id="2.-配置java环境-settings.json文件" tabindex="-1">2. 配置Java环境 settings.json文件</h3>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;java.import.gradle.java.home&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot&quot;</span>
-<span class="hljs-punctuation">}</span>
+          <h2>配置Java环境</h2>
+<h3>1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3><h3>2. 配置Java环境 settings.json文件</h3>
+<pre class="language-json" data-lang="json"><code class="language-json">{
+  "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"
+}
+ 
+</code></pre></p><p>
+<h3>3.配置maven环境 settings.json文件</h3>
+<pre class="language-json" data-lang="json"><code class="language-json">{
+  "java.configuration.maven.globalSettings": "C:\\work\\apache-maven-3.9.12\\conf\\all.xml",
+  "maven.executable.path": "C:\\work\\apache-maven-3.9.12\\bin\\mvn.cmd"
+}
  
 </code></pre>
-<h3 id="3.配置maven环境-settings.json文件" tabindex="-1">3.配置maven环境 settings.json文件</h3>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;java.configuration.maven.globalSettings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\work\\apache-maven-3.9.12\\conf\\all.xml&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.executable.path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\work\\apache-maven-3.9.12\\bin\\mvn.cmd&quot;</span>
-<span class="hljs-punctuation">}</span>
- 
-</code></pre>
-<h3 id="4.配置单元测试环境（可选）-配置vm参数（java-9+-引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）" tabindex="-1">4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;java.test.config&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;vmArgs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.lang=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.math=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.lang.invoke=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.net=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.util=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.util.concurrent=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.io=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.time=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.security=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/sun.security.util=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--illegal-access=permit&quot;</span>
-    <span class="hljs-punctuation">]</span>
-  <span class="hljs-punctuation">}</span> 
-<span class="hljs-punctuation">}</span>
+<h3>4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<pre class="language-json" data-lang="json"><code class="language-json">{
+  "java.test.config": {
+    "vmArgs": [
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.math=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+      "--add-opens=java.base/java.io=ALL-UNNAMED",
+      "--add-opens=java.base/java.time=ALL-UNNAMED",
+      "--add-opens=java.base/java.security=ALL-UNNAMED",
+      "--add-opens=java.base/sun.security.util=ALL-UNNAMED",
+      "--illegal-access=permit"
+    ]
+  } 
+}
 
 </code></pre>
-<h3 id="5.配置运行环境（可选）-配置vm参数（java-9+-引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）" tabindex="-1">5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
-<p>launch.json</p>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.2.0&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;configurations&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-    <span class="hljs-punctuation">{</span>
-      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;java&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Current File&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;request&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;launch&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;mainClass&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;${file}&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;vmArgs&quot;</span> <span class="hljs-punctuation">:</span><span class="hljs-string">&quot;--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED&quot;</span>
-    <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-punctuation">{</span>
-      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;java&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;BankSteelPurchaseFinanceApp&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;request&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;launch&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;mainClass&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;com.banksteel.purchase.BankSteelPurchaseFinanceApp&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;projectName&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;banksteel-purchase-finance&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-attr">&quot;vmArgs&quot;</span> <span class="hljs-punctuation">:</span><span class="hljs-string">&quot;--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED&quot;</span>
-    <span class="hljs-punctuation">}</span>
-  <span class="hljs-punctuation">]</span>
-<span class="hljs-punctuation">}</span>
-</code></pre>
-<p>ps:<br>
-cursor 配置文件 settings.json</p>
-<pre><code class="hljs language-json"><span class="hljs-punctuation">{</span>
-  <span class="hljs-attr">&quot;workbench.colorTheme&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Default Light Modern&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.import.gradle.java.home&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.jdt.ls.java.home&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.executable.options&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.configuration.maven.globalSettings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.executable.path&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\work\\apache-maven-3.6.3\\bin\\mvn.cmd&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.excludedFolders&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+<h3>5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+launch.json
+<pre class="language-json" data-lang="json"><code class="language-json">{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Current File",
+      "request": "launch",
+      "mainClass": "${file}",
+      "vmArgs" :"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"
+    },
+    {
+      "type": "java",
+      "name": "BankSteelPurchaseFinanceApp",
+      "request": "launch",
+      "mainClass": "com.banksteel.purchase.BankSteelPurchaseFinanceApp",
+      "projectName": "banksteel-purchase-finance",
+      "vmArgs" :"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"
+    }
+  ]
+}
+</code></pre></p><p>
+ps:
+cursor 配置文件 settings.json
+<pre class="language-json" data-lang="json"><code class="language-json">{
+  "workbench.colorTheme": "Default Light Modern",
+  "java.import.gradle.java.home": "C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot",
+  "java.jdt.ls.java.home": "",
+  "maven.executable.options": "",
+  "java.configuration.maven.globalSettings": "",
+  "maven.executable.path": "C:\\work\\apache-maven-3.6.3\\bin\\mvn.cmd",
+  "maven.excludedFolders": [
 
-    <span class="hljs-string">&quot;**/.*&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-string">&quot;**/node_modules&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-string">&quot;**/target&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-string">&quot;**/bin&quot;</span><span class="hljs-punctuation">,</span>
-    <span class="hljs-string">&quot;**/archetype-resources&quot;</span>
-  <span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;redhat.telemetry.enabled&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.configuration.maven.userSettings&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt; &lt;settings xmlns=\&quot;http://maven.apache.org/SETTINGS/1.0.0\&quot;           xmlns:xsi=\&quot;http://www.w3.org/2001/XMLSchema-instance\&quot;           xsi:schemaLocation=\&quot;http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\&quot;&gt;      &lt;localRepository&gt;C:\\repository&lt;/localRepository&gt;     &lt;pluginGroups&gt;&lt;/pluginGroups&gt;     &lt;proxies&gt;&lt;/proxies&gt;   &lt;mirrors&gt;     &lt;mirror&gt;       &lt;id&gt;banksteel-mirror&lt;/id&gt;       &lt;name&gt;Banksteel Maven Public Mirror&lt;/name&gt;       &lt;url&gt;http://nexus.registry.banksteel.com/repository/banksteel/&lt;/url&gt;       &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;       &lt;blocked&gt;false&lt;/blocked&gt;     &lt;/mirror&gt;   &lt;/mirrors&gt;     &lt;profiles&gt;      &lt;profile&gt;       &lt;id&gt;dev&lt;/id&gt;       &lt;repositories&gt;              &lt;repository&gt;           &lt;id&gt;dev.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/dev-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;       &lt;/repositories&gt;     &lt;/profile&gt; \t \t &lt;profile&gt;       &lt;id&gt;test&lt;/id&gt;       &lt;repositories&gt;         &lt;repository&gt;           &lt;id&gt;test.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/test-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;       &lt;/repositories&gt;     &lt;/profile&gt; \t \t \t &lt;profile&gt;       &lt;id&gt;pre&lt;/id&gt;       &lt;repositories&gt;          &lt;repository&gt;           &lt;id&gt;pre.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/pre-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;        &lt;/repositories&gt;     &lt;/profile&gt; \t \t &lt;profile&gt;       &lt;id&gt;prod&lt;/id&gt;       &lt;repositories&gt;         &lt;!-- 生产仓库 --&gt;         &lt;repository&gt;           &lt;id&gt;prod.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/snapshots/&lt;/url&gt;           &lt;releases&gt;             &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;             &lt;enabled&gt;true&lt;/enabled&gt;             &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;        &lt;/repositories&gt;     &lt;/profile&gt;   &lt;/profiles&gt;    &lt;activeProfiles&gt;     &lt;activeProfile&gt;dev&lt;/activeProfile&gt;   &lt;/activeProfiles&gt; &lt;/settings&gt;&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.terminal.useJavaHome&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-literal"><span class="hljs-keyword">true</span></span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.project.outputPath&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;maven.settingsFile&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;C:\\work\\apache-maven-3.6.3\\conf\\all.xml&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;security.workspace.trust.untrustedFiles&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;open&quot;</span><span class="hljs-punctuation">,</span>
-  <span class="hljs-attr">&quot;java.test.config&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
-    <span class="hljs-attr">&quot;vmArgs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.lang=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.math=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.lang.invoke=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.net=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.util=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.util.concurrent=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.io=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.time=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/java.security=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--add-opens=java.base/sun.security.util=ALL-UNNAMED&quot;</span><span class="hljs-punctuation">,</span>
-      <span class="hljs-string">&quot;--illegal-access=permit&quot;</span>
-    <span class="hljs-punctuation">]</span>
-  <span class="hljs-punctuation">}</span>
-<span class="hljs-punctuation">}</span>
+    "**/.*",
+    "**/node_modules",
+    "**/target",
+    "**/bin",
+    "**/archetype-resources"
+  ],
+  "redhat.telemetry.enabled": true,
+  "java.configuration.maven.userSettings": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?&gt; &lt;settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"           xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\"&gt;      &lt;localRepository&gt;C:\\repository&lt;/localRepository&gt;     &lt;pluginGroups&gt;&lt;/pluginGroups&gt;     &lt;proxies&gt;&lt;/proxies&gt;   &lt;mirrors&gt;     &lt;mirror&gt;       &lt;id&gt;banksteel-mirror&lt;/id&gt;       &lt;name&gt;Banksteel Maven Public Mirror&lt;/name&gt;       &lt;url&gt;http://nexus.registry.banksteel.com/repository/banksteel/&lt;/url&gt;       &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;       &lt;blocked&gt;false&lt;/blocked&gt;     &lt;/mirror&gt;   &lt;/mirrors&gt;     &lt;profiles&gt;      &lt;profile&gt;       &lt;id&gt;dev&lt;/id&gt;       &lt;repositories&gt;              &lt;repository&gt;           &lt;id&gt;dev.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/dev-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;       &lt;/repositories&gt;     &lt;/profile&gt; \t \t &lt;profile&gt;       &lt;id&gt;test&lt;/id&gt;       &lt;repositories&gt;         &lt;repository&gt;           &lt;id&gt;test.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/test-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;       &lt;/repositories&gt;     &lt;/profile&gt; \t \t \t &lt;profile&gt;       &lt;id&gt;pre&lt;/id&gt;       &lt;repositories&gt;          &lt;repository&gt;           &lt;id&gt;pre.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/pre-snapshots/&lt;/url&gt;           &lt;releases&gt;               &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;               &lt;enabled&gt;true&lt;/enabled&gt;               &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;        &lt;/repositories&gt;     &lt;/profile&gt; \t \t &lt;profile&gt;       &lt;id&gt;prod&lt;/id&gt;       &lt;repositories&gt;         &lt;!-- 生产仓库 --&gt;         &lt;repository&gt;           &lt;id&gt;prod.snapshot&lt;/id&gt;           &lt;url&gt;http://nexus.registry.banksteel.com/repository/snapshots/&lt;/url&gt;           &lt;releases&gt;             &lt;enabled&gt;false&lt;/enabled&gt;           &lt;/releases&gt;           &lt;snapshots&gt;             &lt;enabled&gt;true&lt;/enabled&gt;             &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;           &lt;/snapshots&gt;         &lt;/repository&gt;        &lt;/repositories&gt;     &lt;/profile&gt;   &lt;/profiles&gt;    &lt;activeProfiles&gt;     &lt;activeProfile&gt;dev&lt;/activeProfile&gt;   &lt;/activeProfiles&gt; &lt;/settings&gt;",
+  "maven.terminal.useJavaHome": true,
+  "java.project.outputPath": "",
+  "maven.settingsFile": "C:\\work\\apache-maven-3.6.3\\conf\\all.xml",
+  "security.workspace.trust.untrustedFiles": "open",
+  "java.test.config": {
+    "vmArgs": [
+      "--add-opens=java.base/java.lang=ALL-UNNAMED",
+      "--add-opens=java.base/java.math=ALL-UNNAMED",
+      "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+      "--add-opens=java.base/java.net=ALL-UNNAMED",
+      "--add-opens=java.base/java.util=ALL-UNNAMED",
+      "--add-opens=java.base/java.util.concurrent=ALL-UNNAMED",
+      "--add-opens=java.base/java.io=ALL-UNNAMED",
+      "--add-opens=java.base/java.time=ALL-UNNAMED",
+      "--add-opens=java.base/java.security=ALL-UNNAMED",
+      "--add-opens=java.base/sun.security.util=ALL-UNNAMED",
+      "--illegal-access=permit"
+    ]
+  }
+}
 </code></pre>
-<h3 id="可能遇到的问题" tabindex="-1">可能遇到的问题</h3>
-<ol>
-<li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件<br>
-blocked 设置 false</li>
-</ol>
-<pre><code class="hljs language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">mirror</span>&gt;</span>
+<h3>可能遇到的问题</h3><ol><li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件</li>
+</ol>   blocked 设置 false
+<pre class="language-xml" data-lang="xml"><code class="language-xml">    &lt;mirror&gt;
        ...
-      <span class="hljs-tag">&lt;<span class="hljs-name">blocked</span>&gt;</span>false<span class="hljs-tag">&lt;/<span class="hljs-name">blocked</span>&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-name">mirror</span>&gt;</span>
+      &lt;blocked&gt;false&lt;/blocked&gt;
+    &lt;/mirror&gt;
 </code></pre>
-<p>以上无法解决，建议本地仓库地址使用配置默认的也就是.m2下的仓库地址</p>
-
+以上无法解决，建议本地仓库地址使用配置默认的也就是.m2下的仓库地址</p>
         </div>
       </article>
     </div>

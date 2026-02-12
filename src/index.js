@@ -4,6 +4,9 @@ const MarkdownIt = require('markdown-it');
 const hljs = require('markdown-it-highlightjs');
 const anchor = require('markdown-it-anchor');
 const taskLists = require('markdown-it-task-lists');
+const highlight = require('highlight.js');
+
+hljs.initHighlightingOnLoad = false;
 
 const config = require('./config.json');
 
@@ -11,9 +14,17 @@ const md = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-  breaks: true
+  breaks: true,
+  highlight: function (str, lang) {
+    if (lang && highlight.getLanguage(lang)) {
+      try {
+        const result = highlight.highlight(str, { language: lang }).value;
+        return '<pre><code class="hljs language-' + lang + '">' + result + '</code></pre>';
+      } catch (__) {}
+    }
+    return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+  }
 })
-.use(hljs)
 .use(anchor, {
   level: 2,
   slugify: (s) => s.trim().toLowerCase().replace(/\s+/g, '-')

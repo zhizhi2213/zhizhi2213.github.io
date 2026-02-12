@@ -39,848 +39,774 @@
         </div>
         
         <div class="post-content">
-          <h1>Spring IOC与AOP详解</h1>
-<p>Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。</p>
-<h2 id="第一部分：ioc（控制反转）" tabindex="-1">第一部分：IOC（控制反转）</h2>
-<h3 id="什么是ioc？" tabindex="-1">什么是IOC？</h3>
-<p>IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对象的创建、管理和依赖关系的维护交给Spring容器来处理，而不是由对象自己管理。</p>
-<h4 id="传统开发方式的问题" tabindex="-1">传统开发方式的问题</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">private</span> UserDao userDao;
+          <h1>Spring IOC与AOP详解</h1><p>Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。</p><h2>第一部分：IOC（控制反转）</h2><h3>什么是IOC？</h3><p>IOC（Inversion of Control，控制反转）是Spring的核心思想，它将对象的创建、管理和依赖关系的维护交给Spring容器来处理，而不是由对象自己管理。</p><h4>传统开发方式的问题</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
+    private UserDao userDao;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserService</span><span class="hljs-params">()</span> {
-        <span class="hljs-comment">// 强依赖：直接创建依赖对象，耦合度高</span>
-        <span class="hljs-built_in">this</span>.userDao = <span class="hljs-keyword">new</span> <span class="hljs-title class_">UserDaoImpl</span>();
+    public UserService() {
+        // 强依赖：直接创建依赖对象，耦合度高
+        this.userDao = new UserDaoImpl();
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addUser</span><span class="hljs-params">(User user)</span> {
+    public void addUser(User user) {
         userDao.save(user);
     }
 }
-</code></pre>
-<p>这种方式的问题：</p>
-<ul>
-<li>耦合度高，难以替换实现</li>
+</code></pre></p><p>这种方式的问题：
+<ul><ol><li>耦合度高，难以替换实现</li>
 <li>不便于单元测试</li>
 <li>对象生命周期难以管理</li>
-</ul>
-<h4 id="ioc的解决方案" tabindex="-1">IOC的解决方案</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">private</span> UserDao userDao;
+</ol></ul>
+<h4>IOC的解决方案</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class UserService {
+    private UserDao userDao;
 
-    <span class="hljs-comment">// 通过构造函数注入依赖</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserService</span><span class="hljs-params">(UserDao userDao)</span> {
-        <span class="hljs-built_in">this</span>.userDao = userDao;
+    // 通过构造函数注入依赖
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addUser</span><span class="hljs-params">(User user)</span> {
+    public void addUser(User user) {
         userDao.save(user);
     }
 }
-</code></pre>
-<h3 id="ioc容器" tabindex="-1">IOC容器</h3>
-<p>Spring提供了两种IOC容器：</p>
-<ol>
-<li><strong>BeanFactory</strong>：基础容器，提供基本的IOC功能</li>
+</code></pre></p><h3>IOC容器</h3><p>Spring提供了两种IOC容器：</p><ol><li><strong>BeanFactory</strong>：基础容器，提供基本的IOC功能</li>
 <li><strong>ApplicationContext</strong>：高级容器，提供更多企业级特性</li>
 </ol>
-<h4 id="beanfactory" tabindex="-1">BeanFactory</h4>
-<pre><code class="hljs language-java"><span class="hljs-comment">// BeanFactory接口定义</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">BeanFactory</span> {
+<h4>BeanFactory</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// BeanFactory接口定义
+public interface BeanFactory {
 
-    <span class="hljs-comment">// 根据名称获取Bean</span>
-    Object <span class="hljs-title function_">getBean</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> BeansException;
+    // 根据名称获取Bean
+    Object getBean(String name) throws BeansException;
 
-    <span class="hljs-comment">// 根据类型获取Bean</span>
-    &lt;T&gt; T <span class="hljs-title function_">getBean</span><span class="hljs-params">(Class&lt;T&gt; requiredType)</span> <span class="hljs-keyword">throws</span> BeansException;
+    // 根据类型获取Bean
+    &lt;T&gt; T getBean(Class&lt;T&gt; requiredType) throws BeansException;
 
-    <span class="hljs-comment">// 判断是否包含指定Bean</span>
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">containsBean</span><span class="hljs-params">(String name)</span>;
+    // 判断是否包含指定Bean
+    boolean containsBean(String name);
 
-    <span class="hljs-comment">// 判断Bean是否是单例</span>
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSingleton</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> NoSuchBeanDefinitionException;
+    // 判断Bean是否是单例
+    boolean isSingleton(String name) throws NoSuchBeanDefinitionException;
 }
-</code></pre>
-<h4 id="applicationcontext" tabindex="-1">ApplicationContext</h4>
-<pre><code class="hljs language-java"><span class="hljs-comment">// 常用的ApplicationContext实现</span>
-<span class="hljs-comment">// 1. ClassPathXmlApplicationContext：从类路径加载配置</span>
-<span class="hljs-type">ApplicationContext</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ClassPathXmlApplicationContext</span>(<span class="hljs-string">&quot;applicationContext.xml&quot;</span>);
+</code></pre></p><h4>ApplicationContext</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 常用的ApplicationContext实现
+// 1. ClassPathXmlApplicationContext：从类路径加载配置
+ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 
-<span class="hljs-comment">// 2. FileSystemXmlApplicationContext：从文件系统加载配置</span>
-<span class="hljs-type">ApplicationContext</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FileSystemXmlApplicationContext</span>(<span class="hljs-string">&quot;D:/config/applicationContext.xml&quot;</span>);
+// 2. FileSystemXmlApplicationContext：从文件系统加载配置
+ApplicationContext context = new FileSystemXmlApplicationContext("D:/config/applicationContext.xml");
 
-<span class="hljs-comment">// 3. AnnotationConfigApplicationContext：基于注解的配置</span>
-<span class="hljs-type">ApplicationContext</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AnnotationConfigApplicationContext</span>(AppConfig.class);
+// 3. AnnotationConfigApplicationContext：基于注解的配置
+ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-<span class="hljs-comment">// 4. WebApplicationContext：Web应用的容器（在Spring MVC中使用）</span>
-</code></pre>
-<h3 id="依赖注入（di）的三种方式" tabindex="-1">依赖注入（DI）的三种方式</h3>
-<h4 id="1.-构造函数注入（推荐）" tabindex="-1">1. 构造函数注入（推荐）</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserDao userDao;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> EmailService emailService;
+// 4. WebApplicationContext：Web应用的容器（在Spring MVC中使用）
+</code></pre></p><h3>依赖注入（DI）的三种方式</h3><h4>1. 构造函数注入（推荐）</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
+public class UserService {
+    private final UserDao userDao;
+    private final EmailService emailService;
 
-    <span class="hljs-comment">// 构造函数注入：保证依赖不可变，易于测试</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserService</span><span class="hljs-params">(UserDao userDao, EmailService emailService)</span> {
-        <span class="hljs-built_in">this</span>.userDao = userDao;
-        <span class="hljs-built_in">this</span>.emailService = emailService;
+    // 构造函数注入：保证依赖不可变，易于测试
+    public UserService(UserDao userDao, EmailService emailService) {
+        this.userDao = userDao;
+        this.emailService = emailService;
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(User user)</span> {
+    public void registerUser(User user) {
         userDao.save(user);
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-<h4 id="2.-setter方法注入" tabindex="-1">2. Setter方法注入</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">private</span> UserDao userDao;
-    <span class="hljs-keyword">private</span> EmailService emailService;
+</code></pre></p><h4>2. Setter方法注入</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
+public class UserService {
+    private UserDao userDao;
+    private EmailService emailService;
 
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUserDao</span><span class="hljs-params">(UserDao userDao)</span> {
-        <span class="hljs-built_in">this</span>.userDao = userDao;
+    @Autowired
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setEmailService</span><span class="hljs-params">(EmailService emailService)</span> {
-        <span class="hljs-built_in">this</span>.emailService = emailService;
+    @Autowired
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(User user)</span> {
+    public void registerUser(User user) {
         userDao.save(user);
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-<h4 id="3.-字段注入（不推荐）" tabindex="-1">3. 字段注入（不推荐）</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">private</span> UserDao userDao;
+</code></pre></p><h4>3. 字段注入（不推荐）</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
+public class UserService {
+    @Autowired
+    private UserDao userDao;
 
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">private</span> EmailService emailService;
+    @Autowired
+    private EmailService emailService;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(User user)</span> {
+    public void registerUser(User user) {
         userDao.save(user);
         emailService.sendWelcomeEmail(user.getEmail());
     }
 }
-</code></pre>
-<p><strong>为什么推荐构造函数注入？</strong></p>
-<ul>
-<li>保证依赖不可变（final）</li>
+</code></pre></p><p><strong>为什么推荐构造函数注入？</strong>
+<ul><ol><li>保证依赖不可变（final）</li>
 <li>明确表达类的依赖关系</li>
 <li>便于单元测试（可以轻松mock依赖）</li>
 <li>避免循环依赖</li>
-</ul>
-<h3 id="bean的配置方式" tabindex="-1">Bean的配置方式</h3>
-<h4 id="xml配置方式" tabindex="-1">XML配置方式</h4>
-<pre><code class="hljs language-xml"><span class="hljs-meta">&lt;?xml version=<span class="hljs-string">&quot;1.0&quot;</span> encoding=<span class="hljs-string">&quot;UTF-8&quot;</span>?&gt;</span>
-<span class="hljs-tag">&lt;<span class="hljs-name">beans</span> <span class="hljs-attr">xmlns</span>=<span class="hljs-string">&quot;http://www.springframework.org/schema/beans&quot;</span>
-       <span class="hljs-attr">xmlns:xsi</span>=<span class="hljs-string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>
-       <span class="hljs-attr">xmlns:context</span>=<span class="hljs-string">&quot;http://www.springframework.org/schema/context&quot;</span>
-       <span class="hljs-attr">xsi:schemaLocation</span>=<span class="hljs-string">&quot;http://www.springframework.org/schema/beans
+</ol></ul>
+<h3>Bean的配置方式</h3><h4>XML配置方式</h4><p><pre class="language-xml" data-lang="xml"><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context.xsd&quot;</span>&gt;</span>
+           http://www.springframework.org/schema/context/spring-context.xsd"&gt;
 
-    <span class="hljs-comment">&lt;!-- 扫描注解 --&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">context:component-scan</span> <span class="hljs-attr">base-package</span>=<span class="hljs-string">&quot;com.example&quot;</span>/&gt;</span>
+    &lt;!-- 扫描注解 --&gt;
+    &lt;context:component-scan base-package="com.example"/&gt;
 
-    <span class="hljs-comment">&lt;!-- 定义Bean --&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;userDao&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;com.example.dao.UserDaoImpl&quot;</span>/&gt;</span>
+    &lt;!-- 定义Bean --&gt;
+    &lt;bean id="userDao" class="com.example.dao.UserDaoImpl"/&gt;
 
-    <span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;userService&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;com.example.service.UserService&quot;</span>&gt;</span>
-        <span class="hljs-comment">&lt;!-- 构造函数注入 --&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">constructor-arg</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">&quot;userDao&quot;</span>/&gt;</span>
-    <span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">beans</span>&gt;</span>
-</code></pre>
-<h4 id="注解配置方式" tabindex="-1">注解配置方式</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Configuration</span>
-<span class="hljs-meta">@ComponentScan(&quot;com.example&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AppConfig</span> {
+    &lt;bean id="userService" class="com.example.service.UserService"&gt;
+        &lt;!-- 构造函数注入 --&gt;
+        &lt;constructor-arg ref="userDao"/&gt;
+    &lt;/bean&gt;
+&lt;/beans&gt;
+</code></pre></p><h4>注解配置方式</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Configuration
+@ComponentScan("com.example")
+public class AppConfig {
 
-    <span class="hljs-meta">@Bean</span>
-    <span class="hljs-keyword">public</span> UserDao <span class="hljs-title function_">userDao</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UserDaoImpl</span>();
+    @Bean
+    public UserDao userDao() {
+        return new UserDaoImpl();
     }
 
-    <span class="hljs-meta">@Bean</span>
-    <span class="hljs-keyword">public</span> UserService <span class="hljs-title function_">userService</span><span class="hljs-params">(UserDao userDao)</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UserService</span>(userDao);
+    @Bean
+    public UserService userService(UserDao userDao) {
+        return new UserService(userDao);
     }
 }
-</code></pre>
-<h4 id="自动装配注解" tabindex="-1">自动装配注解</h4>
-<pre><code class="hljs language-java"><span class="hljs-comment">// @Component：通用的组件注解</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserDaoImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">UserDao</span> {
-    <span class="hljs-comment">// 实现代码</span>
+</code></pre></p><h4>自动装配注解</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// @Component：通用的组件注解
+@Component
+public class UserDaoImpl implements UserDao {
+    // 实现代码
 }
 
-<span class="hljs-comment">// @Repository：数据访问层</span>
-<span class="hljs-meta">@Repository</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserDaoImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">UserDao</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// @Repository：数据访问层
+@Repository
+public class UserDaoImpl implements UserDao {
+    // 实现代码
 }
 
-<span class="hljs-comment">// @Service：业务逻辑层</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// @Service：业务逻辑层
+@Service
+public class UserService {
+    // 实现代码
 }
 
-<span class="hljs-comment">// @Controller：控制器层</span>
-<span class="hljs-meta">@Controller</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserController</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// @Controller：控制器层
+@Controller
+public class UserController {
+    // 实现代码
 }
 
-<span class="hljs-comment">// @Autowired：自动装配</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">private</span> UserDao userDao;
+// @Autowired：自动装配
+@Service
+public class UserService {
+    @Autowired
+    private UserDao userDao;
 
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-meta">@Qualifier(&quot;userDaoImpl&quot;)</span> <span class="hljs-comment">// 指定Bean名称</span>
-    <span class="hljs-keyword">private</span> UserDao userDao2;
+    @Autowired
+    @Qualifier("userDaoImpl") // 指定Bean名称
+    private UserDao userDao2;
 
-    <span class="hljs-meta">@Resource(name = &quot;userDaoImpl&quot;)</span> <span class="hljs-comment">// JSR-250注解</span>
-    <span class="hljs-keyword">private</span> UserDao userDao3;
+    @Resource(name = "userDaoImpl") // JSR-250注解
+    private UserDao userDao3;
 }
-</code></pre>
-<h3 id="bean的生命周期" tabindex="-1">Bean的生命周期</h3>
-<p>Spring Bean的生命周期可以分为以下几个阶段：</p>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LifeCycleBean</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">BeanNameAware</span>, BeanFactoryAware,
+</code></pre></p><h3>Bean的生命周期</h3><p>Spring Bean的生命周期可以分为以下几个阶段：</p><p><pre class="language-java" data-lang="java"><code class="language-java">@Component
+public class LifeCycleBean implements BeanNameAware, BeanFactoryAware,
         InitializingBean, DisposableBean {
 
-    <span class="hljs-keyword">private</span> String beanName;
+    private String beanName;
 
-    <span class="hljs-comment">// 1. 实例化Bean（构造函数）</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">LifeCycleBean</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;1. 实例化Bean&quot;</span>);
+    // 1. 实例化Bean（构造函数）
+    public LifeCycleBean() {
+        System.out.println("1. 实例化Bean");
     }
 
-    <span class="hljs-comment">// 2. 设置属性值</span>
-    <span class="hljs-meta">@Autowired</span>
-    <span class="hljs-keyword">private</span> UserDao userDao;
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUserDao</span><span class="hljs-params">(UserDao userDao)</span> {
-        System.out.println(<span class="hljs-string">&quot;2. 设置属性值&quot;</span>);
-        <span class="hljs-built_in">this</span>.userDao = userDao;
+    // 2. 设置属性值
+    @Autowired
+    private UserDao userDao;
+    public void setUserDao(UserDao userDao) {
+        System.out.println("2. 设置属性值");
+        this.userDao = userDao;
     }
 
-    <span class="hljs-comment">// 3. BeanNameAware接口回调</span>
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setBeanName</span><span class="hljs-params">(String name)</span> {
-        System.out.println(<span class="hljs-string">&quot;3. BeanNameAware.setBeanName: &quot;</span> + name);
-        <span class="hljs-built_in">this</span>.beanName = name;
+    // 3. BeanNameAware接口回调
+    @Override
+    public void setBeanName(String name) {
+        System.out.println("3. BeanNameAware.setBeanName: " + name);
+        this.beanName = name;
     }
 
-    <span class="hljs-comment">// 4. BeanFactoryAware接口回调</span>
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setBeanFactory</span><span class="hljs-params">(BeanFactory beanFactory)</span> {
-        System.out.println(<span class="hljs-string">&quot;4. BeanFactoryAware.setBeanFactory&quot;</span>);
+    // 4. BeanFactoryAware接口回调
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        System.out.println("4. BeanFactoryAware.setBeanFactory");
     }
 
-    <span class="hljs-comment">// 5. BeanPostProcessor - 前置处理</span>
-    <span class="hljs-meta">@PostConstruct</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">initMethod</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;5. @PostConstruct初始化方法&quot;</span>);
+    // 5. BeanPostProcessor - 前置处理
+    @PostConstruct
+    public void initMethod() {
+        System.out.println("5. @PostConstruct初始化方法");
     }
 
-    <span class="hljs-comment">// 6. InitializingBean接口回调</span>
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">afterPropertiesSet</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;6. InitializingBean.afterPropertiesSet&quot;</span>);
+    // 6. InitializingBean接口回调
+    @Override
+    public void afterPropertiesSet() {
+        System.out.println("6. InitializingBean.afterPropertiesSet");
     }
 
-    <span class="hljs-comment">// 7. BeanPostProcessor - 后置处理</span>
-    <span class="hljs-meta">@Bean(initMethod = &quot;customInit&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">customInit</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;7. 自定义初始化方法&quot;</span>);
+    // 7. BeanPostProcessor - 后置处理
+    @Bean(initMethod = "customInit")
+    public void customInit() {
+        System.out.println("7. 自定义初始化方法");
     }
 
-    <span class="hljs-comment">// 8. Bean就绪，可以使用</span>
+    // 8. Bean就绪，可以使用
 
-    <span class="hljs-comment">// 9. 容器关闭时销毁Bean</span>
-    <span class="hljs-meta">@PreDestroy</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">preDestroy</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;9. @PreDestroy销毁方法&quot;</span>);
+    // 9. 容器关闭时销毁Bean
+    @PreDestroy
+    public void preDestroy() {
+        System.out.println("9. @PreDestroy销毁方法");
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">destroy</span><span class="hljs-params">()</span> {
-        System.out.println(<span class="hljs-string">&quot;10. DisposableBean.destroy&quot;</span>);
+    @Override
+    public void destroy() {
+        System.out.println("10. DisposableBean.destroy");
     }
 }
-</code></pre>
-<h3 id="bean的作用域" tabindex="-1">Bean的作用域</h3>
-<pre><code class="hljs language-java"><span class="hljs-comment">// Singleton（默认）：单例，整个容器中只有一个实例</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-meta">@Scope(&quot;singleton&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SingletonBean</span> {
-    <span class="hljs-comment">// 实现代码</span>
+</code></pre></p><h3>Bean的作用域</h3><p><pre class="language-java" data-lang="java"><code class="language-java">// Singleton（默认）：单例，整个容器中只有一个实例
+@Service
+@Scope("singleton")
+public class SingletonBean {
+    // 实现代码
 }
 
-<span class="hljs-comment">// Prototype：原型，每次请求都创建新实例</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-meta">@Scope(&quot;prototype&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PrototypeBean</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// Prototype：原型，每次请求都创建新实例
+@Service
+@Scope("prototype")
+public class PrototypeBean {
+    // 实现代码
 }
 
-<span class="hljs-comment">// Request：Web应用中，每个HTTP请求一个实例</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-meta">@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RequestBean</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// Request：Web应用中，每个HTTP请求一个实例
+@Service
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class RequestBean {
+    // 实现代码
 }
 
-<span class="hljs-comment">// Session：Web应用中，每个HTTP Session一个实例</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-meta">@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SessionBean</span> {
-    <span class="hljs-comment">// 实现代码</span>
+// Session：Web应用中，每个HTTP Session一个实例
+@Service
+@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class SessionBean {
+    // 实现代码
 }
-</code></pre>
-<h2 id="第二部分：aop（面向切面编程）" tabindex="-1">第二部分：AOP（面向切面编程）</h2>
-<h3 id="什么是aop？" tabindex="-1">什么是AOP？</h3>
-<p>AOP（Aspect-Oriented Programming，面向切面编程）是一种编程范式，它将横切关注点（如日志、事务、安全等）从业务逻辑中分离出来，提高代码的模块化程度。</p>
-<h4 id="aop的核心概念" tabindex="-1">AOP的核心概念</h4>
-<pre><code class="hljs language-java"><span class="hljs-comment">// 1. 切面（Aspect）：横切关注点的模块化</span>
-<span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LoggingAspect</span> {
+</code></pre></p><h2>第二部分：AOP（面向切面编程）</h2><h3>什么是AOP？</h3><p>AOP（Aspect-Oriented Programming，面向切面编程）是一种编程范式，它将横切关注点（如日志、事务、安全等）从业务逻辑中分离出来，提高代码的模块化程度。</p><h4>AOP的核心概念</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 1. 切面（Aspect）：横切关注点的模块化
+@Aspect
+@Component
+public class LoggingAspect {
 
-    <span class="hljs-comment">// 2. 连接点（Join Point）：程序执行的特定点（如方法调用）</span>
-    <span class="hljs-comment">// 3. 切点（Pointcut）：匹配连接点的表达式</span>
-    <span class="hljs-meta">@Pointcut(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serviceLayer</span><span class="hljs-params">()</span> {}
+    // 2. 连接点（Join Point）：程序执行的特定点（如方法调用）
+    // 3. 切点（Pointcut）：匹配连接点的表达式
+    @Pointcut("execution(* com.example.service.*.*(..))")
+    public void serviceLayer() {}
 
-    <span class="hljs-comment">// 4. 通知（Advice）：在切点执行的代码</span>
-    <span class="hljs-comment">// 前置通知：在目标方法执行前执行</span>
-    <span class="hljs-meta">@Before(&quot;serviceLayer()&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logBefore</span><span class="hljs-params">(JoinPoint joinPoint)</span> {
-        System.out.println(<span class="hljs-string">&quot;执行方法: &quot;</span> + joinPoint.getSignature().getName());
+    // 4. 通知（Advice）：在切点执行的代码
+    // 前置通知：在目标方法执行前执行
+    @Before("serviceLayer()")
+    public void logBefore(JoinPoint joinPoint) {
+        System.out.println("执行方法: " + joinPoint.getSignature().getName());
     }
 
-    <span class="hljs-comment">// 后置通知：在目标方法执行后执行（无论成功或失败）</span>
-    <span class="hljs-meta">@After(&quot;serviceLayer()&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logAfter</span><span class="hljs-params">(JoinPoint joinPoint)</span> {
-        System.out.println(<span class="hljs-string">&quot;方法执行完成: &quot;</span> + joinPoint.getSignature().getName());
+    // 后置通知：在目标方法执行后执行（无论成功或失败）
+    @After("serviceLayer()")
+    public void logAfter(JoinPoint joinPoint) {
+        System.out.println("方法执行完成: " + joinPoint.getSignature().getName());
     }
 
-    <span class="hljs-comment">// 返回通知：在目标方法成功返回后执行</span>
-    <span class="hljs-meta">@AfterReturning(pointcut = &quot;serviceLayer()&quot;, returning = &quot;result&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logAfterReturning</span><span class="hljs-params">(JoinPoint joinPoint, Object result)</span> {
-        System.out.println(<span class="hljs-string">&quot;方法返回: &quot;</span> + result);
+    // 返回通知：在目标方法成功返回后执行
+    @AfterReturning(pointcut = "serviceLayer()", returning = "result")
+    public void logAfterReturning(JoinPoint joinPoint, Object result) {
+        System.out.println("方法返回: " + result);
     }
 
-    <span class="hljs-comment">// 异常通知：在目标方法抛出异常时执行</span>
-    <span class="hljs-meta">@AfterThrowing(pointcut = &quot;serviceLayer()&quot;, throwing = &quot;exception&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logAfterThrowing</span><span class="hljs-params">(JoinPoint joinPoint, Throwable exception)</span> {
-        System.out.println(<span class="hljs-string">&quot;方法异常: &quot;</span> + exception.getMessage());
+    // 异常通知：在目标方法抛出异常时执行
+    @AfterThrowing(pointcut = "serviceLayer()", throwing = "exception")
+    public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
+        System.out.println("方法异常: " + exception.getMessage());
     }
 
-    <span class="hljs-comment">// 环绕通知：最强大的通知类型，可以完全控制方法的执行</span>
-    <span class="hljs-meta">@Around(&quot;serviceLayer()&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">logAround</span><span class="hljs-params">(ProceedingJoinPoint joinPoint)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
+    // 环绕通知：最强大的通知类型，可以完全控制方法的执行
+    @Around("serviceLayer()")
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
 
-        System.out.println(<span class="hljs-string">&quot;开始执行: &quot;</span> + joinPoint.getSignature().getName());
+        System.out.println("开始执行: " + joinPoint.getSignature().getName());
 
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> joinPoint.proceed();
-            <span class="hljs-type">long</span> <span class="hljs-variable">endTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
-            System.out.println(<span class="hljs-string">&quot;执行完成，耗时: &quot;</span> + (endTime - startTime) + <span class="hljs-string">&quot;ms&quot;</span>);
-            <span class="hljs-keyword">return</span> result;
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            System.out.println(<span class="hljs-string">&quot;执行异常: &quot;</span> + e.getMessage());
-            <span class="hljs-keyword">throw</span> e;
+        try {
+            Object result = joinPoint.proceed();
+            long endTime = System.currentTimeMillis();
+            System.out.println("执行完成，耗时: " + (endTime - startTime) + "ms");
+            return result;
+        } catch (Exception e) {
+            System.out.println("执行异常: " + e.getMessage());
+            throw e;
         }
     }
 }
-</code></pre>
-<h3 id="切点表达式详解" tabindex="-1">切点表达式详解</h3>
-<h4 id="execution表达式" tabindex="-1">execution表达式</h4>
-<pre><code class="hljs language-java"><span class="hljs-comment">// 语法：execution(修饰符 返回值类型 包名.类名.方法名(参数) 异常)</span>
+</code></pre></p><h3>切点表达式详解</h3><h4>execution表达式</h4><p><pre class="language-java" data-lang="java"><code class="language-java">// 语法：execution(修饰符 返回值类型 包名.类名.方法名(参数) 异常)
 
-<span class="hljs-comment">// 1. 匹配所有public方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(public * *(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">anyPublicMethod</span><span class="hljs-params">()</span> {}
+// 1. 匹配所有public方法
+@Pointcut("execution(public * *(..))")
+public void anyPublicMethod() {}
 
-<span class="hljs-comment">// 2. 匹配com.example.service包下所有类的所有方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">servicePackage</span><span class="hljs-params">()</span> {}
+// 2. 匹配com.example.service包下所有类的所有方法
+@Pointcut("execution(* com.example.service.*.*(..))")
+public void servicePackage() {}
 
-<span class="hljs-comment">// 3. 匹配com.example.service包及其子包下所有类的所有方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(* com.example.service..*.*(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serviceAndSubPackage</span><span class="hljs-params">()</span> {}
+// 3. 匹配com.example.service包及其子包下所有类的所有方法
+@Pointcut("execution(* com.example.service..*.*(..))")
+public void serviceAndSubPackage() {}
 
-<span class="hljs-comment">// 4. 匹配所有以save开头的方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(* save*(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">saveMethods</span><span class="hljs-params">()</span> {}
+// 4. 匹配所有以save开头的方法
+@Pointcut("execution(* save*(..))")
+public void saveMethods() {}
 
-<span class="hljs-comment">// 5. 匹配UserService接口的所有方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(* com.example.service.UserService.*(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">userServiceMethods</span><span class="hljs-params">()</span> {}
+// 5. 匹配UserService接口的所有方法
+@Pointcut("execution(* com.example.service.UserService.*(..))")
+public void userServiceMethods() {}
 
-<span class="hljs-comment">// 6. 匹配第一个参数为String的方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(* *(String, ..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">firstParamString</span><span class="hljs-params">()</span> {}
+// 6. 匹配第一个参数为String的方法
+@Pointcut("execution(* *(String, ..))")
+public void firstParamString() {}
 
-<span class="hljs-comment">// 7. 匹配返回值为void的方法</span>
-<span class="hljs-meta">@Pointcut(&quot;execution(void com.example.service.*.*(..))&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">voidMethods</span><span class="hljs-params">()</span> {}
-</code></pre>
-<h4 id="其他表达式类型" tabindex="-1">其他表达式类型</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">VariousPointcuts</span> {
+// 7. 匹配返回值为void的方法
+@Pointcut("execution(void com.example.service.*.*(..))")
+public void voidMethods() {}
+</code></pre></p><h4>其他表达式类型</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+@Component
+public class VariousPointcuts {
 
-    <span class="hljs-comment">// within：限定类范围</span>
-    <span class="hljs-meta">@Pointcut(&quot;within(com.example.service.*)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">withinServicePackage</span><span class="hljs-params">()</span> {}
+    // within：限定类范围
+    @Pointcut("within(com.example.service.*)")
+    public void withinServicePackage() {}
 
-    <span class="hljs-comment">// this：限定代理对象类型</span>
-    <span class="hljs-meta">@Pointcut(&quot;this(com.example.service.UserService)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">thisUserService</span><span class="hljs-params">()</span> {}
+    // this：限定代理对象类型
+    @Pointcut("this(com.example.service.UserService)")
+    public void thisUserService() {}
 
-    <span class="hljs-comment">// target：限定目标对象类型</span>
-    <span class="hljs-meta">@Pointcut(&quot;target(com.example.service.UserService)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">targetUserService</span><span class="hljs-params">()</span> {}
+    // target：限定目标对象类型
+    @Pointcut("target(com.example.service.UserService)")
+    public void targetUserService() {}
 
-    <span class="hljs-comment">// args：限定参数类型</span>
-    <span class="hljs-meta">@Pointcut(&quot;args(com.example.model.User)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">userArgument</span><span class="hljs-params">()</span> {}
+    // args：限定参数类型
+    @Pointcut("args(com.example.model.User)")
+    public void userArgument() {}
 
-    <span class="hljs-comment">// @annotation：限定注解</span>
-    <span class="hljs-meta">@Pointcut(&quot;@annotation(com.example.annotation.Loggable)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">loggableMethod</span><span class="hljs-params">()</span> {}
+    // @annotation：限定注解
+    @Pointcut("@annotation(com.example.annotation.Loggable)")
+    public void loggableMethod() {}
 
-    <span class="hljs-comment">// @within：限定类上的注解</span>
-    <span class="hljs-meta">@Pointcut(&quot;@within(com.example.annotation.Service)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serviceClass</span><span class="hljs-params">()</span> {}
+    // @within：限定类上的注解
+    @Pointcut("@within(com.example.annotation.Service)")
+    public void serviceClass() {}
 
-    <span class="hljs-comment">// @target：限定目标对象上的注解</span>
-    <span class="hljs-meta">@Pointcut(&quot;@target(com.example.annotation.RestController)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">restControllerClass</span><span class="hljs-params">()</span> {}
+    // @target：限定目标对象上的注解
+    @Pointcut("@target(com.example.annotation.RestController)")
+    public void restControllerClass() {}
 
-    <span class="hljs-comment">// bean：限定Bean名称</span>
-    <span class="hljs-meta">@Pointcut(&quot;bean(userService)&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">userServiceBean</span><span class="hljs-params">()</span> {}
+    // bean：限定Bean名称
+    @Pointcut("bean(userService)")
+    public void userServiceBean() {}
 
-    <span class="hljs-comment">// 组合表达式</span>
-    <span class="hljs-meta">@Pointcut(&quot;servicePackage() &amp;&amp; !voidMethods()&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serviceAndNotVoid</span><span class="hljs-params">()</span> {}
+    // 组合表达式
+    @Pointcut("servicePackage() &amp;&amp; !voidMethods()")
+    public void serviceAndNotVoid() {}
 
-    <span class="hljs-meta">@Pointcut(&quot;servicePackage() || controllerMethods()&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serviceOrController</span><span class="hljs-params">()</span> {}
+    @Pointcut("servicePackage() || controllerMethods()")
+    public void serviceOrController() {}
 }
-</code></pre>
-<h3 id="aop的实际应用场景" tabindex="-1">AOP的实际应用场景</h3>
-<h4 id="1.-日志记录" tabindex="-1">1. 日志记录</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-meta">@Slf4j</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LoggingAspect</span> {
+</code></pre></p><h3>AOP的实际应用场景</h3><h4>1. 日志记录</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+@Component
+@Slf4j
+public class LoggingAspect {
 
-    <span class="hljs-meta">@Around(&quot;@annotation(com.example.annotation.Loggable)&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">logMethodExecution</span><span class="hljs-params">(ProceedingJoinPoint joinPoint)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">String</span> <span class="hljs-variable">className</span> <span class="hljs-operator">=</span> joinPoint.getTarget().getClass().getSimpleName();
-        <span class="hljs-type">String</span> <span class="hljs-variable">methodName</span> <span class="hljs-operator">=</span> joinPoint.getSignature().getName();
+    @Around("@annotation(com.example.annotation.Loggable)")
+    public Object logMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
         Object[] args = joinPoint.getArgs();
 
-        log.info(<span class="hljs-string">&quot;{}.{}() - 开始执行，参数: {}&quot;</span>, className, methodName, Arrays.toString(args));
+        log.info("{}.{}() - 开始执行，参数: {}", className, methodName, Arrays.toString(args));
 
-        <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         Object result;
-        <span class="hljs-keyword">try</span> {
+        try {
             result = joinPoint.proceed();
-            <span class="hljs-type">long</span> <span class="hljs-variable">endTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
-            log.info(<span class="hljs-string">&quot;{}.{}() - 执行成功，返回值: {}, 耗时: {}ms&quot;</span>,
+            long endTime = System.currentTimeMillis();
+            log.info("{}.{}() - 执行成功，返回值: {}, 耗时: {}ms",
                     className, methodName, result, endTime - startTime);
-            <span class="hljs-keyword">return</span> result;
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            log.error(<span class="hljs-string">&quot;{}.{}() - 执行异常: {}&quot;</span>, className, methodName, e.getMessage(), e);
-            <span class="hljs-keyword">throw</span> e;
+            return result;
+        } catch (Exception e) {
+            log.error("{}.{}() - 执行异常: {}", className, methodName, e.getMessage(), e);
+            throw e;
         }
     }
 }
 
-<span class="hljs-comment">// 使用自定义注解</span>
-<span class="hljs-meta">@Target(ElementType.METHOD)</span>
-<span class="hljs-meta">@Retention(RetentionPolicy.RUNTIME)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> Loggable {
-    String <span class="hljs-title function_">value</span><span class="hljs-params">()</span> <span class="hljs-keyword">default</span> <span class="hljs-string">&quot;&quot;</span>;
+// 使用自定义注解
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Loggable {
+    String value() default "";
 }
 
-<span class="hljs-comment">// 在方法上使用注解</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-meta">@Loggable(&quot;用户注册&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(User user)</span> {
-        <span class="hljs-comment">// 业务逻辑</span>
+// 在方法上使用注解
+@Service
+public class UserService {
+    @Loggable("用户注册")
+    public void registerUser(User user) {
+        // 业务逻辑
     }
 }
-</code></pre>
-<h4 id="2.-性能监控" tabindex="-1">2. 性能监控</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PerformanceAspect</span> {
+</code></pre></p><h4>2. 性能监控</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+@Component
+public class PerformanceAspect {
 
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;String, Long&gt; methodStats = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;&gt;();
+    private final Map&lt;String, Long&gt; methodStats = new ConcurrentHashMap&lt;&gt;();
 
-    <span class="hljs-meta">@Around(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">monitorPerformance</span><span class="hljs-params">(ProceedingJoinPoint joinPoint)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">String</span> <span class="hljs-variable">methodName</span> <span class="hljs-operator">=</span> joinPoint.getSignature().toShortString();
-        <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
+    @Around("execution(* com.example.service.*.*(..))")
+    public Object monitorPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
+        String methodName = joinPoint.getSignature().toShortString();
+        long startTime = System.currentTimeMillis();
 
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-keyword">return</span> joinPoint.proceed();
-        } <span class="hljs-keyword">finally</span> {
-            <span class="hljs-type">long</span> <span class="hljs-variable">duration</span> <span class="hljs-operator">=</span> System.currentTimeMillis() - startTime;
+        try {
+            return joinPoint.proceed();
+        } finally {
+            long duration = System.currentTimeMillis() - startTime;
             methodStats.merge(methodName, duration, Long::sum);
-            <span class="hljs-keyword">if</span> (duration &gt; <span class="hljs-number">1000</span>) {
-                System.out.println(<span class="hljs-string">&quot;警告: &quot;</span> + methodName + <span class="hljs-string">&quot; 执行时间过长: &quot;</span> + duration + <span class="hljs-string">&quot;ms&quot;</span>);
+            if (duration &gt; 1000) {
+                System.out.println("警告: " + methodName + " 执行时间过长: " + duration + "ms");
             }
         }
     }
 
-    <span class="hljs-meta">@Scheduled(fixedRate = 60000)</span> <span class="hljs-comment">// 每分钟输出一次统计信息</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">printStatistics</span><span class="hljs-params">()</span> {
+    @Scheduled(fixedRate = 60000) // 每分钟输出一次统计信息
+    public void printStatistics() {
         methodStats.forEach((method, totalTime) -&gt;
-            System.out.println(method + <span class="hljs-string">&quot;: 总耗时 &quot;</span> + totalTime + <span class="hljs-string">&quot;ms&quot;</span>));
+            System.out.println(method + ": 总耗时 " + totalTime + "ms"));
     }
 }
-</code></pre>
-<h4 id="3.-缓存" tabindex="-1">3. 缓存</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CacheAspect</span> {
+</code></pre></p><h4>3. 缓存</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+@Component
+public class CacheAspect {
 
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;String, Object&gt; cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;&gt;();
+    private final Map&lt;String, Object&gt; cache = new ConcurrentHashMap&lt;&gt;();
 
-    <span class="hljs-meta">@Around(&quot;@annotation(cacheable)&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">cacheResult</span><span class="hljs-params">(ProceedingJoinPoint joinPoint, Cacheable cacheable)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">String</span> <span class="hljs-variable">cacheKey</span> <span class="hljs-operator">=</span> generateKey(joinPoint, cacheable);
+    @Around("@annotation(cacheable)")
+    public Object cacheResult(ProceedingJoinPoint joinPoint, Cacheable cacheable) throws Throwable {
+        String cacheKey = generateKey(joinPoint, cacheable);
 
-        <span class="hljs-type">Object</span> <span class="hljs-variable">cachedResult</span> <span class="hljs-operator">=</span> cache.get(cacheKey);
-        <span class="hljs-keyword">if</span> (cachedResult != <span class="hljs-literal">null</span>) {
-            System.out.println(<span class="hljs-string">&quot;从缓存中获取: &quot;</span> + cacheKey);
-            <span class="hljs-keyword">return</span> cachedResult;
+        Object cachedResult = cache.get(cacheKey);
+        if (cachedResult != null) {
+            System.out.println("从缓存中获取: " + cacheKey);
+            return cachedResult;
         }
 
-        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> joinPoint.proceed();
+        Object result = joinPoint.proceed();
         cache.put(cacheKey, result);
-        System.out.println(<span class="hljs-string">&quot;存入缓存: &quot;</span> + cacheKey);
+        System.out.println("存入缓存: " + cacheKey);
 
-        <span class="hljs-keyword">return</span> result;
+        return result;
     }
 
-    <span class="hljs-keyword">private</span> String <span class="hljs-title function_">generateKey</span><span class="hljs-params">(ProceedingJoinPoint joinPoint, Cacheable cacheable)</span> {
-        <span class="hljs-type">StringBuilder</span> <span class="hljs-variable">keyBuilder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringBuilder</span>();
+    private String generateKey(ProceedingJoinPoint joinPoint, Cacheable cacheable) {
+        StringBuilder keyBuilder = new StringBuilder();
         keyBuilder.append(joinPoint.getSignature().toShortString());
-        <span class="hljs-keyword">for</span> (Object arg : joinPoint.getArgs()) {
-            keyBuilder.append(<span class="hljs-string">&quot;:&quot;</span>).append(arg);
+        for (Object arg : joinPoint.getArgs()) {
+            keyBuilder.append(":").append(arg);
         }
-        <span class="hljs-keyword">return</span> keyBuilder.toString();
+        return keyBuilder.toString();
     }
 }
 
-<span class="hljs-meta">@Target(ElementType.METHOD)</span>
-<span class="hljs-meta">@Retention(RetentionPolicy.RUNTIME)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-meta">@interface</span> Cacheable {
-    String <span class="hljs-title function_">key</span><span class="hljs-params">()</span> <span class="hljs-keyword">default</span> <span class="hljs-string">&quot;&quot;</span>;
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Cacheable {
+    String key() default "";
 }
 
-<span class="hljs-comment">// 使用</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-meta">@Cacheable</span>
-    <span class="hljs-keyword">public</span> User <span class="hljs-title function_">findById</span><span class="hljs-params">(Long id)</span> {
-        <span class="hljs-comment">// 从数据库查询</span>
-        <span class="hljs-keyword">return</span> userRepository.findById(id);
+// 使用
+@Service
+public class UserService {
+    @Cacheable
+    public User findById(Long id) {
+        // 从数据库查询
+        return userRepository.findById(id);
     }
 }
-</code></pre>
-<h4 id="4.-事务管理" tabindex="-1">4. 事务管理</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TransactionAspect</span> {
+</code></pre></p><h4>4. 事务管理</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Aspect
+@Component
+public class TransactionAspect {
 
-    <span class="hljs-meta">@Around(&quot;@annotation(transactional)&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">manageTransaction</span><span class="hljs-params">(ProceedingJoinPoint joinPoint, Transactional transactional)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">Connection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
-        <span class="hljs-keyword">try</span> {
+    @Around("@annotation(transactional)")
+    public Object manageTransaction(ProceedingJoinPoint joinPoint, Transactional transactional) throws Throwable {
+        Connection connection = null;
+        try {
             connection = getDatabaseConnection();
-            connection.setAutoCommit(<span class="hljs-literal">false</span>);
+            connection.setAutoCommit(false);
 
-            <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> joinPoint.proceed();
+            Object result = joinPoint.proceed();
 
             connection.commit();
-            <span class="hljs-keyword">return</span> result;
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">if</span> (connection != <span class="hljs-literal">null</span>) {
+            return result;
+        } catch (Exception e) {
+            if (connection != null) {
                 connection.rollback();
             }
-            <span class="hljs-keyword">throw</span> e;
-        } <span class="hljs-keyword">finally</span> {
-            <span class="hljs-keyword">if</span> (connection != <span class="hljs-literal">null</span>) {
+            throw e;
+        } finally {
+            if (connection != null) {
                 connection.close();
             }
         }
     }
 }
 
-<span class="hljs-comment">// 使用</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-meta">@Transactional</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">transferMoney</span><span class="hljs-params">(Long fromId, Long toId, BigDecimal amount)</span> {
-        <span class="hljs-comment">// 转账逻辑</span>
+// 使用
+@Service
+public class UserService {
+    @Transactional
+    public void transferMoney(Long fromId, Long toId, BigDecimal amount) {
+        // 转账逻辑
     }
 }
-</code></pre>
-<h3 id="spring-aop的实现原理" tabindex="-1">Spring AOP的实现原理</h3>
-<p>Spring AOP主要通过动态代理实现：</p>
-<pre><code class="hljs language-java"><span class="hljs-comment">// JDK动态代理（基于接口）</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">saveUser</span><span class="hljs-params">(User user)</span>;
+</code></pre></p><h3>Spring AOP的实现原理</h3><p>Spring AOP主要通过动态代理实现：</p><p><pre class="language-java" data-lang="java"><code class="language-java">// JDK动态代理（基于接口）
+public interface UserService {
+    void saveUser(User user);
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">saveUser</span><span class="hljs-params">(User user)</span> {
-        System.out.println(<span class="hljs-string">&quot;保存用户: &quot;</span> + user.getName());
+public class UserServiceImpl implements UserService {
+    public void saveUser(User user) {
+        System.out.println("保存用户: " + user.getName());
     }
 }
 
-<span class="hljs-comment">// 代理实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserServiceProxy</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">InvocationHandler</span> {
+// 代理实现
+public class UserServiceProxy implements InvocationHandler {
 
-    <span class="hljs-keyword">private</span> Object target;
+    private Object target;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserServiceProxy</span><span class="hljs-params">(Object target)</span> {
-        <span class="hljs-built_in">this</span>.target = target;
+    public UserServiceProxy(Object target) {
+        this.target = target;
     }
 
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getProxy</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> Proxy.newProxyInstance(
+    public Object getProxy() {
+        return Proxy.newProxyInstance(
             target.getClass().getClassLoader(),
             target.getClass().getInterfaces(),
-            <span class="hljs-built_in">this</span>
+            this
         );
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object proxy, Method method, Object[] args)</span> <span class="hljs-keyword">throws</span> Throwable {
-        System.out.println(<span class="hljs-string">&quot;前置通知: &quot;</span> + method.getName());
-        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> method.invoke(target, args);
-        System.out.println(<span class="hljs-string">&quot;后置通知: &quot;</span> + method.getName());
-        <span class="hljs-keyword">return</span> result;
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("前置通知: " + method.getName());
+        Object result = method.invoke(target, args);
+        System.out.println("后置通知: " + method.getName());
+        return result;
     }
 }
 
-<span class="hljs-comment">// CGLIB代理（基于类）</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserServiceCglibProxy</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MethodInterceptor</span> {
+// CGLIB代理（基于类）
+public class UserServiceCglibProxy implements MethodInterceptor {
 
-    <span class="hljs-keyword">private</span> Object target;
+    private Object target;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserServiceCglibProxy</span><span class="hljs-params">(Object target)</span> {
-        <span class="hljs-built_in">this</span>.target = target;
+    public UserServiceCglibProxy(Object target) {
+        this.target = target;
     }
 
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getProxy</span><span class="hljs-params">()</span> {
-        <span class="hljs-type">Enhancer</span> <span class="hljs-variable">enhancer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Enhancer</span>();
+    public Object getProxy() {
+        Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(target.getClass());
-        enhancer.setCallback(<span class="hljs-built_in">this</span>);
-        <span class="hljs-keyword">return</span> enhancer.create();
+        enhancer.setCallback(this);
+        return enhancer.create();
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">intercept</span><span class="hljs-params">(Object obj, Method method, Object[] args, MethodProxy proxy)</span> <span class="hljs-keyword">throws</span> Throwable {
-        System.out.println(<span class="hljs-string">&quot;前置通知: &quot;</span> + method.getName());
-        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> proxy.invoke(target, args);
-        System.out.println(<span class="hljs-string">&quot;后置通知: &quot;</span> + method.getName());
-        <span class="hljs-keyword">return</span> result;
+    @Override
+    public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        System.out.println("前置通知: " + method.getName());
+        Object result = proxy.invoke(target, args);
+        System.out.println("后置通知: " + method.getName());
+        return result;
     }
 }
-</code></pre>
-<h3 id="ioc与aop的综合应用" tabindex="-1">IOC与AOP的综合应用</h3>
-<p>下面是一个完整的综合示例：</p>
-<pre><code class="hljs language-java"><span class="hljs-comment">// 1. 定义实体类</span>
-<span class="hljs-meta">@Data</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">User</span> {
-    <span class="hljs-keyword">private</span> Long id;
-    <span class="hljs-keyword">private</span> String username;
-    <span class="hljs-keyword">private</span> String email;
+</code></pre></p><h3>IOC与AOP的综合应用</h3><p>下面是一个完整的综合示例：</p><p><pre class="language-java" data-lang="java"><code class="language-java">// 1. 定义实体类
+@Data
+public class User {
+    private Long id;
+    private String username;
+    private String email;
 }
 
-<span class="hljs-comment">// 2. 定义DAO接口和实现</span>
-<span class="hljs-meta">@Repository</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">UserDao</span> {
-    User <span class="hljs-title function_">save</span><span class="hljs-params">(User user)</span>;
-    User <span class="hljs-title function_">findById</span><span class="hljs-params">(Long id)</span>;
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">delete</span><span class="hljs-params">(Long id)</span>;
+// 2. 定义DAO接口和实现
+@Repository
+public interface UserDao {
+    User save(User user);
+    User findById(Long id);
+    void delete(Long id);
 }
 
-<span class="hljs-meta">@Repository</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserDaoImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">UserDao</span> {
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> User <span class="hljs-title function_">save</span><span class="hljs-params">(User user)</span> {
-        <span class="hljs-comment">// 数据库保存逻辑</span>
-        System.out.println(<span class="hljs-string">&quot;保存用户到数据库&quot;</span>);
-        <span class="hljs-keyword">return</span> user;
+@Repository
+public class UserDaoImpl implements UserDao {
+    @Override
+    public User save(User user) {
+        // 数据库保存逻辑
+        System.out.println("保存用户到数据库");
+        return user;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> User <span class="hljs-title function_">findById</span><span class="hljs-params">(Long id)</span> {
-        <span class="hljs-comment">// 数据库查询逻辑</span>
-        System.out.println(<span class="hljs-string">&quot;从数据库查询用户&quot;</span>);
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>();
+    @Override
+    public User findById(Long id) {
+        // 数据库查询逻辑
+        System.out.println("从数据库查询用户");
+        return new User();
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">delete</span><span class="hljs-params">(Long id)</span> {
-        <span class="hljs-comment">// 数据库删除逻辑</span>
-        System.out.println(<span class="hljs-string">&quot;从数据库删除用户&quot;</span>);
+    @Override
+    public void delete(Long id) {
+        // 数据库删除逻辑
+        System.out.println("从数据库删除用户");
     }
 }
 
-<span class="hljs-comment">// 3. 定义Service层</span>
-<span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserService</span> {
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> UserDao userDao;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> EmailService emailService;
+// 3. 定义Service层
+@Service
+public class UserService {
+    private final UserDao userDao;
+    private final EmailService emailService;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UserService</span><span class="hljs-params">(UserDao userDao, EmailService emailService)</span> {
-        <span class="hljs-built_in">this</span>.userDao = userDao;
-        <span class="hljs-built_in">this</span>.emailService = emailService;
+    public UserService(UserDao userDao, EmailService emailService) {
+        this.userDao = userDao;
+        this.emailService = emailService;
     }
 
-    <span class="hljs-meta">@Loggable(&quot;用户注册&quot;)</span>
-    <span class="hljs-meta">@Transactional</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerUser</span><span class="hljs-params">(User user)</span> {
+    @Loggable("用户注册")
+    @Transactional
+    public void registerUser(User user) {
         userDao.save(user);
         emailService.sendWelcomeEmail(user.getEmail());
     }
 
-    <span class="hljs-meta">@Cacheable</span>
-    <span class="hljs-keyword">public</span> User <span class="hljs-title function_">getUserById</span><span class="hljs-params">(Long id)</span> {
-        <span class="hljs-keyword">return</span> userDao.findById(id);
+    @Cacheable
+    public User getUserById(Long id) {
+        return userDao.findById(id);
     }
 
-    <span class="hljs-meta">@Transactional</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteUser</span><span class="hljs-params">(Long id)</span> {
+    @Transactional
+    public void deleteUser(Long id) {
         userDao.delete(id);
     }
 }
 
-<span class="hljs-comment">// 4. 定义切面</span>
-<span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ApplicationAspect</span> {
+// 4. 定义切面
+@Aspect
+@Component
+public class ApplicationAspect {
 
-    <span class="hljs-comment">// 日志切面</span>
-    <span class="hljs-meta">@Around(&quot;@annotation(com.example.annotation.Loggable)&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">logAround</span><span class="hljs-params">(ProceedingJoinPoint joinPoint)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">String</span> <span class="hljs-variable">methodName</span> <span class="hljs-operator">=</span> joinPoint.getSignature().getName();
-        System.out.println(<span class="hljs-string">&quot;方法开始执行: &quot;</span> + methodName);
+    // 日志切面
+    @Around("@annotation(com.example.annotation.Loggable)")
+    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        String methodName = joinPoint.getSignature().getName();
+        System.out.println("方法开始执行: " + methodName);
 
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> joinPoint.proceed();
-            System.out.println(<span class="hljs-string">&quot;方法执行成功: &quot;</span> + methodName);
-            <span class="hljs-keyword">return</span> result;
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            System.out.println(<span class="hljs-string">&quot;方法执行异常: &quot;</span> + methodName + <span class="hljs-string">&quot;, &quot;</span> + e.getMessage());
-            <span class="hljs-keyword">throw</span> e;
+        try {
+            Object result = joinPoint.proceed();
+            System.out.println("方法执行成功: " + methodName);
+            return result;
+        } catch (Exception e) {
+            System.out.println("方法执行异常: " + methodName + ", " + e.getMessage());
+            throw e;
         }
     }
 
-    <span class="hljs-comment">// 性能监控切面</span>
-    <span class="hljs-meta">@Around(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">monitorPerformance</span><span class="hljs-params">(ProceedingJoinPoint joinPoint)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">long</span> <span class="hljs-variable">startTime</span> <span class="hljs-operator">=</span> System.currentTimeMillis();
-        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> joinPoint.proceed();
-        <span class="hljs-type">long</span> <span class="hljs-variable">duration</span> <span class="hljs-operator">=</span> System.currentTimeMillis() - startTime;
+    // 性能监控切面
+    @Around("execution(* com.example.service.*.*(..))")
+    public Object monitorPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object result = joinPoint.proceed();
+        long duration = System.currentTimeMillis() - startTime;
 
-        <span class="hljs-keyword">if</span> (duration &gt; <span class="hljs-number">100</span>) {
-            System.out.println(<span class="hljs-string">&quot;性能警告: &quot;</span> + joinPoint.getSignature().toShortString()
-                    + <span class="hljs-string">&quot; 执行时间: &quot;</span> + duration + <span class="hljs-string">&quot;ms&quot;</span>);
+        if (duration &gt; 100) {
+            System.out.println("性能警告: " + joinPoint.getSignature().toShortString()
+                    + " 执行时间: " + duration + "ms");
         }
-        <span class="hljs-keyword">return</span> result;
+        return result;
     }
 }
 
-<span class="hljs-comment">// 5. 配置类</span>
-<span class="hljs-meta">@Configuration</span>
-<span class="hljs-meta">@ComponentScan(&quot;com.example&quot;)</span>
-<span class="hljs-meta">@EnableAspectJAutoProxy</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AppConfig</span> {
+// 5. 配置类
+@Configuration
+@ComponentScan("com.example")
+@EnableAspectJAutoProxy
+public class AppConfig {
 }
 
-<span class="hljs-comment">// 6. 启动类</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Application</span> {
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> {
-        <span class="hljs-type">ApplicationContext</span> <span class="hljs-variable">context</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AnnotationConfigApplicationContext</span>(AppConfig.class);
+// 6. 启动类
+public class Application {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-        <span class="hljs-type">UserService</span> <span class="hljs-variable">userService</span> <span class="hljs-operator">=</span> context.getBean(UserService.class);
+        UserService userService = context.getBean(UserService.class);
 
-        <span class="hljs-type">User</span> <span class="hljs-variable">user</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">User</span>();
-        user.setUsername(<span class="hljs-string">&quot;testuser&quot;</span>);
-        user.setEmail(<span class="hljs-string">&quot;test@example.com&quot;</span>);
+        User user = new User();
+        user.setUsername("testuser");
+        user.setEmail("test@example.com");
 
         userService.registerUser(user);
-        <span class="hljs-type">User</span> <span class="hljs-variable">foundUser</span> <span class="hljs-operator">=</span> userService.getUserById(<span class="hljs-number">1L</span>);
+        User foundUser = userService.getUserById(1L);
     }
 }
-</code></pre>
-<h2 id="总结" tabindex="-1">总结</h2>
-<h3 id="ioc的优势" tabindex="-1">IOC的优势</h3>
-<ol>
-<li><strong>降低耦合</strong>：通过依赖注入降低组件之间的耦合度</li>
+</code></pre></p><h2>总结</h2><h3>IOC的优势</h3><ol><li><strong>降低耦合</strong>：通过依赖注入降低组件之间的耦合度</li>
 <li><strong>便于测试</strong>：可以轻松mock依赖进行单元测试</li>
 <li><strong>集中管理</strong>：统一管理Bean的生命周期和配置</li>
 <li><strong>提高可维护性</strong>：代码结构清晰，易于理解和维护</li>
 </ol>
-<h3 id="aop的优势" tabindex="-1">AOP的优势</h3>
-<ol>
-<li><strong>关注点分离</strong>：将横切关注点从业务逻辑中分离</li>
+<h3>AOP的优势</h3><ol><li><strong>关注点分离</strong>：将横切关注点从业务逻辑中分离</li>
 <li><strong>代码复用</strong>：避免重复的横切逻辑代码</li>
 <li><strong>灵活配置</strong>：通过切点表达式灵活地定义切面</li>
 <li><strong>增强功能</strong>：在不修改原有代码的情况下增强功能</li>
 </ol>
-<h3 id="最佳实践" tabindex="-1">最佳实践</h3>
-<ol>
-<li><strong>优先使用构造函数注入</strong></li>
+<h3>最佳实践</h3><ol><li><strong>优先使用构造函数注入</strong></li>
 <li><strong>合理使用注解，避免过度使用</strong></li>
 <li><strong>AOP切面保持简单，避免复杂逻辑</strong></li>
 <li><strong>合理定义Bean的作用域</strong></li>
 <li><strong>注意循环依赖问题</strong></li>
 <li><strong>性能敏感的代码慎用AOP</strong></li>
 </ol>
-<h3 id="学习建议" tabindex="-1">学习建议</h3>
-<ol>
-<li>从简单的例子开始，逐步理解IOC和AOP的概念</li>
+<h3>学习建议</h3><ol><li>从简单的例子开始，逐步理解IOC和AOP的概念</li>
 <li>阅读Spring源码，了解底层实现原理</li>
 <li>在实际项目中应用，积累经验</li>
 <li>学习设计模式，理解IOC和AOP的设计思想</li>
 </ol>
-<h2 id="参考资源" tabindex="-1">参考资源</h2>
-<ul>
-<li>Spring Framework官方文档</li>
+<h2>参考资源</h2><ul><ol><li>Spring Framework官方文档</li>
 <li>《Spring源码深度解析》</li>
 <li>《Spring实战》</li>
 <li>《Effective Java》</li>
-</ul>
-
+</ol></ul>
         </div>
       </article>
     </div>

@@ -39,20 +39,13 @@
         </div>
         
         <div class="post-content">
-          <h1>MyBatis 源码深度解析</h1>
-<h2 id="一、mybatis-简介" tabindex="-1">一、MyBatis 简介</h2>
-<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。</p>
-<h3 id="核心特点" tabindex="-1">核心特点</h3>
-<ul>
-<li>基于 SQL 映射的持久层框架</li>
+          <h1>MyBatis 源码深度解析</h1><h2>一、MyBatis 简介</h2><p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。</p><h3>核心特点</h3><ul><ol><li>基于 SQL 映射的持久层框架</li>
 <li>支持动态 SQL 语句</li>
 <li>支持缓存机制</li>
 <li>提供了与 Spring 的无缝集成</li>
 <li>灵活的映射配置（XML 或注解）</li>
-</ul>
-<h2 id="二、mybatis-核心架构" tabindex="-1">二、MyBatis 核心架构</h2>
-<p>MyBatis 的核心架构由以下几个层次组成：</p>
-<pre><code class="hljs">┌─────────────────────────────────────────┐
+</ol></ul>
+<h2>二、MyBatis 核心架构</h2><p>MyBatis 的核心架构由以下几个层次组成：</p><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────────────┐
 │         API Interface Layer             │
 │  (SqlSession, Mapper Interface)         │
 ├─────────────────────────────────────────┤
@@ -65,43 +58,38 @@
 │       Core Supporting Layer             │
 │  (Configuration, XMLConfigBuilder)      │
 └─────────────────────────────────────────┘
-</code></pre>
-<h3 id="2.1-核心组件" tabindex="-1">2.1 核心组件</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Configuration</span> {
-    <span class="hljs-keyword">protected</span> Environment environment;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> safeRowBoundsEnabled;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> safeResultHandlerEnabled;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> mapUnderscoreToCamelCase;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> aggressiveLazyLoading;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> multipleResultSetsEnabled;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> useGeneratedKeys;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> useColumnLabel;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> cacheEnabled;
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> callSettersOnNulls;
+</code></pre></p><h3>2.1 核心组件</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class Configuration {
+    protected Environment environment;
+    protected boolean safeRowBoundsEnabled;
+    protected boolean safeResultHandlerEnabled;
+    protected boolean mapUnderscoreToCamelCase;
+    protected boolean aggressiveLazyLoading;
+    protected boolean multipleResultSetsEnabled;
+    protected boolean useGeneratedKeys;
+    protected boolean useColumnLabel;
+    protected boolean cacheEnabled;
+    protected boolean callSettersOnNulls;
     
-    <span class="hljs-keyword">protected</span> Map&lt;String, MappedStatement&gt; mappedStatements = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StrictMap</span>&lt;MappedStatement&gt;(<span class="hljs-string">&quot;Mapped Statements collection&quot;</span>);
-    <span class="hljs-keyword">protected</span> Map&lt;String, Cache&gt; caches = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StrictMap</span>&lt;Cache&gt;(<span class="hljs-string">&quot;Caches collection&quot;</span>);
-    <span class="hljs-keyword">protected</span> Map&lt;String, ResultMap&gt; resultMaps = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StrictMap</span>&lt;ResultMap&gt;(<span class="hljs-string">&quot;Result Maps collection&quot;</span>);
-    <span class="hljs-keyword">protected</span> Map&lt;String, ParameterMap&gt; parameterMaps = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StrictMap</span>&lt;ParameterMap&gt;(<span class="hljs-string">&quot;Parameter Maps collection&quot;</span>);
-    <span class="hljs-keyword">protected</span> Map&lt;String, KeyGenerator&gt; keyGenerators = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StrictMap</span>&lt;KeyGenerator&gt;(<span class="hljs-string">&quot;Key Generators collection&quot;</span>);
+    protected Map&lt;String, MappedStatement&gt; mappedStatements = new StrictMap&lt;MappedStatement&gt;("Mapped Statements collection");
+    protected Map&lt;String, Cache&gt; caches = new StrictMap&lt;Cache&gt;("Caches collection");
+    protected Map&lt;String, ResultMap&gt; resultMaps = new StrictMap&lt;ResultMap&gt;("Result Maps collection");
+    protected Map&lt;String, ParameterMap&gt; parameterMaps = new StrictMap&lt;ParameterMap&gt;("Parameter Maps collection");
+    protected Map&lt;String, KeyGenerator&gt; keyGenerators = new StrictMap&lt;KeyGenerator&gt;("Key Generators collection");
     
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">TypeHandlerRegistry</span> <span class="hljs-variable">typeHandlerRegistry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeHandlerRegistry</span>();
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">TypeAliasRegistry</span> <span class="hljs-variable">typeAliasRegistry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeAliasRegistry</span>();
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">ObjectFactory</span> <span class="hljs-variable">objectFactory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultObjectFactory</span>();
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">ObjectWrapperFactory</span> <span class="hljs-variable">objectWrapperFactory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultObjectWrapperFactory</span>();
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">ReflectorFactory</span> <span class="hljs-variable">reflectorFactory</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultReflectorFactory</span>();
+    protected TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+    protected TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
+    protected ObjectFactory objectFactory = new DefaultObjectFactory();
+    protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+    protected ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
 }
-</code></pre>
-<h2 id="三、mybatis-初始化流程" tabindex="-1">三、MyBatis 初始化流程</h2>
-<h3 id="3.1-整体初始化流程图" tabindex="-1">3.1 整体初始化流程图</h3>
-<pre><code class="hljs">┌─────────────┐
+</code></pre></p><h2>三、MyBatis 初始化流程</h2><h3>3.1 整体初始化流程图</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────┐
 │  加载配置文件  │
-│ mybatis.<span class="hljs-keyword">xml</span> <span class="hljs-title">│
+│ mybatis.xml │
 └──────┬──────┘
        │
        ▼
 ┌──────────────────────┐
-│   SqlSessionFactory</span>  │
+│   SqlSessionFactory  │
 │    .Builder.build()  │
 └──────┬───────────────┘
        │
@@ -128,78 +116,71 @@
 │  DefaultSqlSession  │
 │   Factory          │
 └─────────────────────┘
-</code></pre>
-<h3 id="3.2-初始化源码分析" tabindex="-1">3.2 初始化源码分析</h3>
-<h4 id="3.2.1-sqlsessionfactory-构建" tabindex="-1">3.2.1 SqlSessionFactory 构建</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SqlSessionFactoryBuilder</span> {
+</code></pre></p><h3>3.2 初始化源码分析</h3><h4>3.2.1 SqlSessionFactory 构建</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class SqlSessionFactoryBuilder {
     
-    <span class="hljs-keyword">public</span> SqlSessionFactory <span class="hljs-title function_">build</span><span class="hljs-params">(InputStream inputStream)</span> {
-        <span class="hljs-keyword">return</span> build(inputStream, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+    public SqlSessionFactory build(InputStream inputStream) {
+        return build(inputStream, null, null);
     }
     
-    <span class="hljs-keyword">public</span> SqlSessionFactory <span class="hljs-title function_">build</span><span class="hljs-params">(InputStream inputStream, String environment, Properties properties)</span> {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">XMLConfigBuilder</span> <span class="hljs-variable">parser</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">XMLConfigBuilder</span>(inputStream, environment, properties);
-            <span class="hljs-keyword">return</span> build(parser.parse());
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">throw</span> ExceptionFactory.wrapException(<span class="hljs-string">&quot;Error building SqlSession.&quot;</span>, e);
-        } <span class="hljs-keyword">finally</span> {
+    public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
+        try {
+            XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
+            return build(parser.parse());
+        } catch (Exception e) {
+            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+        } finally {
             ErrorContext.instance().reset();
-            <span class="hljs-keyword">try</span> {
+            try {
                 inputStream.close();
-            } <span class="hljs-keyword">catch</span> (IOException e) {
-                <span class="hljs-comment">// ignore</span>
+            } catch (IOException e) {
+                // ignore
             }
         }
     }
     
-    <span class="hljs-keyword">public</span> SqlSessionFactory <span class="hljs-title function_">build</span><span class="hljs-params">(Configuration config)</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultSqlSessionFactory</span>(config);
+    public SqlSessionFactory build(Configuration config) {
+        return new DefaultSqlSessionFactory(config);
     }
 }
-</code></pre>
-<h4 id="3.2.2-xmlconfigbuilder-解析配置" tabindex="-1">3.2.2 XMLConfigBuilder 解析配置</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">XMLConfigBuilder</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseBuilder</span> {
+</code></pre></p><h4>3.2.2 XMLConfigBuilder 解析配置</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class XMLConfigBuilder extends BaseBuilder {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> parsed;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> XPathParser parser;
-    <span class="hljs-keyword">private</span> String environment;
+    private boolean parsed;
+    private final XPathParser parser;
+    private String environment;
     
-    <span class="hljs-keyword">public</span> Configuration <span class="hljs-title function_">parse</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">if</span> (parsed) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuilderException</span>(<span class="hljs-string">&quot;Each XMLConfigBuilder can only be used once.&quot;</span>);
+    public Configuration parse() {
+        if (parsed) {
+            throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
-        parsed = <span class="hljs-literal">true</span>;
-        parseConfiguration(parser.evalNode(<span class="hljs-string">&quot;/configuration&quot;</span>));
-        <span class="hljs-keyword">return</span> configuration;
+        parsed = true;
+        parseConfiguration(parser.evalNode("/configuration"));
+        return configuration;
     }
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parseConfiguration</span><span class="hljs-params">(XNode root)</span> {
-        <span class="hljs-keyword">try</span> {
-            propertiesElement(root.evalNode(<span class="hljs-string">&quot;properties&quot;</span>));
-            settingsAsProperties(root.evalNode(<span class="hljs-string">&quot;settings&quot;</span>));
-            typeAliasesElement(root.evalNode(<span class="hljs-string">&quot;typeAliases&quot;</span>));
-            pluginElement(root.evalNode(<span class="hljs-string">&quot;plugins&quot;</span>));
-            objectFactoryElement(root.evalNode(<span class="hljs-string">&quot;objectFactory&quot;</span>));
-            objectWrapperFactoryElement(root.evalNode(<span class="hljs-string">&quot;objectWrapperFactory&quot;</span>));
-            reflectorFactoryElement(root.evalNode(<span class="hljs-string">&quot;reflectorFactory&quot;</span>));
+    private void parseConfiguration(XNode root) {
+        try {
+            propertiesElement(root.evalNode("properties"));
+            settingsAsProperties(root.evalNode("settings"));
+            typeAliasesElement(root.evalNode("typeAliases"));
+            pluginElement(root.evalNode("plugins"));
+            objectFactoryElement(root.evalNode("objectFactory"));
+            objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+            reflectorFactoryElement(root.evalNode("reflectorFactory"));
             settingsElement(settings);
-            environmentsElement(root.evalNode(<span class="hljs-string">&quot;environments&quot;</span>));
-            databaseIdProviderElement(root.evalNode(<span class="hljs-string">&quot;databaseIdProvider&quot;</span>));
-            typeHandlerElement(root.evalNode(<span class="hljs-string">&quot;typeHandlers&quot;</span>));
-            mapperElement(root.evalNode(<span class="hljs-string">&quot;mappers&quot;</span>));
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuilderException</span>(<span class="hljs-string">&quot;Error parsing SQL Mapper Configuration. Cause: &quot;</span> + e, e);
+            environmentsElement(root.evalNode("environments"));
+            databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+            typeHandlerElement(root.evalNode("typeHandlers"));
+            mapperElement(root.evalNode("mappers"));
+        } catch (Exception e) {
+            throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
         }
     }
 }
-</code></pre>
-<h4 id="3.2.3-mapper-解析" tabindex="-1">3.2.3 Mapper 解析</h4>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">XMLMapperBuilder</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseBuilder</span> {
+</code></pre></p><h4>3.2.3 Mapper 解析</h4><p><pre class="language-java" data-lang="java"><code class="language-java">public class XMLMapperBuilder extends BaseBuilder {
     
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parse</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">if</span> (!configuration.isResourceLoaded(resource)) {
-            configurationElement(parser.evalNode(<span class="hljs-string">&quot;/mapper&quot;</span>));
+    public void parse() {
+        if (!configuration.isResourceLoaded(resource)) {
+            configurationElement(parser.evalNode("/mapper"));
             configuration.addLoadedResource(resource);
             bindMapperForNamespace();
         }
@@ -208,28 +189,25 @@
         parsePendingStatements();
     }
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">configurationElement</span><span class="hljs-params">(XNode context)</span> {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">String</span> <span class="hljs-variable">namespace</span> <span class="hljs-operator">=</span> context.getStringAttribute(<span class="hljs-string">&quot;namespace&quot;</span>);
-            <span class="hljs-keyword">if</span> (namespace == <span class="hljs-literal">null</span> || namespace.isEmpty()) {
-                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuilderException</span>(<span class="hljs-string">&quot;Mapper&#x27;s namespace cannot be empty&quot;</span>);
+    private void configurationElement(XNode context) {
+        try {
+            String namespace = context.getStringAttribute("namespace");
+            if (namespace == null || namespace.isEmpty()) {
+                throw new BuilderException("Mapper's namespace cannot be empty");
             }
             builderAssistant.setCurrentNamespace(namespace);
-            cacheRefElement(context.evalNode(<span class="hljs-string">&quot;cache-ref&quot;</span>));
-            cacheElement(context.evalNode(<span class="hljs-string">&quot;cache&quot;</span>));
-            parameterMapElement(context.evalNodes(<span class="hljs-string">&quot;/mapper/parameterMap&quot;</span>));
-            resultMapElements(context.evalNodes(<span class="hljs-string">&quot;/mapper/resultMap&quot;</span>));
-            sqlElement(context.evalNodes(<span class="hljs-string">&quot;/mapper/sql&quot;</span>));
-            buildStatementFromContext(context.evalNodes(<span class="hljs-string">&quot;select|insert|update|delete&quot;</span>));
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuilderException</span>(<span class="hljs-string">&quot;Error parsing Mapper XML. Cause: &quot;</span> + e, e);
+            cacheRefElement(context.evalNode("cache-ref"));
+            cacheElement(context.evalNode("cache"));
+            parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+            resultMapElements(context.evalNodes("/mapper/resultMap"));
+            sqlElement(context.evalNodes("/mapper/sql"));
+            buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
+        } catch (Exception e) {
+            throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
         }
     }
 }
-</code></pre>
-<h2 id="四、sql-执行核心流程" tabindex="-1">四、SQL 执行核心流程</h2>
-<h3 id="4.1-sql-执行完整流程图" tabindex="-1">4.1 SQL 执行完整流程图</h3>
-<pre><code class="hljs">┌──────────────┐
+</code></pre></p><h2>四、SQL 执行核心流程</h2><h3>4.1 SQL 执行完整流程图</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌──────────────┐
 │  获取 Mapper  │
 │   接口实例    │
 └──────┬───────┘
@@ -276,242 +254,226 @@
 │  Handler         │
 │  (结果集处理)     │
 └──────────────────┘
-</code></pre>
-<h3 id="4.2-mapper-动态代理机制" tabindex="-1">4.2 Mapper 动态代理机制</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MapperProxy</span>&lt;T&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">InvocationHandler</span> {
+</code></pre></p><h3>4.2 Mapper 动态代理机制</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class MapperProxy&lt;T&gt; implements InvocationHandler {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SqlSession sqlSession;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Class&lt;T&gt; mapperInterface;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;Method, MapperMethod&gt; methodCache;
+    private final SqlSession sqlSession;
+    private final Class&lt;T&gt; mapperInterface;
+    private final Map&lt;Method, MapperMethod&gt; methodCache;
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object proxy, Method method, Object[] args)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-keyword">if</span> (Object.class.equals(method.getDeclaringClass())) {
-                <span class="hljs-keyword">return</span> method.invoke(<span class="hljs-built_in">this</span>, args);
-            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (isDefaultMethod(method)) {
-                <span class="hljs-keyword">return</span> invokeDefaultMethod(proxy, method, args);
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        try {
+            if (Object.class.equals(method.getDeclaringClass())) {
+                return method.invoke(this, args);
+            } else if (isDefaultMethod(method)) {
+                return invokeDefaultMethod(proxy, method, args);
             }
-        } <span class="hljs-keyword">catch</span> (Throwable t) {
-            <span class="hljs-keyword">throw</span> ExceptionUtil.unwrapThrowable(t);
+        } catch (Throwable t) {
+            throw ExceptionUtil.unwrapThrowable(t);
         }
-        <span class="hljs-keyword">final</span> <span class="hljs-type">MapperMethod</span> <span class="hljs-variable">mapperMethod</span> <span class="hljs-operator">=</span> cachedMapperMethod(method);
-        <span class="hljs-keyword">return</span> mapperMethod.execute(sqlSession, args);
+        final MapperMethod mapperMethod = cachedMapperMethod(method);
+        return mapperMethod.execute(sqlSession, args);
     }
     
-    <span class="hljs-keyword">private</span> MapperMethod <span class="hljs-title function_">cachedMapperMethod</span><span class="hljs-params">(Method method)</span> {
-        <span class="hljs-type">MapperMethod</span> <span class="hljs-variable">mapperMethod</span> <span class="hljs-operator">=</span> methodCache.get(method);
-        <span class="hljs-keyword">if</span> (mapperMethod == <span class="hljs-literal">null</span>) {
-            mapperMethod = <span class="hljs-keyword">new</span> <span class="hljs-title class_">MapperMethod</span>(mapperInterface, method, sqlSession.getConfiguration());
+    private MapperMethod cachedMapperMethod(Method method) {
+        MapperMethod mapperMethod = methodCache.get(method);
+        if (mapperMethod == null) {
+            mapperMethod = new MapperMethod(mapperInterface, method, sqlSession.getConfiguration());
             methodCache.put(method, mapperMethod);
         }
-        <span class="hljs-keyword">return</span> mapperMethod;
+        return mapperMethod;
     }
 }
-</code></pre>
-<h3 id="4.3-mappermethod-执行逻辑" tabindex="-1">4.3 MapperMethod 执行逻辑</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MapperMethod</span> {
+</code></pre></p><h3>4.3 MapperMethod 执行逻辑</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class MapperMethod {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SqlCommand command;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> MethodSignature method;
+    private final SqlCommand command;
+    private final MethodSignature method;
     
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">execute</span><span class="hljs-params">(SqlSession sqlSession, Object[] args)</span> {
+    public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
-        <span class="hljs-keyword">switch</span> (command.getType()) {
-            <span class="hljs-keyword">case</span> INSERT: {
-                <span class="hljs-type">Object</span> <span class="hljs-variable">param</span> <span class="hljs-operator">=</span> method.convertArgsToSqlCommandParam(args);
+        switch (command.getType()) {
+            case INSERT: {
+                Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.insert(command.getName(), param));
-                <span class="hljs-keyword">break</span>;
+                break;
             }
-            <span class="hljs-keyword">case</span> UPDATE: {
-                <span class="hljs-type">Object</span> <span class="hljs-variable">param</span> <span class="hljs-operator">=</span> method.convertArgsToSqlCommandParam(args);
+            case UPDATE: {
+                Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.update(command.getName(), param));
-                <span class="hljs-keyword">break</span>;
+                break;
             }
-            <span class="hljs-keyword">case</span> DELETE: {
-                <span class="hljs-type">Object</span> <span class="hljs-variable">param</span> <span class="hljs-operator">=</span> method.convertArgsToSqlCommandParam(args);
+            case DELETE: {
+                Object param = method.convertArgsToSqlCommandParam(args);
                 result = rowCountResult(sqlSession.delete(command.getName(), param));
-                <span class="hljs-keyword">break</span>;
+                break;
             }
-            <span class="hljs-keyword">case</span> SELECT:
-                <span class="hljs-keyword">if</span> (method.returnsVoid() &amp;&amp; method.hasResultHandler()) {
+            case SELECT:
+                if (method.returnsVoid() &amp;&amp; method.hasResultHandler()) {
                     executeWithResultHandler(sqlSession, args);
-                    result = <span class="hljs-literal">null</span>;
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (method.returnsMany()) {
+                    result = null;
+                } else if (method.returnsMany()) {
                     result = executeForMany(sqlSession, args);
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (method.returnsMap()) {
+                } else if (method.returnsMap()) {
                     result = executeForMap(sqlSession, args);
-                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (method.returnsCursor()) {
+                } else if (method.returnsCursor()) {
                     result = executeForCursor(sqlSession, args);
-                } <span class="hljs-keyword">else</span> {
-                    <span class="hljs-type">Object</span> <span class="hljs-variable">param</span> <span class="hljs-operator">=</span> method.convertArgsToSqlCommandParam(args);
+                } else {
+                    Object param = method.convertArgsToSqlCommandParam(args);
                     result = sqlSession.selectOne(command.getName(), param);
                 }
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">case</span> FLUSH:
+                break;
+            case FLUSH:
                 result = sqlSession.flushStatements();
-                <span class="hljs-keyword">break</span>;
-            <span class="hljs-keyword">default</span>:
-                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BindingException</span>(<span class="hljs-string">&quot;Unknown execution method for: &quot;</span> + command.getName());
+                break;
+            default:
+                throw new BindingException("Unknown execution method for: " + command.getName());
         }
-        <span class="hljs-keyword">if</span> (result == <span class="hljs-literal">null</span> &amp;&amp; method.getReturnType().isPrimitive() &amp;&amp; !method.returnsVoid()) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BindingException</span>(<span class="hljs-string">&quot;Mapper method &#x27;&quot;</span> + command.getName() 
-                + <span class="hljs-string">&quot; attempted to return null from a method with a primitive return type (&quot;</span> + method.getReturnType() + <span class="hljs-string">&quot;).&quot;</span>);
+        if (result == null &amp;&amp; method.getReturnType().isPrimitive() &amp;&amp; !method.returnsVoid()) {
+            throw new BindingException("Mapper method '" + command.getName() 
+                + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
         }
-        <span class="hljs-keyword">return</span> result;
+        return result;
     }
 }
-</code></pre>
-<h3 id="4.4-sqlsession-执行流程" tabindex="-1">4.4 SqlSession 执行流程</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DefaultSqlSession</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SqlSession</span> {
+</code></pre></p><h3>4.4 SqlSession 执行流程</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class DefaultSqlSession implements SqlSession {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Configuration configuration;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Executor executor;
+    private final Configuration configuration;
+    private final Executor executor;
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">selectList</span><span class="hljs-params">(String statement, Object parameter, RowBounds rowBounds)</span> {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">MappedStatement</span> <span class="hljs-variable">ms</span> <span class="hljs-operator">=</span> configuration.getMappedStatement(statement);
-            <span class="hljs-keyword">return</span> executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">throw</span> ExceptionFactory.wrapException(<span class="hljs-string">&quot;Error querying database. Cause: &quot;</span> + e, e);
-        } <span class="hljs-keyword">finally</span> {
+    @Override
+    public &lt;E&gt; List&lt;E&gt; selectList(String statement, Object parameter, RowBounds rowBounds) {
+        try {
+            MappedStatement ms = configuration.getMappedStatement(statement);
+            return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
+        } catch (Exception e) {
+            throw ExceptionFactory.wrapException("Error querying database. Cause: " + e, e);
+        } finally {
             ErrorContext.instance().reset();
         }
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">selectOne</span><span class="hljs-params">(String statement, Object parameter)</span> {
-        List&lt;T&gt; list = <span class="hljs-built_in">this</span>.&lt;T&gt;selectList(statement, parameter);
-        <span class="hljs-keyword">if</span> (list.size() == <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">return</span> list.get(<span class="hljs-number">0</span>);
-        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (list.size() &gt; <span class="hljs-number">1</span>) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TooManyResultsException</span>(<span class="hljs-string">&quot;Expected one result (or null) to be returned by selectOne(), but found: &quot;</span> + list.size());
-        } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    @Override
+    public &lt;T&gt; T selectOne(String statement, Object parameter) {
+        List&lt;T&gt; list = this.&lt;T&gt;selectList(statement, parameter);
+        if (list.size() == 1) {
+            return list.get(0);
+        } else if (list.size() &gt; 1) {
+            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+        } else {
+            return null;
         }
     }
 }
-</code></pre>
-<h2 id="五、executor-执行器" tabindex="-1">五、Executor 执行器</h2>
-<h3 id="5.1-executor-继承体系" tabindex="-1">5.1 Executor 继承体系</h3>
-<pre><code class="hljs">        ┌──────────────┐
+</code></pre></p><h2>五、Executor 执行器</h2><h3>5.1 Executor 继承体系</h3><p><pre class="language-text" data-lang="text"><code class="language-text">        ┌──────────────┐
         │   Executor   │
         └──────┬───────┘
                │
        ┌───────┴────────┐
        │                │
 ┌──────▼──────┐  ┌─────▼──────────┐
-│ <span class="hljs-keyword">BaseExecutor│ </span> │ CachingExecutor│
+│ BaseExecutor│  │ CachingExecutor│
 └──────┬──────┘  └────────────────┘
        │
   ┌────┼────────┬────────┐
   │    │        │        │
 ┌─▼─┐┌─▼───┐┌──▼──┐┌───▼────┐
-│Simple│Reuse│<span class="hljs-keyword">Batch│Closed│
-</span>│Executor│Executor│Executor│Executor│
+│Simple│Reuse│Batch│Closed│
+│Executor│Executor│Executor│Executor│
 └───┘└─────┘└─────┘└────────┘
-</code></pre>
-<h3 id="5.2-baseexecutor-核心实现" tabindex="-1">5.2 BaseExecutor 核心实现</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BaseExecutor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Executor</span> {
+</code></pre></p><h3>5.2 BaseExecutor 核心实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public abstract class BaseExecutor implements Executor {
     
-    <span class="hljs-keyword">protected</span> Transaction transaction;
-    <span class="hljs-keyword">protected</span> Wrapper wrapper;
-    <span class="hljs-keyword">protected</span> ConcurrentLinkedQueue&lt;DeferredLoad&gt; deferredLoads;
-    <span class="hljs-keyword">protected</span> PerpetualCache localCache;
-    <span class="hljs-keyword">protected</span> PerpetualCache localOutputParameterCache;
-    <span class="hljs-keyword">protected</span> Configuration configuration;
+    protected Transaction transaction;
+    protected Wrapper wrapper;
+    protected ConcurrentLinkedQueue&lt;DeferredLoad&gt; deferredLoads;
+    protected PerpetualCache localCache;
+    protected PerpetualCache localOutputParameterCache;
+    protected Configuration configuration;
     
-    <span class="hljs-keyword">protected</span> List&lt;BatchResult&gt; batchResults = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">int</span> <span class="hljs-variable">queryStack</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+    protected List&lt;BatchResult&gt; batchResults = new ArrayList&lt;&gt;();
+    protected int queryStack = 0;
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">query</span><span class="hljs-params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler)</span> <span class="hljs-keyword">throws</span> SQLException {
-        <span class="hljs-type">BoundSql</span> <span class="hljs-variable">boundSql</span> <span class="hljs-operator">=</span> ms.getBoundSql(parameter);
-        <span class="hljs-type">CacheKey</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> createCacheKey(ms, parameter, rowBounds, boundSql);
-        <span class="hljs-keyword">return</span> query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+    @Override
+    public &lt;E&gt; List&lt;E&gt; query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
+        BoundSql boundSql = ms.getBoundSql(parameter);
+        CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
+        return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
     }
     
-    <span class="hljs-meta">@SuppressWarnings(&quot;unchecked&quot;)</span>
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">query</span><span class="hljs-params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span> <span class="hljs-keyword">throws</span> SQLException {
-        ErrorContext.instance().resource(ms.getResource()).activity(<span class="hljs-string">&quot;executing a query&quot;</span>).object(ms.getId());
-        <span class="hljs-keyword">if</span> (closed) {
-            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExecutorException</span>(<span class="hljs-string">&quot;Executor was closed.&quot;</span>);
+    @SuppressWarnings("unchecked")
+    @Override
+    public &lt;E&gt; List&lt;E&gt; query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
+        ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
+        if (closed) {
+            throw new ExecutorException("Executor was closed.");
         }
-        <span class="hljs-keyword">if</span> (queryStack == <span class="hljs-number">0</span> &amp;&amp; ms.isFlushCacheRequired()) {
+        if (queryStack == 0 &amp;&amp; ms.isFlushCacheRequired()) {
             clearLocalCache();
         }
         List&lt;E&gt; list;
-        <span class="hljs-keyword">try</span> {
+        try {
             queryStack++;
-            list = resultHandler == <span class="hljs-literal">null</span> ? (List&lt;E&gt;) localCache.getObject(key) : <span class="hljs-literal">null</span>;
-            <span class="hljs-keyword">if</span> (list != <span class="hljs-literal">null</span>) {
+            list = resultHandler == null ? (List&lt;E&gt;) localCache.getObject(key) : null;
+            if (list != null) {
                 handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
-            } <span class="hljs-keyword">else</span> {
+            } else {
                 list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
             }
-        } <span class="hljs-keyword">finally</span> {
+        } finally {
             queryStack--;
         }
-        <span class="hljs-keyword">if</span> (queryStack == <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">for</span> (DeferredLoad deferredLoad : deferredLoads) {
+        if (queryStack == 0) {
+            for (DeferredLoad deferredLoad : deferredLoads) {
                 deferredLoad.load();
             }
             deferredLoads.clear();
-            <span class="hljs-keyword">if</span> (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+            if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
                 clearLocalCache();
             }
         }
-        <span class="hljs-keyword">return</span> list;
+        return list;
     }
     
-    <span class="hljs-keyword">private</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">queryFromDatabase</span><span class="hljs-params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)</span> <span class="hljs-keyword">throws</span> SQLException {
+    private &lt;E&gt; List&lt;E&gt; queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
         List&lt;E&gt; list;
         localCache.putObject(key, EXECUTION_PLACEHOLDER);
-        <span class="hljs-keyword">try</span> {
+        try {
             list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
-        } <span class="hljs-keyword">finally</span> {
+        } finally {
             localCache.removeObject(key);
         }
         localCache.putObject(key, list);
-        <span class="hljs-keyword">if</span> (ms.getStatementType() == StatementType.CALLABLE) {
+        if (ms.getStatementType() == StatementType.CALLABLE) {
             localOutputParameterCache.putObject(key, parameter);
         }
-        <span class="hljs-keyword">return</span> list;
+        return list;
     }
     
-    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">abstract</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">doQuery</span><span class="hljs-params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)</span> <span class="hljs-keyword">throws</span> SQLException;
+    protected abstract &lt;E&gt; List&lt;E&gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException;
 }
-</code></pre>
-<h3 id="5.3-simpleexecutor-实现" tabindex="-1">5.3 SimpleExecutor 实现</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleExecutor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseExecutor</span> {
+</code></pre></p><h3>5.3 SimpleExecutor 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class SimpleExecutor extends BaseExecutor {
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">doQuery</span><span class="hljs-params">(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)</span> <span class="hljs-keyword">throws</span> SQLException {
-        <span class="hljs-type">Statement</span> <span class="hljs-variable">stmt</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-type">Configuration</span> <span class="hljs-variable">configuration</span> <span class="hljs-operator">=</span> ms.getConfiguration();
-            <span class="hljs-type">StatementHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+    @Override
+    public &lt;E&gt; List&lt;E&gt; doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+        Statement stmt = null;
+        try {
+            Configuration configuration = ms.getConfiguration();
+            StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
             stmt = prepareStatement(handler, ms.getStatementLog());
-            <span class="hljs-keyword">return</span> handler.&lt;E&gt;query(stmt, resultHandler);
-        } <span class="hljs-keyword">finally</span> {
+            return handler.&lt;E&gt;query(stmt, resultHandler);
+        } finally {
             closeStatement(stmt);
         }
     }
     
-    <span class="hljs-keyword">private</span> Statement <span class="hljs-title function_">prepareStatement</span><span class="hljs-params">(StatementHandler handler, Log statementLog)</span> <span class="hljs-keyword">throws</span> SQLException {
+    private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
         Statement stmt;
-        <span class="hljs-type">Connection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> getConnection(statementLog);
+        Connection connection = getConnection(statementLog);
         stmt = handler.prepare(connection, transaction.getTimeout());
         handler.parameterize(stmt);
-        <span class="hljs-keyword">return</span> stmt;
+        return stmt;
     }
 }
-</code></pre>
-<h2 id="六、statementhandler-语句处理器" tabindex="-1">六、StatementHandler 语句处理器</h2>
-<h3 id="6.1-statementhandler-继承体系" tabindex="-1">6.1 StatementHandler 继承体系</h3>
-<pre><code class="hljs">         ┌──────────────────┐
+</code></pre></p><h2>六、StatementHandler 语句处理器</h2><h3>6.1 StatementHandler 继承体系</h3><p><pre class="language-text" data-lang="text"><code class="language-text">         ┌──────────────────┐
          │ StatementHandler│
          └────────┬─────────┘
                   │
@@ -519,140 +481,134 @@
     │             │             │
 ┌───▼───┐   ┌───▼────┐   ┌───▼────┐
 │Base   │   │Callable│   │Routing │
-│<span class="hljs-keyword">Statement</span>│ │<span class="hljs-keyword">Handler</span> │ │<span class="hljs-keyword">Handler</span> │
-│<span class="hljs-keyword">Handler</span>│   └────────┘   └────────┘
+│Statement│ │Handler │ │Handler │
+│Handler│   └────────┘   └────────┘
 └───┬───┘
     │
 ┌───┼────────────┬──────────┐
 │   │            │          │
 ┌▼─┐┌▼──────┐┌────▼───┐┌────▼────┐
-│Simple│<span class="hljs-keyword">Prepare</span>│Callable│Callable│
-│<span class="hljs-keyword">Statement</span>│dStatement│<span class="hljs-keyword">Handler</span> │<span class="hljs-keyword">Handler</span> │
-│<span class="hljs-keyword">Handler</span>│<span class="hljs-keyword">Handler</span>│<span class="hljs-keyword">Handler</span> │<span class="hljs-keyword">Handler</span> │
+│Simple│Prepare│Callable│Callable│
+│Statement│dStatement│Handler │Handler │
+│Handler│Handler│Handler │Handler │
 └────┘└─────┘└────────┘└────────┘
-</code></pre>
-<h3 id="6.2-preparedstatementhandler-实现" tabindex="-1">6.2 PreparedStatementHandler 实现</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PreparedStatementHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseStatementHandler</span> {
+</code></pre></p><h3>6.2 PreparedStatementHandler 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class PreparedStatementHandler extends BaseStatementHandler {
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">query</span><span class="hljs-params">(Statement statement, ResultHandler resultHandler)</span> <span class="hljs-keyword">throws</span> SQLException {
-        <span class="hljs-type">PreparedStatement</span> <span class="hljs-variable">ps</span> <span class="hljs-operator">=</span> (PreparedStatement) statement;
+    @Override
+    public &lt;E&gt; List&lt;E&gt; query(Statement statement, ResultHandler resultHandler) throws SQLException {
+        PreparedStatement ps = (PreparedStatement) statement;
         ps.execute();
-        <span class="hljs-keyword">return</span> resultSetHandler.&lt;E&gt;handleResultSets(ps);
+        return resultSetHandler.&lt;E&gt;handleResultSets(ps);
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">protected</span> Statement <span class="hljs-title function_">instantiateStatement</span><span class="hljs-params">(Connection connection)</span> <span class="hljs-keyword">throws</span> SQLException {
-        <span class="hljs-type">String</span> <span class="hljs-variable">sql</span> <span class="hljs-operator">=</span> boundSql.getSql();
-        <span class="hljs-keyword">if</span> (mappedStatement.getKeyGenerator() <span class="hljs-keyword">instanceof</span> Jdbc3KeyGenerator) {
+    @Override
+    protected Statement instantiateStatement(Connection connection) throws SQLException {
+        String sql = boundSql.getSql();
+        if (mappedStatement.getKeyGenerator() instanceof Jdbc3KeyGenerator) {
             String[] keyColumnNames = mappedStatement.getKeyColumns();
-            <span class="hljs-keyword">if</span> (keyColumnNames == <span class="hljs-literal">null</span>) {
-                <span class="hljs-keyword">return</span> connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">return</span> connection.prepareStatement(sql, keyColumnNames);
+            if (keyColumnNames == null) {
+                return connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            } else {
+                return connection.prepareStatement(sql, keyColumnNames);
             }
-        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (mappedStatement.getResultSetType() != <span class="hljs-literal">null</span>) {
-            <span class="hljs-keyword">return</span> connection.prepareStatement(sql, mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
-        } <span class="hljs-keyword">else</span> {
-            <span class="hljs-keyword">return</span> connection.prepareStatement(sql);
+        } else if (mappedStatement.getResultSetType() != null) {
+            return connection.prepareStatement(sql, mappedStatement.getResultSetType().getValue(), ResultSet.CONCUR_READ_ONLY);
+        } else {
+            return connection.prepareStatement(sql);
         }
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">parameterize</span><span class="hljs-params">(Statement statement)</span> <span class="hljs-keyword">throws</span> SQLException {
+    @Override
+    public void parameterize(Statement statement) throws SQLException {
         parameterHandler.setParameters((PreparedStatement) statement);
     }
 }
-</code></pre>
-<h3 id="6.3-parameterhandler-参数处理器" tabindex="-1">6.3 ParameterHandler 参数处理器</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ParameterHandler</span> {
-    Object <span class="hljs-title function_">getParameterObject</span><span class="hljs-params">()</span>;
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">setParameters</span><span class="hljs-params">(PreparedStatement ps)</span> <span class="hljs-keyword">throws</span> SQLException;
+</code></pre></p><h3>6.3 ParameterHandler 参数处理器</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface ParameterHandler {
+    Object getParameterObject();
+    void setParameters(PreparedStatement ps) throws SQLException;
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DefaultParameterHandler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ParameterHandler</span> {
+public class DefaultParameterHandler implements ParameterHandler {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> TypeHandlerRegistry typeHandlerRegistry;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> MappedStatement mappedStatement;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Object parameterObject;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> BoundSql boundSql;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Configuration configuration;
+    private final TypeHandlerRegistry typeHandlerRegistry;
+    private final MappedStatement mappedStatement;
+    private final Object parameterObject;
+    private final BoundSql boundSql;
+    private final Configuration configuration;
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setParameters</span><span class="hljs-params">(PreparedStatement ps)</span> {
-        ErrorContext.instance().activity(<span class="hljs-string">&quot;setting parameters&quot;</span>).object(mappedStatement.getParameterMap().getId());
+    @Override
+    public void setParameters(PreparedStatement ps) {
+        ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List&lt;ParameterMapping&gt; parameterMappings = boundSql.getParameterMappings();
-        <span class="hljs-keyword">if</span> (parameterMappings != <span class="hljs-literal">null</span>) {
-            <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; parameterMappings.size(); i++) {
-                <span class="hljs-type">ParameterMapping</span> <span class="hljs-variable">parameterMapping</span> <span class="hljs-operator">=</span> parameterMappings.get(i);
-                <span class="hljs-keyword">if</span> (parameterMapping.getMode() != ParameterMode.OUT) {
+        if (parameterMappings != null) {
+            for (int i = 0; i &lt; parameterMappings.size(); i++) {
+                ParameterMapping parameterMapping = parameterMappings.get(i);
+                if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
-                    <span class="hljs-type">String</span> <span class="hljs-variable">propertyName</span> <span class="hljs-operator">=</span> parameterMapping.getProperty();
-                    <span class="hljs-keyword">if</span> (boundSql.hasAdditionalParameter(propertyName)) {
+                    String propertyName = parameterMapping.getProperty();
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
                         value = boundSql.getAdditionalParameter(propertyName);
-                    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (parameterObject == <span class="hljs-literal">null</span>) {
-                        value = <span class="hljs-literal">null</span>;
-                    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    } else if (parameterObject == null) {
+                        value = null;
+                    } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
                         value = parameterObject;
-                    } <span class="hljs-keyword">else</span> {
-                        <span class="hljs-type">MetaObject</span> <span class="hljs-variable">metaObject</span> <span class="hljs-operator">=</span> configuration.newMetaObject(parameterObject);
+                    } else {
+                        MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
-                    <span class="hljs-type">TypeHandler</span> <span class="hljs-variable">typeHandler</span> <span class="hljs-operator">=</span> parameterMapping.getTypeHandler();
-                    <span class="hljs-type">JdbcType</span> <span class="hljs-variable">jdbcType</span> <span class="hljs-operator">=</span> parameterMapping.getJdbcType();
-                    <span class="hljs-keyword">if</span> (value == <span class="hljs-literal">null</span> &amp;&amp; jdbcType == <span class="hljs-literal">null</span>) {
+                    TypeHandler typeHandler = parameterMapping.getTypeHandler();
+                    JdbcType jdbcType = parameterMapping.getJdbcType();
+                    if (value == null &amp;&amp; jdbcType == null) {
                         jdbcType = configuration.getJdbcTypeForNull();
                     }
-                    <span class="hljs-keyword">try</span> {
-                        typeHandler.setParameter(ps, i + <span class="hljs-number">1</span>, value, jdbcType);
-                    } <span class="hljs-keyword">catch</span> (TypeException e) {
-                        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeException</span>(<span class="hljs-string">&quot;Could not set parameters for mapping: &quot;</span> + parameterMapping + <span class="hljs-string">&quot;. Cause: &quot;</span> + e, e);
-                    } <span class="hljs-keyword">catch</span> (SQLException e) {
-                        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TypeException</span>(<span class="hljs-string">&quot;Could not set parameters for mapping: &quot;</span> + parameterMapping + <span class="hljs-string">&quot;. Cause: &quot;</span> + e, e);
+                    try {
+                        typeHandler.setParameter(ps, i + 1, value, jdbcType);
+                    } catch (TypeException e) {
+                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
+                    } catch (SQLException e) {
+                        throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
                     }
                 }
             }
         }
     }
 }
-</code></pre>
-<h3 id="6.4-resultsethandler-结果集处理器" tabindex="-1">6.4 ResultSetHandler 结果集处理器</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ResultSetHandler</span> {
-    &lt;E&gt; List&lt;E&gt; <span class="hljs-title function_">handleResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException;
-    &lt;E&gt; Cursor&lt;E&gt; <span class="hljs-title function_">handleCursorResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException;
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleOutputParameters</span><span class="hljs-params">(CallableStatement cs)</span> <span class="hljs-keyword">throws</span> SQLException;
+</code></pre></p><h3>6.4 ResultSetHandler 结果集处理器</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface ResultSetHandler {
+    &lt;E&gt; List&lt;E&gt; handleResultSets(Statement stmt) throws SQLException;
+    &lt;E&gt; Cursor&lt;E&gt; handleCursorResultSets(Statement stmt) throws SQLException;
+    void handleOutputParameters(CallableStatement cs) throws SQLException;
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DefaultResultSetHandler</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ResultSetHandler</span> {
+public class DefaultResultSetHandler implements ResultSetHandler {
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> List&lt;Object&gt; <span class="hljs-title function_">handleResultSets</span><span class="hljs-params">(Statement stmt)</span> <span class="hljs-keyword">throws</span> SQLException {
-        ErrorContext.instance().activity(<span class="hljs-string">&quot;handling results&quot;</span>).object(mappedStatement.getId());
+    @Override
+    public List&lt;Object&gt; handleResultSets(Statement stmt) throws SQLException {
+        ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
         
-        <span class="hljs-keyword">final</span> List&lt;Object&gt; multipleResults = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
-        <span class="hljs-type">int</span> <span class="hljs-variable">resultSetCount</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
-        <span class="hljs-type">ResultSetWrapper</span> <span class="hljs-variable">rsw</span> <span class="hljs-operator">=</span> getFirstResultSet(stmt);
+        final List&lt;Object&gt; multipleResults = new ArrayList&lt;&gt;();
+        int resultSetCount = 0;
+        ResultSetWrapper rsw = getFirstResultSet(stmt);
         
         List&lt;ResultMap&gt; resultMaps = mappedStatement.getResultMaps();
-        <span class="hljs-type">int</span> <span class="hljs-variable">resultMapCount</span> <span class="hljs-operator">=</span> resultMaps.size();
+        int resultMapCount = resultMaps.size();
         validateResultMapsCount(rsw, resultMapCount);
         
-        <span class="hljs-keyword">while</span> (rsw != <span class="hljs-literal">null</span> &amp;&amp; resultMapCount &gt; resultSetCount) {
-            <span class="hljs-type">ResultMap</span> <span class="hljs-variable">resultMap</span> <span class="hljs-operator">=</span> resultMaps.get(resultSetCount);
-            handleResultSet(rsw, resultMap, multipleResults, <span class="hljs-literal">null</span>);
+        while (rsw != null &amp;&amp; resultMapCount &gt; resultSetCount) {
+            ResultMap resultMap = resultMaps.get(resultSetCount);
+            handleResultSet(rsw, resultMap, multipleResults, null);
             rsw = getNextResultSet(stmt);
             cleanUpAfterHandlingResultSet();
             resultSetCount++;
         }
         
         String[] resultSets = mappedStatement.getResultSets();
-        <span class="hljs-keyword">if</span> (resultSets != <span class="hljs-literal">null</span>) {
-            <span class="hljs-keyword">while</span> (rsw != <span class="hljs-literal">null</span> &amp;&amp; resultSetCount &lt; resultSets.length) {
-                <span class="hljs-type">ResultMapping</span> <span class="hljs-variable">parentMapping</span> <span class="hljs-operator">=</span> nextResultMaps.get(resultSets[resultSetCount]);
-                <span class="hljs-keyword">if</span> (parentMapping != <span class="hljs-literal">null</span>) {
-                    <span class="hljs-type">String</span> <span class="hljs-variable">nestedResultMapId</span> <span class="hljs-operator">=</span> parentMapping.getNestedResultMapId();
-                    <span class="hljs-type">ResultMap</span> <span class="hljs-variable">resultMap</span> <span class="hljs-operator">=</span> configuration.getResultMap(nestedResultMapId);
-                    handleResultSet(rsw, resultMap, <span class="hljs-literal">null</span>, parentMapping);
+        if (resultSets != null) {
+            while (rsw != null &amp;&amp; resultSetCount &lt; resultSets.length) {
+                ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);
+                if (parentMapping != null) {
+                    String nestedResultMapId = parentMapping.getNestedResultMapId();
+                    ResultMap resultMap = configuration.getResultMap(nestedResultMapId);
+                    handleResultSet(rsw, resultMap, null, parentMapping);
                 }
                 rsw = getNextResultSet(stmt);
                 cleanUpAfterHandlingResultSet();
@@ -660,37 +616,34 @@
             }
         }
         
-        <span class="hljs-keyword">return</span> collapseSingleResultList(multipleResults);
+        return collapseSingleResultList(multipleResults);
     }
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">handleResultSet</span><span class="hljs-params">(ResultSetWrapper rsw, ResultMap resultMap, List&lt;Object&gt; multipleResults, ResultMapping parentMapping)</span> <span class="hljs-keyword">throws</span> SQLException {
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-keyword">if</span> (parentMapping != <span class="hljs-literal">null</span>) {
-                handleRowValuesForNestedResultMap(rsw, resultMap, <span class="hljs-literal">null</span>, parentMapping);
-            } <span class="hljs-keyword">else</span> {
-                <span class="hljs-keyword">if</span> (resultHandler == <span class="hljs-literal">null</span>) {
-                    handleRowValuesForDefaultResultMap(rsw, resultMap, multipleResults, <span class="hljs-literal">null</span>);
-                } <span class="hljs-keyword">else</span> {
-                    handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+    private void handleResultSet(ResultSetWrapper rsw, ResultMap resultMap, List&lt;Object&gt; multipleResults, ResultMapping parentMapping) throws SQLException {
+        try {
+            if (parentMapping != null) {
+                handleRowValuesForNestedResultMap(rsw, resultMap, null, parentMapping);
+            } else {
+                if (resultHandler == null) {
+                    handleRowValuesForDefaultResultMap(rsw, resultMap, multipleResults, null);
+                } else {
+                    handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, null, null);
                 }
             }
-        } <span class="hljs-keyword">finally</span> {
+        } finally {
             closeResultSet(rsw.getResultSet());
         }
     }
 }
-</code></pre>
-<h2 id="七、缓存机制" tabindex="-1">七、缓存机制</h2>
-<h3 id="7.1-mybatis-缓存结构" tabindex="-1">7.1 MyBatis 缓存结构</h3>
-<pre><code class="hljs">┌─────────────────────────────────┐
-│      <span class="hljs-keyword">Cache</span> 接口                 │
+</code></pre></p><h2>七、缓存机制</h2><h3>7.1 MyBatis 缓存结构</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌─────────────────────────────────┐
+│      Cache 接口                 │
 └────────────┬────────────────────┘
              │
     ┌────────┴────────┐
     │                 │
 ┌───▼─────┐    ┌────▼──────┐
 │Perpetual│    │  Blocking │
-│<span class="hljs-keyword">Cache</span>    │    │<span class="hljs-keyword">Cache</span>      │
+│Cache    │    │Cache      │
 └─────────┘    └───────────┘
     │
     │
@@ -700,59 +653,54 @@
 │  SoftCache / WeakCache     │
 │  LoggingCache / SyncCache  │
 └───────────────────────────┘
-</code></pre>
-<h3 id="7.2-缓存实现" tabindex="-1">7.2 缓存实现</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PerpetualCache</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Cache</span> {
+</code></pre></p><h3>7.2 缓存实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public class PerpetualCache implements Cache {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String id;
-    <span class="hljs-keyword">private</span> Map&lt;Object, Object&gt; cache = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+    private final String id;
+    private Map&lt;Object, Object&gt; cache = new HashMap&lt;&gt;();
     
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">PerpetualCache</span><span class="hljs-params">(String id)</span> {
-        <span class="hljs-built_in">this</span>.id = id;
+    public PerpetualCache(String id) {
+        this.id = id;
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getId</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> id;
+    @Override
+    public String getId() {
+        return id;
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getSize</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> cache.size();
+    @Override
+    public int getSize() {
+        return cache.size();
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">putObject</span><span class="hljs-params">(Object key, Object value)</span> {
+    @Override
+    public void putObject(Object key, Object value) {
         cache.put(key, value);
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getObject</span><span class="hljs-params">(Object key)</span> {
-        <span class="hljs-keyword">return</span> cache.get(key);
+    @Override
+    public Object getObject(Object key) {
+        return cache.get(key);
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">removeObject</span><span class="hljs-params">(Object key)</span> {
-        <span class="hljs-keyword">return</span> cache.remove(key);
+    @Override
+    public Object removeObject(Object key) {
+        return cache.remove(key);
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">clear</span><span class="hljs-params">()</span> {
+    @Override
+    public void clear() {
         cache.clear();
     }
 }
-</code></pre>
-<h2 id="八、动态-sql-机制" tabindex="-1">八、动态 SQL 机制</h2>
-<h3 id="8.1-动态-sql-执行流程" tabindex="-1">8.1 动态 SQL 执行流程</h3>
-<pre><code class="hljs">┌──────────────────┐
-│  解析 <span class="hljs-type">XML</span>        │
-│  动态 <span class="hljs-keyword">SQL</span> 标签   │
+</code></pre></p><h2>八、动态 SQL 机制</h2><h3>8.1 动态 SQL 执行流程</h3><p><pre class="language-text" data-lang="text"><code class="language-text">┌──────────────────┐
+│  解析 XML        │
+│  动态 SQL 标签   │
 └────────┬─────────┘
          │
          ▼
 ┌──────────────────┐
 │  SqlSource       │
-│  (<span class="hljs-keyword">SQL</span> 源)        │
+│  (SQL 源)        │
 └────────┬─────────┘
          │
          ▼
@@ -764,246 +712,178 @@
          ▼
 ┌──────────────────┐
 │  SqlNode         │
-│  (<span class="hljs-keyword">SQL</span> 节点)       │
+│  (SQL 节点)       │
 └────────┬─────────┘
          │
          ▼
 ┌──────────────────┐
 │  BoundSql        │
-│  (绑定 <span class="hljs-keyword">SQL</span>)      │
+│  (绑定 SQL)      │
 └──────────────────┘
-</code></pre>
-<h3 id="8.2-sqlnode-实现" tabindex="-1">8.2 SqlNode 实现</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">SqlNode</span> {
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">apply</span><span class="hljs-params">(DynamicContext context)</span>;
+</code></pre></p><h3>8.2 SqlNode 实现</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface SqlNode {
+    boolean apply(DynamicContext context);
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">IfSqlNode</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SqlNode</span> {
+public class IfSqlNode implements SqlNode {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ExpressionEvaluator evaluator;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String test;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SqlNode contents;
+    private final ExpressionEvaluator evaluator;
+    private final String test;
+    private final SqlNode contents;
     
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">IfSqlNode</span><span class="hljs-params">(SqlNode contents, String test)</span> {
-        <span class="hljs-built_in">this</span>.test = test;
-        <span class="hljs-built_in">this</span>.contents = contents;
-        <span class="hljs-built_in">this</span>.evaluator = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExpressionEvaluator</span>();
+    public IfSqlNode(SqlNode contents, String test) {
+        this.test = test;
+        this.contents = contents;
+        this.evaluator = new ExpressionEvaluator();
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">apply</span><span class="hljs-params">(DynamicContext context)</span> {
-        <span class="hljs-keyword">if</span> (evaluator.evaluateBoolean(test, context.getBindings())) {
+    @Override
+    public boolean apply(DynamicContext context) {
+        if (evaluator.evaluateBoolean(test, context.getBindings())) {
             contents.apply(context);
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            return true;
         }
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+        return false;
     }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ForEachSqlNode</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">SqlNode</span> {
+public class ForEachSqlNode implements SqlNode {
     
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">ITEM_PREFIX</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;__frch_&quot;</span>;
+    public static final String ITEM_PREFIX = "__frch_";
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> ExpressionEvaluator evaluator;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String collectionExpression;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> SqlNode contents;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String open;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String close;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String separator;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String item;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String index;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String itemName;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String indexName;
+    private final ExpressionEvaluator evaluator;
+    private final String collectionExpression;
+    private final SqlNode contents;
+    private final String open;
+    private final String close;
+    private final String separator;
+    private final String item;
+    private final String index;
+    private final String itemName;
+    private final String indexName;
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">apply</span><span class="hljs-params">(DynamicContext context)</span> {
+    @Override
+    public boolean apply(DynamicContext context) {
         Map&lt;String, Object&gt; bindings = context.getBindings();
-        <span class="hljs-keyword">final</span> Iterable&lt;?&gt; iterable = evaluator.evaluateIterable(collectionExpression, bindings);
-        <span class="hljs-keyword">if</span> (!iterable.iterator().hasNext()) {
-            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        final Iterable&lt;?&gt; iterable = evaluator.evaluateIterable(collectionExpression, bindings);
+        if (!iterable.iterator().hasNext()) {
+            return true;
         }
-        <span class="hljs-type">boolean</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;
+        boolean first = true;
         applyOpen(context);
-        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
-        <span class="hljs-keyword">for</span> (Object o : iterable) {
-            <span class="hljs-type">DynamicContext</span> <span class="hljs-variable">oldContext</span> <span class="hljs-operator">=</span> context;
-            <span class="hljs-keyword">if</span> (first) {
-                first = <span class="hljs-literal">false</span>;
-            } <span class="hljs-keyword">else</span> {
+        int i = 0;
+        for (Object o : iterable) {
+            DynamicContext oldContext = context;
+            if (first) {
+                first = false;
+            } else {
                 applySeparator(context);
             }
             applyItem(context, o, i);
-            contents.apply(<span class="hljs-keyword">new</span> <span class="hljs-title class_">FilteredDynamicContext</span>(oldContext, index, item, i));
+            contents.apply(new FilteredDynamicContext(oldContext, index, item, i));
             i++;
         }
         applyClose(context);
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        return true;
     }
 }
-</code></pre>
-<h2 id="九、插件机制" tabindex="-1">九、插件机制</h2>
-<h3 id="9.1-拦截器链" tabindex="-1">9.1 拦截器链</h3>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Interceptor</span> {
-    Object <span class="hljs-title function_">intercept</span><span class="hljs-params">(Invocation invocation)</span> <span class="hljs-keyword">throws</span> Throwable;
-    Object <span class="hljs-title function_">plugin</span><span class="hljs-params">(Object target)</span>;
-    <span class="hljs-keyword">void</span> <span class="hljs-title function_">setProperties</span><span class="hljs-params">(Properties properties)</span>;
+</code></pre></p><h2>九、插件机制</h2><h3>9.1 拦截器链</h3><p><pre class="language-java" data-lang="java"><code class="language-java">public interface Interceptor {
+    Object intercept(Invocation invocation) throws Throwable;
+    Object plugin(Object target);
+    void setProperties(Properties properties);
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InterceptorChain</span> {
+public class InterceptorChain {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> List&lt;Interceptor&gt; interceptors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+    private final List&lt;Interceptor&gt; interceptors = new ArrayList&lt;&gt;();
     
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">pluginAll</span><span class="hljs-params">(Object target)</span> {
-        <span class="hljs-keyword">for</span> (Interceptor interceptor : interceptors) {
+    public Object pluginAll(Object target) {
+        for (Interceptor interceptor : interceptors) {
             target = interceptor.plugin(target);
         }
-        <span class="hljs-keyword">return</span> target;
+        return target;
     }
     
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addInterceptor</span><span class="hljs-params">(Interceptor interceptor)</span> {
+    public void addInterceptor(Interceptor interceptor) {
         interceptors.add(interceptor);
     }
     
-    <span class="hljs-keyword">public</span> List&lt;Interceptor&gt; <span class="hljs-title function_">getInterceptors</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> Collections.unmodifiableList(interceptors);
+    public List&lt;Interceptor&gt; getInterceptors() {
+        return Collections.unmodifiableList(interceptors);
     }
 }
 
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Plugin</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">InvocationHandler</span> {
+public class Plugin implements InvocationHandler {
     
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Object target;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Interceptor interceptor;
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap;
+    private final Object target;
+    private final Interceptor interceptor;
+    private final Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap;
     
-    <span class="hljs-keyword">private</span> <span class="hljs-title function_">Plugin</span><span class="hljs-params">(Object target, Interceptor interceptor, Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap)</span> {
-        <span class="hljs-built_in">this</span>.target = target;
-        <span class="hljs-built_in">this</span>.interceptor = interceptor;
-        <span class="hljs-built_in">this</span>.signatureMap = signatureMap;
+    private Plugin(Object target, Interceptor interceptor, Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap) {
+        this.target = target;
+        this.interceptor = interceptor;
+        this.signatureMap = signatureMap;
     }
     
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">wrap</span><span class="hljs-params">(Object target, Interceptor interceptor)</span> {
+    public static Object wrap(Object target, Interceptor interceptor) {
         Map&lt;Class&lt;?&gt;, Set&lt;Method&gt;&gt; signatureMap = getSignatureMap(interceptor);
         Class&lt;?&gt; type = target.getClass();
         Class&lt;?&gt;[] interfaces = getAllInterfaces(type, signatureMap);
-        <span class="hljs-keyword">if</span> (interfaces.length &gt; <span class="hljs-number">0</span>) {
-            <span class="hljs-keyword">return</span> Proxy.newProxyInstance(
+        if (interfaces.length &gt; 0) {
+            return Proxy.newProxyInstance(
                 type.getClassLoader(),
                 interfaces,
-                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Plugin</span>(target, interceptor, signatureMap));
+                new Plugin(target, interceptor, signatureMap));
         }
-        <span class="hljs-keyword">return</span> target;
+        return target;
     }
     
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object proxy, Method method, Object[] args)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-keyword">try</span> {
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        try {
             Set&lt;Method&gt; methods = signatureMap.get(method.getDeclaringClass());
-            <span class="hljs-keyword">if</span> (methods != <span class="hljs-literal">null</span> &amp;&amp; methods.contains(method)) {
-                <span class="hljs-keyword">return</span> interceptor.intercept(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Invocation</span>(target, method, args));
+            if (methods != null &amp;&amp; methods.contains(method)) {
+                return interceptor.intercept(new Invocation(target, method, args));
             }
-            <span class="hljs-keyword">return</span> method.invoke(target, args);
-        } <span class="hljs-keyword">catch</span> (Exception e) {
-            <span class="hljs-keyword">throw</span> ExceptionUtil.unwrapThrowable(e);
+            return method.invoke(target, args);
+        } catch (Exception e) {
+            throw ExceptionUtil.unwrapThrowable(e);
         }
     }
 }
-</code></pre>
-<h2 id="十、总结" tabindex="-1">十、总结</h2>
-<h3 id="10.1-mybatis-核心流程总结" tabindex="-1">10.1 MyBatis 核心流程总结</h3>
-<ol>
-<li>
-<p><strong>初始化阶段</strong>：</p>
-<ul>
-<li>解析配置文件（XMLConfigBuilder）</li>
-<li>解析 Mapper 文件（XMLMapperBuilder）</li>
-<li>构建 Configuration 对象</li>
-<li>创建 SqlSessionFactory</li>
-</ul>
-</li>
-<li>
-<p><strong>执行阶段</strong>：</p>
-<ul>
-<li>通过 MapperProxy 动态代理执行方法</li>
-<li>MapperMethod 封装方法调用</li>
-<li>SqlSession 管理会话</li>
-<li>Executor 执行 SQL</li>
-<li>StatementHandler 处理语句</li>
-<li>ParameterHandler 设置参数</li>
-<li>ResultSetHandler 处理结果集</li>
-</ul>
-</li>
-<li>
-<p><strong>扩展机制</strong>：</p>
-<ul>
-<li>插件机制（Interceptor + Plugin）</li>
-<li>缓存机制（Cache 接口 + 装饰器）</li>
-<li>动态 SQL（SqlNode + DynamicContext）</li>
-</ul>
-</li>
-</ol>
-<h3 id="10.2-设计模式总结" tabindex="-1">10.2 设计模式总结</h3>
-<table>
-<thead>
-<tr>
-<th>设计模式</th>
-<th>应用场景</th>
-<th>典型类</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>工厂模式</td>
-<td>创建 SqlSessionFactory</td>
-<td>SqlSessionFactoryBuilder</td>
-</tr>
-<tr>
-<td>建造者模式</td>
-<td>构建复杂对象</td>
-<td>XMLConfigBuilder, XMLMapperBuilder</td>
-</tr>
-<tr>
-<td>代理模式</td>
-<td>Mapper 接口代理</td>
-<td>MapperProxy</td>
-</tr>
-<tr>
-<td>策略模式</td>
-<td>不同的执行器</td>
-<td>SimpleExecutor, ReuseExecutor, BatchExecutor</td>
-</tr>
-<tr>
-<td>装饰器模式</td>
-<td>缓存功能增强</td>
-<td>LruCache, FifoCache</td>
-</tr>
-<tr>
-<td>模板方法模式</td>
-<td>执行器基类</td>
-<td>BaseExecutor</td>
-</tr>
-<tr>
-<td>责任链模式</td>
-<td>插件拦截</td>
-<td>InterceptorChain</td>
-</tr>
-</tbody>
-</table>
-<h3 id="10.3-学习建议" tabindex="-1">10.3 学习建议</h3>
-<ol>
-<li>从简单示例入手，理解基本用法</li>
+</code></pre></p><h2>十、总结</h2><h3>10.1 MyBatis 核心流程总结</h3><ol><li><strong>初始化阶段</strong>：</li>
+</ol>   - 解析配置文件（XMLConfigBuilder）
+   - 解析 Mapper 文件（XMLMapperBuilder）
+   - 构建 Configuration 对象
+   - 创建 SqlSessionFactory</p><ol><li><strong>执行阶段</strong>：</li>
+</ol>   - 通过 MapperProxy 动态代理执行方法
+   - MapperMethod 封装方法调用
+   - SqlSession 管理会话
+   - Executor 执行 SQL
+   - StatementHandler 处理语句
+   - ParameterHandler 设置参数
+   - ResultSetHandler 处理结果集</p><ol><li><strong>扩展机制</strong>：</li>
+</ol>   - 插件机制（Interceptor + Plugin）
+   - 缓存机制（Cache 接口 + 装饰器）
+   - 动态 SQL（SqlNode + DynamicContext）</p><h3>10.2 设计模式总结</h3><p>| 设计模式 | 应用场景 | 典型类 |
+|---------|---------|--------|
+| 工厂模式 | 创建 SqlSessionFactory | SqlSessionFactoryBuilder |
+| 建造者模式 | 构建复杂对象 | XMLConfigBuilder, XMLMapperBuilder |
+| 代理模式 | Mapper 接口代理 | MapperProxy |
+| 策略模式 | 不同的执行器 | SimpleExecutor, ReuseExecutor, BatchExecutor |
+| 装饰器模式 | 缓存功能增强 | LruCache, FifoCache |
+| 模板方法模式 | 执行器基类 | BaseExecutor |
+| 责任链模式 | 插件拦截 | InterceptorChain |</p><h3>10.3 学习建议</h3><ol><li>从简单示例入手，理解基本用法</li>
 <li>重点理解初始化流程和执行流程</li>
 <li>深入研究动态 SQL 的实现机制</li>
 <li>学习插件机制和缓存机制</li>
 <li>结合源码调试，加深理解</li>
 </ol>
-<p>通过本文的学习，你应该能够：</p>
-<ul>
-<li>理解 MyBatis 的整体架构和核心组件</li>
+通过本文的学习，你应该能够：
+<ul><ol><li>理解 MyBatis 的整体架构和核心组件</li>
 <li>掌握 MyBatis 的初始化和执行流程</li>
 <li>了解动态 SQL、缓存、插件等核心机制的实现原理</li>
 <li>具备阅读和深入 MyBatis 源码的能力</li>
-</ul>
-
+</ol></ul>
         </div>
       </article>
     </div>

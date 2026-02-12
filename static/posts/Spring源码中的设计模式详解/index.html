@@ -39,531 +39,434 @@
         </div>
         
         <div class="post-content">
-          <h1>Spring源码中的设计模式详解</h1>
-<p>Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。</p>
-<h2 id="什么是设计模式？" tabindex="-1">什么是设计模式？</h2>
-<p>设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。</p>
-<h2 id="1.-代理模式（proxy-pattern）" tabindex="-1">1. 代理模式（Proxy Pattern）</h2>
-<h3 id="什么是代理模式？" tabindex="-1">什么是代理模式？</h3>
-<p>代理模式为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p>
-<h3 id="spring中的应用" tabindex="-1">Spring中的应用</h3>
-<p>Spring中最经典的代理模式应用就是**AOP（面向切面编程）**的实现。</p>
-<h4 id="动态代理示例" tabindex="-1">动态代理示例</h4>
-<p>Spring AOP主要通过两种方式实现动态代理：</p>
-<ol>
-<li><strong>JDK动态代理</strong>（基于接口）</li>
+          <h1>Spring源码中的设计模式详解</h1><p>Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。</p><h2>什么是设计模式？</h2><p>设计模式是一套被反复使用、多数人知晓的、经过分类编目的、代码设计经验的总结。使用设计模式是为了可重用代码、让代码更容易被他人理解、保证代码可靠性。</p><h2>1. 代理模式（Proxy Pattern）</h2><h3>什么是代理模式？</h3><p>代理模式为其他对象提供一种代理以控制对这个对象的访问。在某些情况下，一个对象不适合或者不能直接引用另一个对象，而代理对象可以在客户端和目标对象之间起到中介的作用。</p><h3>Spring中的应用</h3><p>Spring中最经典的代理模式应用就是<strong>AOP（面向切面编程）</strong>的实现。</p><h4>动态代理示例</h4><p>Spring AOP主要通过两种方式实现动态代理：</p><ol><li><strong>JDK动态代理</strong>（基于接口）</li>
 <li><strong>CGLIB代理</strong>（基于类）</li>
 </ol>
-<p>Spring源码中的关键类：</p>
-<ul>
-<li><code>org.springframework.aop.framework.JdkDynamicAopProxy</code></li>
+Spring源码中的关键类：
+<ul><ol><li><code>org.springframework.aop.framework.JdkDynamicAopProxy</code></li>
 <li><code>org.springframework.aop.framework.CglibAopProxy</code></li>
-</ul>
-<pre><code class="hljs language-java"><span class="hljs-comment">// Spring源码中的Jdk动态代理实现片段</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">JdkDynamicAopProxy</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">AopProxy</span>, InvocationHandler, Serializable {
+</ol></ul>
+<pre class="language-java" data-lang="java"><code class="language-java">// Spring源码中的Jdk动态代理实现片段
+public class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializable {
 
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> AdvisedSupport advised;
+    private final AdvisedSupport advised;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">JdkDynamicAopProxy</span><span class="hljs-params">(AdvisedSupport config)</span> {
-        <span class="hljs-built_in">this</span>.advised = config;
+    public JdkDynamicAopProxy(AdvisedSupport config) {
+        this.advised = config;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getProxy</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> getProxy(ClassUtils.getDefaultClassLoader());
+    @Override
+    public Object getProxy() {
+        return getProxy(ClassUtils.getDefaultClassLoader());
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getProxy</span><span class="hljs-params">(ClassLoader classLoader)</span> {
-        <span class="hljs-keyword">return</span> Proxy.newProxyInstance(classLoader, 
-            <span class="hljs-built_in">this</span>.advised.getTargetClass().getInterfaces(), 
-            <span class="hljs-built_in">this</span>);
+    @Override
+    public Object getProxy(ClassLoader classLoader) {
+        return Proxy.newProxyInstance(classLoader, 
+            this.advised.getTargetClass().getInterfaces(), 
+            this);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object proxy, Method method, Object[] args)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-type">MethodInvocation</span> <span class="hljs-variable">invocation</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
-        <span class="hljs-type">Object</span> <span class="hljs-variable">oldProxy</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
-        <span class="hljs-type">boolean</span> <span class="hljs-variable">setProxyContext</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        MethodInvocation invocation = null;
+        Object oldProxy = null;
+        boolean setProxyContext = false;
 
-        <span class="hljs-type">TargetSource</span> <span class="hljs-variable">targetSource</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.advised.targetSource;
-        Class&lt;?&gt; targetClass = <span class="hljs-literal">null</span>;
-        <span class="hljs-type">Object</span> <span class="hljs-variable">target</span> <span class="hljs-operator">=</span> <span class="hljs-literal">null</span>;
+        TargetSource targetSource = this.advised.targetSource;
+        Class&lt;?&gt; targetClass = null;
+        Object target = null;
 
-        <span class="hljs-keyword">try</span> {
-            <span class="hljs-comment">// 执行目标方法</span>
-            <span class="hljs-keyword">return</span> retVal;
-        } <span class="hljs-keyword">finally</span> {
-            <span class="hljs-comment">// 清理工作</span>
+        try {
+            // 执行目标方法
+            return retVal;
+        } finally {
+            // 清理工作
         }
     }
 }
-</code></pre>
-<h4 id="实际应用场景" tabindex="-1">实际应用场景</h4>
-<pre><code class="hljs language-java"><span class="hljs-meta">@Service</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UserServiceImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">UserService</span> {
+</code></pre></p><h4>实际应用场景</h4><p><pre class="language-java" data-lang="java"><code class="language-java">@Service
+public class UserServiceImpl implements UserService {
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">saveUser</span><span class="hljs-params">(User user)</span> {
-        System.out.println(<span class="hljs-string">&quot;保存用户: &quot;</span> + user.getName());
+    @Override
+    public void saveUser(User user) {
+        System.out.println("保存用户: " + user.getName());
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">deleteUser</span><span class="hljs-params">(Long userId)</span> {
-        System.out.println(<span class="hljs-string">&quot;删除用户: &quot;</span> + userId);
+    @Override
+    public void deleteUser(Long userId) {
+        System.out.println("删除用户: " + userId);
     }
 }
 
-<span class="hljs-comment">// 使用Spring AOP添加日志切面</span>
-<span class="hljs-meta">@Aspect</span>
-<span class="hljs-meta">@Component</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">LoggingAspect</span> {
+// 使用Spring AOP添加日志切面
+@Aspect
+@Component
+public class LoggingAspect {
 
-    <span class="hljs-meta">@Before(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logBefore</span><span class="hljs-params">(JoinPoint joinPoint)</span> {
-        System.out.println(<span class="hljs-string">&quot;执行方法: &quot;</span> + joinPoint.getSignature().getName());
+    @Before("execution(* com.example.service.*.*(..))")
+    public void logBefore(JoinPoint joinPoint) {
+        System.out.println("执行方法: " + joinPoint.getSignature().getName());
     }
 
-    <span class="hljs-meta">@After(&quot;execution(* com.example.service.*.*(..))&quot;)</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logAfter</span><span class="hljs-params">(JoinPoint joinPoint)</span> {
-        System.out.println(<span class="hljs-string">&quot;方法执行完毕: &quot;</span> + joinPoint.getSignature().getName());
+    @After("execution(* com.example.service.*.*(..))")
+    public void logAfter(JoinPoint joinPoint) {
+        System.out.println("方法执行完毕: " + joinPoint.getSignature().getName());
     }
 }
-</code></pre>
-<h3 id="代理模式的优势" tabindex="-1">代理模式的优势</h3>
-<ol>
-<li><strong>职责清晰</strong>：真实角色只需关注业务逻辑</li>
+</code></pre></p><h3>代理模式的优势</h3><ol><li><strong>职责清晰</strong>：真实角色只需关注业务逻辑</li>
 <li><strong>高扩展性</strong>：代理对象可以在不修改真实对象的情况下增加额外功能</li>
 <li><strong>智能化</strong>：动态代理可以在运行时决定调用哪个对象</li>
 </ol>
-<h2 id="2.-适配器模式（adapter-pattern）" tabindex="-1">2. 适配器模式（Adapter Pattern）</h2>
-<h3 id="什么是适配器模式？" tabindex="-1">什么是适配器模式？</h3>
-<p>适配器模式将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</p>
-<h3 id="spring中的应用-1" tabindex="-1">Spring中的应用</h3>
-<p>Spring中适配器模式的应用非常广泛，主要体现在以下几个方面：</p>
-<h4 id="2.1-spring-mvc中的适配器" tabindex="-1">2.1 Spring MVC中的适配器</h4>
-<p>在Spring MVC中，不同的Controller类型（如注解@Controller、实现Controller接口、HttpRequestHandler等）通过适配器模式统一处理。</p>
-<p>关键类：</p>
-<ul>
-<li><code>org.springframework.web.servlet.HandlerAdapter</code></li>
+<h2>2. 适配器模式（Adapter Pattern）</h2><h3>什么是适配器模式？</h3><p>适配器模式将一个类的接口转换成客户希望的另外一个接口，使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</p><h3>Spring中的应用</h3><p>Spring中适配器模式的应用非常广泛，主要体现在以下几个方面：</p><h4>2.1 Spring MVC中的适配器</h4><p>在Spring MVC中，不同的Controller类型（如注解@Controller、实现Controller接口、HttpRequestHandler等）通过适配器模式统一处理。</p><p>关键类：
+<ul><ol><li><code>org.springframework.web.servlet.HandlerAdapter</code></li>
 <li><code>org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter</code></li>
 <li><code>org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter</code></li>
-</ul>
-<pre><code class="hljs language-java"><span class="hljs-comment">// HandlerAdapter接口定义</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">HandlerAdapter</span> {
+</ol></ul>
+<pre class="language-java" data-lang="java"><code class="language-java">// HandlerAdapter接口定义
+public interface HandlerAdapter {
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">supports</span><span class="hljs-params">(Object handler)</span>;
+    boolean supports(Object handler);
 
-    ModelAndView <span class="hljs-title function_">handle</span><span class="hljs-params">(HttpServletRequest request, 
+    ModelAndView handle(HttpServletRequest request, 
                         HttpServletResponse response, 
-                        Object handler)</span> <span class="hljs-keyword">throws</span> Exception;
+                        Object handler) throws Exception;
 
-    <span class="hljs-type">long</span> <span class="hljs-title function_">getLastModified</span><span class="hljs-params">(HttpServletRequest request, Object handler)</span>;
+    long getLastModified(HttpServletRequest request, Object handler);
 }
 
-<span class="hljs-comment">// RequestMappingHandlerAdapter实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RequestMappingHandlerAdapter</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractHandlerMethodAdapter</span>
-        <span class="hljs-keyword">implements</span> <span class="hljs-title class_">BeanFactoryAware</span>, InitializingBean {
+// RequestMappingHandlerAdapter实现
+public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
+        implements BeanFactoryAware, InitializingBean {
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">supportsInternal</span><span class="hljs-params">(HandlerMethod handlerMethod)</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    @Override
+    protected boolean supportsInternal(HandlerMethod handlerMethod) {
+        return true;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">protected</span> ModelAndView <span class="hljs-title function_">handleInternal</span><span class="hljs-params">(HttpServletRequest request,
+    @Override
+    protected ModelAndView handleInternal(HttpServletRequest request,
                                           HttpServletResponse response,
-                                          HandlerMethod handlerMethod)</span> <span class="hljs-keyword">throws</span> Exception {
-        <span class="hljs-comment">// 处理注解类型的Controller</span>
-        <span class="hljs-keyword">return</span> invokeHandlerMethod(request, response, handlerMethod);
+                                          HandlerMethod handlerMethod) throws Exception {
+        // 处理注解类型的Controller
+        return invokeHandlerMethod(request, response, handlerMethod);
     }
 }
 
-<span class="hljs-comment">// HttpRequestHandlerAdapter实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpRequestHandlerAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">HandlerAdapter</span> {
+// HttpRequestHandlerAdapter实现
+public class HttpRequestHandlerAdapter implements HandlerAdapter {
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">supports</span><span class="hljs-params">(Object handler)</span> {
-        <span class="hljs-keyword">return</span> (handler <span class="hljs-keyword">instanceof</span> HttpRequestHandler);
+    @Override
+    public boolean supports(Object handler) {
+        return (handler instanceof HttpRequestHandler);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> ModelAndView <span class="hljs-title function_">handle</span><span class="hljs-params">(HttpServletRequest request,
+    @Override
+    public ModelAndView handle(HttpServletRequest request,
                                HttpServletResponse response,
-                               Object handler)</span> <span class="hljs-keyword">throws</span> Exception {
+                               Object handler) throws Exception {
         ((HttpRequestHandler) handler).handleRequest(request, response);
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+        return null;
     }
 }
-</code></pre>
-<h4 id="2.2-spring-aop中的适配器" tabindex="-1">2.2 Spring AOP中的适配器</h4>
-<p>Spring AOP通过适配器模式将不同的Advice（通知）类型适配到统一的拦截器链中。</p>
-<p>关键类：</p>
-<ul>
-<li><code>org.springframework.aop.framework.adapter.AdvisorAdapter</code></li>
+</code></pre></p><h4>2.2 Spring AOP中的适配器</h4><p>Spring AOP通过适配器模式将不同的Advice（通知）类型适配到统一的拦截器链中。</p><p>关键类：
+<ul><ol><li><code>org.springframework.aop.framework.adapter.AdvisorAdapter</code></li>
 <li><code>org.springframework.aop.framework.adapter.MethodBeforeAdviceAdapter</code></li>
 <li><code>org.springframework.aop.framework.adapter.AfterReturningAdviceAdapter</code></li>
-</ul>
-<pre><code class="hljs language-java"><span class="hljs-comment">// AdvisorAdapter接口</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">AdvisorAdapter</span> {
+</ol></ul>
+<pre class="language-java" data-lang="java"><code class="language-java">// AdvisorAdapter接口
+public interface AdvisorAdapter {
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">supportsAdvice</span><span class="hljs-params">(Advice advice)</span>;
+    boolean supportsAdvice(Advice advice);
 
-    MethodInterceptor <span class="hljs-title function_">getInterceptor</span><span class="hljs-params">(Advisor advisor)</span>;
+    MethodInterceptor getInterceptor(Advisor advisor);
 }
 
-<span class="hljs-comment">// MethodBeforeAdviceAdapter实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MethodBeforeAdviceAdapter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">AdvisorAdapter</span>, Serializable {
+// MethodBeforeAdviceAdapter实现
+public class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">supportsAdvice</span><span class="hljs-params">(Advice advice)</span> {
-        <span class="hljs-keyword">return</span> (advice <span class="hljs-keyword">instanceof</span> MethodBeforeAdvice);
+    @Override
+    public boolean supportsAdvice(Advice advice) {
+        return (advice instanceof MethodBeforeAdvice);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> MethodInterceptor <span class="hljs-title function_">getInterceptor</span><span class="hljs-params">(Advisor advisor)</span> {
-        <span class="hljs-type">MethodBeforeAdvice</span> <span class="hljs-variable">advice</span> <span class="hljs-operator">=</span> (MethodBeforeAdvice) advisor.getAdvice();
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MethodBeforeAdviceInterceptor</span>(advice);
-    }
-}
-
-<span class="hljs-comment">// 适配器实现</span>
-<span class="hljs-keyword">class</span> <span class="hljs-title class_">MethodBeforeAdviceInterceptor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MethodInterceptor</span>, Serializable {
-
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> MethodBeforeAdvice advice;
-
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">MethodBeforeAdviceInterceptor</span><span class="hljs-params">(MethodBeforeAdvice advice)</span> {
-        <span class="hljs-built_in">this</span>.advice = advice;
-    }
-
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(MethodInvocation mi)</span> <span class="hljs-keyword">throws</span> Throwable {
-        <span class="hljs-comment">// 在目标方法执行前执行</span>
-        <span class="hljs-built_in">this</span>.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis());
-        <span class="hljs-keyword">return</span> mi.proceed();
+    @Override
+    public MethodInterceptor getInterceptor(Advisor advisor) {
+        MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+        return new MethodBeforeAdviceInterceptor(advice);
     }
 }
-</code></pre>
-<h3 id="适配器模式的优势" tabindex="-1">适配器模式的优势</h3>
-<ol>
-<li><strong>解耦</strong>：将接口转换逻辑独立出来，不修改原有代码</li>
+
+// 适配器实现
+class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable {
+
+    private final MethodBeforeAdvice advice;
+
+    public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) {
+        this.advice = advice;
+    }
+
+    @Override
+    public Object invoke(MethodInvocation mi) throws Throwable {
+        // 在目标方法执行前执行
+        this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis());
+        return mi.proceed();
+    }
+}
+</code></pre></p><h3>适配器模式的优势</h3><ol><li><strong>解耦</strong>：将接口转换逻辑独立出来，不修改原有代码</li>
 <li><strong>复用</strong>：提高了类的复用性</li>
 <li><strong>灵活</strong>：可以灵活地添加新的适配器</li>
 </ol>
-<h2 id="3.-装饰器模式（decorator-pattern）" tabindex="-1">3. 装饰器模式（Decorator Pattern）</h2>
-<h3 id="什么是装饰器模式？" tabindex="-1">什么是装饰器模式？</h3>
-<p>装饰器模式动态地给一个对象添加一些额外的职责。就增加功能来说，装饰器模式相比生成子类更为灵活。</p>
-<h3 id="spring中的应用-2" tabindex="-1">Spring中的应用</h3>
-<p>Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源处理中。</p>
-<h4 id="3.1-beanwrapper的装饰" tabindex="-1">3.1 BeanWrapper的装饰</h4>
-<p><code>BeanWrapper</code>是Spring中用于操作Bean属性的强大工具，它通过装饰器模式增强了基本的属性访问功能。</p>
-<p>关键类：</p>
-<ul>
-<li><code>org.springframework.beans.BeanWrapper</code></li>
+<h2>3. 装饰器模式（Decorator Pattern）</h2><h3>什么是装饰器模式？</h3><p>装饰器模式动态地给一个对象添加一些额外的职责。就增加功能来说，装饰器模式相比生成子类更为灵活。</p><h3>Spring中的应用</h3><p>Spring中装饰器模式的典型应用是在Bean的生命周期管理和资源处理中。</p><h4>3.1 BeanWrapper的装饰</h4><p><code>BeanWrapper</code>是Spring中用于操作Bean属性的强大工具，它通过装饰器模式增强了基本的属性访问功能。</p><p>关键类：
+<ul><ol><li><code>org.springframework.beans.BeanWrapper</code></li>
 <li><code>org.springframework.beans.BeanWrapperImpl</code></li>
-</ul>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BeanWrapperImpl</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">BeanWrapper</span> {
+</ol></ul>
+<pre class="language-java" data-lang="java"><code class="language-java">public class BeanWrapperImpl implements BeanWrapper {
 
-    <span class="hljs-keyword">private</span> Object wrappedObject;
-    <span class="hljs-keyword">private</span> BeanWrapper nestedBeanWrapper;
+    private Object wrappedObject;
+    private BeanWrapper nestedBeanWrapper;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">BeanWrapperImpl</span><span class="hljs-params">(Object wrappedObject)</span> {
-        <span class="hljs-built_in">this</span>.wrappedObject = wrappedObject;
+    public BeanWrapperImpl(Object wrappedObject) {
+        this.wrappedObject = wrappedObject;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getWrappedInstance</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.wrappedObject;
+    @Override
+    public Object getWrappedInstance() {
+        return this.wrappedObject;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Class&lt;?&gt; getWrappedClass() {
-        <span class="hljs-keyword">return</span> (<span class="hljs-built_in">this</span>.wrappedObject != <span class="hljs-literal">null</span> ? <span class="hljs-built_in">this</span>.wrappedObject.getClass() : <span class="hljs-literal">null</span>);
+    @Override
+    public Class&lt;?&gt; getWrappedClass() {
+        return (this.wrappedObject != null ? this.wrappedObject.getClass() : null);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setPropertyValue</span><span class="hljs-params">(String propertyName, Object value)</span> 
-            <span class="hljs-keyword">throws</span> BeansException {
-        <span class="hljs-comment">// 装饰：添加类型转换、验证等功能</span>
-        <span class="hljs-type">BeanValueHolder</span> <span class="hljs-variable">valueHolder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanValueHolder</span>(propertyName, value);
-        <span class="hljs-type">PropertyValue</span> <span class="hljs-variable">pv</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PropertyValue</span>(propertyName, valueHolder);
+    @Override
+    public void setPropertyValue(String propertyName, Object value) 
+            throws BeansException {
+        // 装饰：添加类型转换、验证等功能
+        BeanValueHolder valueHolder = new BeanValueHolder(propertyName, value);
+        PropertyValue pv = new PropertyValue(propertyName, valueHolder);
         setPropertyValue(pv);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getPropertyValue</span><span class="hljs-params">(String propertyName)</span> 
-            <span class="hljs-keyword">throws</span> BeansException {
-        <span class="hljs-comment">// 装饰：添加缓存、类型转换等功能</span>
-        <span class="hljs-type">PropertyTokenHolder</span> <span class="hljs-variable">tokens</span> <span class="hljs-operator">=</span> getPropertyNameTokens(propertyName);
-        <span class="hljs-keyword">return</span> getPropertyValue(tokens);
+    @Override
+    public Object getPropertyValue(String propertyName) 
+            throws BeansException {
+        // 装饰：添加缓存、类型转换等功能
+        PropertyTokenHolder tokens = getPropertyNameTokens(propertyName);
+        return getPropertyValue(tokens);
     }
 }
-</code></pre>
-<h4 id="3.2-httpservletresponsewrapper的装饰" tabindex="-1">3.2 HttpServletResponseWrapper的装饰</h4>
-<p>在Spring MVC中，通过装饰器模式包装原生HttpServletResponse对象。</p>
-<pre><code class="hljs language-java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HttpServletResponseWrapper</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ServletResponseWrapper</span> 
-        <span class="hljs-keyword">implements</span> <span class="hljs-title class_">HttpServletResponse</span> {
+</code></pre></p><h4>3.2 HttpServletResponseWrapper的装饰</h4><p>在Spring MVC中，通过装饰器模式包装原生HttpServletResponse对象。</p><p><pre class="language-java" data-lang="java"><code class="language-java">public class HttpServletResponseWrapper extends ServletResponseWrapper 
+        implements HttpServletResponse {
 
-    <span class="hljs-keyword">private</span> HttpServletResponse response;
+    private HttpServletResponse response;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">HttpServletResponseWrapper</span><span class="hljs-params">(HttpServletResponse response)</span> {
-        <span class="hljs-built_in">super</span>(response);
-        <span class="hljs-built_in">this</span>.response = response;
+    public HttpServletResponseWrapper(HttpServletResponse response) {
+        super(response);
+        this.response = response;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addCookie</span><span class="hljs-params">(Cookie cookie)</span> {
-        <span class="hljs-built_in">this</span>.response.addCookie(cookie);
+    @Override
+    public void addCookie(Cookie cookie) {
+        this.response.addCookie(cookie);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">encodeURL</span><span class="hljs-params">(String url)</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.response.encodeURL(url);
+    @Override
+    public String encodeURL(String url) {
+        return this.response.encodeURL(url);
     }
 
-    <span class="hljs-comment">// 可以在这里添加额外的装饰功能</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setCustomHeader</span><span class="hljs-params">(String name, String value)</span> {
-        <span class="hljs-built_in">this</span>.response.setHeader(name, value);
+    // 可以在这里添加额外的装饰功能
+    public void setCustomHeader(String name, String value) {
+        this.response.setHeader(name, value);
     }
 }
-</code></pre>
-<h3 id="装饰器模式的优势" tabindex="-1">装饰器模式的优势</h3>
-<ol>
-<li><strong>灵活扩展</strong>：可以在运行时动态地添加或撤销功能</li>
+</code></pre></p><h3>装饰器模式的优势</h3><ol><li><strong>灵活扩展</strong>：可以在运行时动态地添加或撤销功能</li>
 <li><strong>避免类爆炸</strong>：相比继承，装饰器模式可以避免产生大量子类</li>
 <li><strong>单一职责</strong>：每个装饰器只关注一个特定的功能</li>
 </ol>
-<h2 id="4.-工厂模式（factory-pattern）" tabindex="-1">4. 工厂模式（Factory Pattern）</h2>
-<h3 id="什么是工厂模式？" tabindex="-1">什么是工厂模式？</h3>
-<p>工厂模式提供了一种创建对象的最佳方式，在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。</p>
-<h3 id="spring中的应用-3" tabindex="-1">Spring中的应用</h3>
-<p>Spring框架本身就是一个大型的工厂，<strong>IoC容器</strong>就是工厂模式的典型应用。</p>
-<h4 id="4.1-beanfactory（简单工厂+工厂方法）" tabindex="-1">4.1 BeanFactory（简单工厂+工厂方法）</h4>
-<p><code>BeanFactory</code>是Spring容器的核心接口，负责管理和配置Bean。</p>
-<p>关键类：</p>
-<ul>
-<li><code>org.springframework.beans.factory.BeanFactory</code></li>
+<h2>4. 工厂模式（Factory Pattern）</h2><h3>什么是工厂模式？</h3><p>工厂模式提供了一种创建对象的最佳方式，在创建对象时不会对客户端暴露创建逻辑，并且是通过使用一个共同的接口来指向新创建的对象。</p><h3>Spring中的应用</h3><p>Spring框架本身就是一个大型的工厂，<strong>IoC容器</strong>就是工厂模式的典型应用。</p><h4>4.1 BeanFactory（简单工厂+工厂方法）</h4><p><code>BeanFactory</code>是Spring容器的核心接口，负责管理和配置Bean。</p><p>关键类：
+<ul><ol><li><code>org.springframework.beans.factory.BeanFactory</code></li>
 <li><code>org.springframework.beans.factory.xml.XmlBeanFactory</code></li>
 <li><code>org.springframework.beans.factory.support.DefaultListableBeanFactory</code></li>
-</ul>
-<pre><code class="hljs language-java"><span class="hljs-comment">// BeanFactory接口</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">BeanFactory</span> {
+</ol></ul>
+<pre class="language-java" data-lang="java"><code class="language-java">// BeanFactory接口
+public interface BeanFactory {
 
-    <span class="hljs-type">String</span> <span class="hljs-variable">FACTORY_BEAN_PREFIX</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&amp;&quot;</span>;
+    String FACTORY_BEAN_PREFIX = "&amp;";
 
-    Object <span class="hljs-title function_">getBean</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> BeansException;
+    Object getBean(String name) throws BeansException;
 
-    &lt;T&gt; T <span class="hljs-title function_">getBean</span><span class="hljs-params">(String name, Class&lt;T&gt; requiredType)</span> <span class="hljs-keyword">throws</span> BeansException;
+    &lt;T&gt; T getBean(String name, Class&lt;T&gt; requiredType) throws BeansException;
 
-    &lt;T&gt; T <span class="hljs-title function_">getBean</span><span class="hljs-params">(Class&lt;T&gt; requiredType)</span> <span class="hljs-keyword">throws</span> BeansException;
+    &lt;T&gt; T getBean(Class&lt;T&gt; requiredType) throws BeansException;
 
-    Object <span class="hljs-title function_">getBean</span><span class="hljs-params">(String name, Object... args)</span> <span class="hljs-keyword">throws</span> BeansException;
+    Object getBean(String name, Object... args) throws BeansException;
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">containsBean</span><span class="hljs-params">(String name)</span>;
+    boolean containsBean(String name);
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSingleton</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> NoSuchBeanDefinitionException;
+    boolean isSingleton(String name) throws NoSuchBeanDefinitionException;
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">isPrototype</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> NoSuchBeanDefinitionException;
+    boolean isPrototype(String name) throws NoSuchBeanDefinitionException;
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">isTypeMatch</span><span class="hljs-params">(String name, ResolvableType typeToMatch)</span>;
+    boolean isTypeMatch(String name, ResolvableType typeToMatch);
 
-    <span class="hljs-type">boolean</span> <span class="hljs-title function_">isTypeMatch</span><span class="hljs-params">(String name, Class&lt;?&gt; typeToMatch)</span> 
-            <span class="hljs-keyword">throws</span> NoSuchBeanDefinitionException;
+    boolean isTypeMatch(String name, Class&lt;?&gt; typeToMatch) 
+            throws NoSuchBeanDefinitionException;
 
-    Class&lt;?&gt; getType(String name) <span class="hljs-keyword">throws</span> NoSuchBeanDefinitionException;
+    Class&lt;?&gt; getType(String name) throws NoSuchBeanDefinitionException;
 
     String[] getAliases(String name);
 }
 
-<span class="hljs-comment">// DefaultListableBeanFactory实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DefaultListableBeanFactory</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractAutowireCapableBeanFactory</span>
-        <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ConfigurableListableBeanFactory</span>, BeanDefinitionRegistry {
+// DefaultListableBeanFactory实现
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+        implements ConfigurableListableBeanFactory, BeanDefinitionRegistry {
 
-    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Map&lt;String, BeanDefinition&gt; beanDefinitionMap = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConcurrentHashMap</span>&lt;&gt;(<span class="hljs-number">256</span>);
+    private final Map&lt;String, BeanDefinition&gt; beanDefinitionMap = new ConcurrentHashMap&lt;&gt;(256);
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getBean</span><span class="hljs-params">(String name)</span> <span class="hljs-keyword">throws</span> BeansException {
-        <span class="hljs-keyword">return</span> doGetBean(name, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>);
+    @Override
+    public Object getBean(String name) throws BeansException {
+        return doGetBean(name, null, null, false);
     }
 
-    <span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">doGetBean</span><span class="hljs-params">(String name, <span class="hljs-meta">@Nullable</span> Class&lt;T&gt; requiredType,
-                             <span class="hljs-meta">@Nullable</span> Object[] args, <span class="hljs-type">boolean</span> typeCheckOnly)</span> 
-            <span class="hljs-keyword">throws</span> BeansException {
+    protected &lt;T&gt; T doGetBean(String name, @Nullable Class&lt;T&gt; requiredType,
+                             @Nullable Object[] args, boolean typeCheckOnly) 
+            throws BeansException {
 
-        <span class="hljs-comment">// 1. 检查缓存中是否有实例化的单例Bean</span>
-        <span class="hljs-type">Object</span> <span class="hljs-variable">beanInstance</span> <span class="hljs-operator">=</span> getSingleton(beanName);
+        // 1. 检查缓存中是否有实例化的单例Bean
+        Object beanInstance = getSingleton(beanName);
 
-        <span class="hljs-keyword">if</span> (beanInstance != <span class="hljs-literal">null</span>) {
-            <span class="hljs-keyword">return</span> (T) beanInstance;
+        if (beanInstance != null) {
+            return (T) beanInstance;
         }
 
-        <span class="hljs-comment">// 2. 获取BeanDefinition</span>
-        <span class="hljs-type">RootBeanDefinition</span> <span class="hljs-variable">mbd</span> <span class="hljs-operator">=</span> getMergedLocalBeanDefinition(beanName);
+        // 2. 获取BeanDefinition
+        RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 
-        <span class="hljs-comment">// 3. 创建Bean实例</span>
+        // 3. 创建Bean实例
         beanInstance = createBean(beanName, mbd, args);
 
-        <span class="hljs-keyword">return</span> (T) beanInstance;
+        return (T) beanInstance;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">registerBeanDefinition</span><span class="hljs-params">(String beanName, BeanDefinition beanDefinition)</span> {
-        <span class="hljs-built_in">this</span>.beanDefinitionMap.put(beanName, beanDefinition);
+    @Override
+    public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition) {
+        this.beanDefinitionMap.put(beanName, beanDefinition);
     }
 }
-</code></pre>
-<h4 id="4.2-applicationcontext（抽象工厂）" tabindex="-1">4.2 ApplicationContext（抽象工厂）</h4>
-<p><code>ApplicationContext</code>是<code>BeanFactory</code>的扩展，提供了更多企业级特性。</p>
-<pre><code class="hljs language-java"><span class="hljs-comment">// ApplicationContext接口</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ApplicationContext</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">EnvironmentCapable</span>, 
+</code></pre></p><h4>4.2 ApplicationContext（抽象工厂）</h4><p><code>ApplicationContext</code>是<code>BeanFactory</code>的扩展，提供了更多企业级特性。</p><p><pre class="language-java" data-lang="java"><code class="language-java">// ApplicationContext接口
+public interface ApplicationContext extends EnvironmentCapable, 
         ListableBeanFactory, HierarchicalBeanFactory,
         MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 
-    String <span class="hljs-title function_">getId</span><span class="hljs-params">()</span>;
+    String getId();
 
-    String <span class="hljs-title function_">getApplicationName</span><span class="hljs-params">()</span>;
+    String getApplicationName();
 
-    String <span class="hljs-title function_">getDisplayName</span><span class="hljs-params">()</span>;
+    String getDisplayName();
 
-    <span class="hljs-type">long</span> <span class="hljs-title function_">getStartupDate</span><span class="hljs-params">()</span>;
+    long getStartupDate();
 
-    ApplicationContext <span class="hljs-title function_">getParent</span><span class="hljs-params">()</span>;
+    ApplicationContext getParent();
 
-    AutowireCapableBeanFactory <span class="hljs-title function_">getAutowireCapableBeanFactory</span><span class="hljs-params">()</span>;
+    AutowireCapableBeanFactory getAutowireCapableBeanFactory();
 }
 
-<span class="hljs-comment">// ClassPathXmlApplicationContext实现</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ClassPathXmlApplicationContext</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractXmlApplicationContext</span> {
+// ClassPathXmlApplicationContext实现
+public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContext {
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ClassPathXmlApplicationContext</span><span class="hljs-params">(String configLocation)</span> <span class="hljs-keyword">throws</span> BeansException {
-        <span class="hljs-built_in">this</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>[] {configLocation}, <span class="hljs-literal">true</span>, <span class="hljs-literal">null</span>);
+    public ClassPathXmlApplicationContext(String configLocation) throws BeansException {
+        this(new String[] {configLocation}, true, null);
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-title function_">ClassPathXmlApplicationContext</span><span class="hljs-params">(String[] configLocations, 
-                                          <span class="hljs-type">boolean</span> refresh, 
-                                          <span class="hljs-meta">@Nullable</span> ApplicationContext parent)</span>
-            <span class="hljs-keyword">throws</span> BeansException {
-        <span class="hljs-built_in">super</span>(parent);
+    public ClassPathXmlApplicationContext(String[] configLocations, 
+                                          boolean refresh, 
+                                          @Nullable ApplicationContext parent)
+            throws BeansException {
+        super(parent);
         setConfigLocations(configLocations);
-        <span class="hljs-keyword">if</span> (refresh) {
+        if (refresh) {
             refresh();
         }
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">protected</span> Resource[] getConfigResources() {
-        <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.configLocations;
+    @Override
+    protected Resource[] getConfigResources() {
+        return this.configLocations;
     }
 }
-</code></pre>
-<h4 id="4.3-factorybean（工厂bean）" tabindex="-1">4.3 FactoryBean（工厂Bean）</h4>
-<p><code>FactoryBean</code>是Spring中特殊的工厂Bean接口，用于创建复杂对象。</p>
-<pre><code class="hljs language-java"><span class="hljs-comment">// FactoryBean接口</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">FactoryBean</span>&lt;T&gt; {
+</code></pre></p><h4>4.3 FactoryBean（工厂Bean）</h4><p><code>FactoryBean</code>是Spring中特殊的工厂Bean接口，用于创建复杂对象。</p><p><pre class="language-java" data-lang="java"><code class="language-java">// FactoryBean接口
+public interface FactoryBean&lt;T&gt; {
 
-    <span class="hljs-type">String</span> <span class="hljs-variable">OBJECT_TYPE_ATTRIBUTE</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;factoryBeanObjectType&quot;</span>;
+    String OBJECT_TYPE_ATTRIBUTE = "factoryBeanObjectType";
 
-    <span class="hljs-meta">@Nullable</span>
-    T <span class="hljs-title function_">getObject</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception;
+    @Nullable
+    T getObject() throws Exception;
 
-    <span class="hljs-meta">@Nullable</span>
+    @Nullable
     Class&lt;?&gt; getObjectType();
 
-    <span class="hljs-keyword">default</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSingleton</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+    default boolean isSingleton() {
+        return true;
     }
 }
 
-<span class="hljs-comment">// 示例：使用FactoryBean创建复杂对象</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ConnectionFactoryBean</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">FactoryBean</span>&lt;Connection&gt; {
+// 示例：使用FactoryBean创建复杂对象
+public class ConnectionFactoryBean implements FactoryBean&lt;Connection&gt; {
 
-    <span class="hljs-keyword">private</span> String url;
-    <span class="hljs-keyword">private</span> String username;
-    <span class="hljs-keyword">private</span> String password;
+    private String url;
+    private String username;
+    private String password;
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUrl</span><span class="hljs-params">(String url)</span> {
-        <span class="hljs-built_in">this</span>.url = url;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUsername</span><span class="hljs-params">(String username)</span> {
-        <span class="hljs-built_in">this</span>.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setPassword</span><span class="hljs-params">(String password)</span> {
-        <span class="hljs-built_in">this</span>.password = password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Connection <span class="hljs-title function_">getObject</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    @Override
+    public Connection getObject() throws Exception {
         DriverManager.getConnection(url, username, password);
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> Class&lt;?&gt; getObjectType() {
-        <span class="hljs-keyword">return</span> Connection.class;
+    @Override
+    public Class&lt;?&gt; getObjectType() {
+        return Connection.class;
     }
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isSingleton</span><span class="hljs-params">()</span> {
-        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    @Override
+    public boolean isSingleton() {
+        return false;
     }
 }
-</code></pre>
-<p>配置文件中使用：</p>
-<pre><code class="hljs language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">bean</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;connection&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;com.example.ConnectionFactoryBean&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;url&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;jdbc:mysql://localhost:3306/test&quot;</span>/&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;username&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;root&quot;</span>/&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">property</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;password&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;123456&quot;</span>/&gt;</span>
-<span class="hljs-tag">&lt;/<span class="hljs-name">bean</span>&gt;</span>
-</code></pre>
-<h3 id="工厂模式的优势" tabindex="-1">工厂模式的优势</h3>
-<ol>
-<li><strong>解耦</strong>：将对象的创建和使用分离</li>
+</code></pre></p><p>配置文件中使用：
+<pre class="language-xml" data-lang="xml"><code class="language-xml">&lt;bean id="connection" class="com.example.ConnectionFactoryBean"&gt;
+    &lt;property name="url" value="jdbc:mysql://localhost:3306/test"/&gt;
+    &lt;property name="username" value="root"/&gt;
+    &lt;property name="password" value="123456"/&gt;
+&lt;/bean&gt;
+</code></pre></p><h3>工厂模式的优势</h3><ol><li><strong>解耦</strong>：将对象的创建和使用分离</li>
 <li><strong>灵活</strong>：可以方便地切换不同的实现</li>
 <li><strong>统一管理</strong>：集中管理对象的创建逻辑</li>
 <li><strong>可扩展</strong>：容易扩展新的产品类型</li>
 </ol>
-<h2 id="总结" tabindex="-1">总结</h2>
-<p>Spring框架通过对设计模式的巧妙运用，实现了高度的可扩展性和灵活性：</p>
-<table>
-<thead>
-<tr>
-<th>设计模式</th>
-<th>Spring应用场景</th>
-<th>核心类</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>代理模式</td>
-<td>AOP实现、事务管理</td>
-<td>JdkDynamicAopProxy、CglibAopProxy</td>
-</tr>
-<tr>
-<td>适配器模式</td>
-<td>MVC Handler适配、AOP Advice适配</td>
-<td>HandlerAdapter、AdvisorAdapter</td>
-</tr>
-<tr>
-<td>装饰器模式</td>
-<td>BeanWrapper、HttpServletResponseWrapper</td>
-<td>BeanWrapperImpl、HttpServletResponseWrapper</td>
-</tr>
-<tr>
-<td>工厂模式</td>
-<td>IoC容器、Bean创建</td>
-<td>BeanFactory、ApplicationContext、FactoryBean</td>
-</tr>
-</tbody>
-</table>
-<p>学习Spring源码中的设计模式应用，不仅能帮助我们更好地理解Spring框架的工作原理，更能提升我们自身的代码设计能力。在实际开发中，我们应该根据具体场景选择合适的设计模式，避免过度设计。</p>
-<h2 id="参考资源" tabindex="-1">参考资源</h2>
-<ul>
-<li>Spring Framework官方文档</li>
+<h2>总结</h2><p>Spring框架通过对设计模式的巧妙运用，实现了高度的可扩展性和灵活性：</p><p>| 设计模式 | Spring应用场景 | 核心类 |
+|---------|--------------|--------|
+| 代理模式 | AOP实现、事务管理 | JdkDynamicAopProxy、CglibAopProxy |
+| 适配器模式 | MVC Handler适配、AOP Advice适配 | HandlerAdapter、AdvisorAdapter |
+| 装饰器模式 | BeanWrapper、HttpServletResponseWrapper | BeanWrapperImpl、HttpServletResponseWrapper |
+| 工厂模式 | IoC容器、Bean创建 | BeanFactory、ApplicationContext、FactoryBean |</p><p>学习Spring源码中的设计模式应用，不仅能帮助我们更好地理解Spring框架的工作原理，更能提升我们自身的代码设计能力。在实际开发中，我们应该根据具体场景选择合适的设计模式，避免过度设计。</p><h2>参考资源</h2><ul><ol><li>Spring Framework官方文档</li>
 <li>《Spring源码深度解析》</li>
 <li>《设计模式：可复用面向对象软件的基础》</li>
-</ul>
-
+</ol></ul>
         </div>
       </article>
     </div>
