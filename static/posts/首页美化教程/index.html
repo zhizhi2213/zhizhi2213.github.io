@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>首页美化教程 - 吱吱的博客</title>
+  <meta name="description" content="参考教程(https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页)
+
+参考主页(https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun))
+
+ 1. ctrl+c ...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="首页美化教程">
+  <meta property="og:description" content="参考教程(https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页)
+
+参考主页(https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun))
+
+ 1. ctrl+c ...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/首页美化教程/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年1月23日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="首页美化教程">
+  <meta name="twitter:description" content="参考教程(https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页)
+
+参考主页(https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun))
+
+ 1. ctrl+c ...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link active">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">首页美化教程</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年1月23日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
+          </div>
+
+          <div class="post-content">
+            <p>[参考教程](<a href="https://zhuanlan.zhihu.com/p/454597068">https://zhuanlan.zhihu.com/p/454597068</a> Github 首页美化教程（一）：打造个性化的GitHub首页)</p>
+<p>[参考主页](<a href="https://github.com/sun0225SUN/">https://github.com/sun0225SUN/</a> sun0225SUN (Guoqi Sun))</p>
+<h3 id="1-ctrl-c-and-ctrl-v-复制参考主页的代码">1. ctrl+c and ctrl+v 复制参考主页的代码</h3>
+<p>创建一个与用户名同名的仓库，然后将这个代码推到我们刚刚建立的仓库里面去。<br>
+注意要先打开仓库权限</p>
+<ul>
+<li>仓库 Settings → Actions → General → Workflow permissions</li>
+<li>选 Read and write permissions</li>
+<li>如果看到 “Allow GitHub Actions to create and approve pull requests”，也勾上</li>
+</ul>
+<h3 id="2-WakaTime-Token-配置">2. WakaTime Token 配置</h3>
+<p>这个主要作用是用来记录与统计我们的编程时间的。<br>
+我们需要到<a href="https://wakatime.com/">WakaTime</a>网站注册一个账号，然后在设置里面找到API Key，复制下来。</p>
+<ol>
+<li>
+<p>需要在你的编辑器中安装WakaTime插件 并设置API Key</p>
+</li>
+<li>
+<p>在 GitHub 仓库里添加 Secrets</p>
+</li>
+</ol>
+<ul>
+<li>打开你的仓库 → 点上方菜单里的 Settings</li>
+<li>左边栏找到 Secrets and variables → Actions</li>
+<li>点 New repository secret</li>
+<li>Name 填：WAKATIME_API_KEY</li>
+<li>Value 填：刚才复制的那串 key</li>
+<li>保存</li>
+</ul>
+<p>这个WAKATIME_API_KEY就是我们.github/workflows/waka.yml文件里面的那个环境变量。</p>
+<pre class="language-markdown"><code class="language-markdown"><span class="token comment">&lt;!--START_SECTION:waka--></span>
+<span class="token comment">&lt;!--END_SECTION:waka--></span>
+</code></pre>
+<p>Action 每次跑，会自动把数据填充在这两行之间。</p>
+<h3 id="3-配置Token">3. 配置Token</h3>
+<ol>
+<li>
+<p>生成 PAT</p>
+<ul>
+<li>去 GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)</li>
+<li>点击「Generate new token (classic)」</li>
+<li>勾选最少的权限：
+<ul>
+<li>repo</li>
+<li>read:user</li>
+<li>read:org（如果你要展示组织/私有仓库信息）</li>
+<li>workflow</li>
+</ul>
+</li>
+<li>复制生成的 token（格式是 ghp_XXXXXXXXX…）</li>
+</ul>
+</li>
+<li>
+<p>配置插件变量</p>
+<ul>
+<li>打开你的仓库</li>
+<li>Settings → Secrets and variables → Actions → New repository secret</li>
+<li>Name 填：GH_TOKEN（插件所需变量就是.github/workflows/xxx.yml文件里面的那个环境变量）</li>
+<li>Value 填：刚才生成的 PAT</li>
+</ul>
+<p>一般有以下几个变量</p>
+<ul>
+<li>GH_TOKEN</li>
+<li>ACCESS_TOKEN</li>
+<li>METRICS_TOKEN</li>
+<li>GITHUB_TOKEN</li>
+</ul>
+</li>
+</ol>
+<h3 id="4-Repobeats-配置">4. Repobeats 配置</h3>
+<pre class="language-md"><code class="language-md"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">width</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>120%<span class="token punctuation">"</span></span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+</code></pre>
+<p>这一行是 Repobeats 服务，自动生成一张仓库贡献的动态分析图。比如提交数、活跃度、PR、issue 等，会显示成五颜六色的曲线图。这个 Repobeats 图，它并不是记录你的「整个 GitHub 账号」，而是记录某一个具体仓库的活动情况。</p>
+<p>你只需要在 <a href="https://repobeats.axiom.co/">Repobeats</a> 这个网页中登录你的 Github 账号，然后选择需要记录的仓库，就会有一句这样的话：</p>
+<pre class="language-plaintext"><code class="language-plaintext">// Add the following to your README.md to embed Repobeats
+
+![Alt](https://repobeats.axiom.co/api/embed/7aa7311e6885fc4b499b17d5c47c0cd5cbca9d4d.svg "Repobeats analytics image")
+</code></pre>
+<p>替换掉这个地址就ok了。</p>
+<h3 id="5-readme-streak-stats配置">5. readme-streak-stats配置</h3>
+<p><a href="https://github.com/DenverCoder1/github-readme-streak-stats?tab=readme-ov-file">github-readme-streak-stats 项目地址</a></p>
+<ol>
+<li>参考项目地址部署配置</li>
+<li>readme 修改 user 与 域名（主题、语言等都可以修改，具体参考项目介绍）</li>
+</ol>
+<pre class="language-markdown"><code class="language-markdown"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>picture</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>source</span> <span class="token attr-name">media</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(prefers-color-scheme: dark)<span class="token punctuation">"</span></span> <span class="token attr-name">srcset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=dark&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>source</span> <span class="token attr-name">media</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>(prefers-color-scheme: light)<span class="token punctuation">"</span></span> <span class="token attr-name">srcset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=light&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://github-readme-streak-stats-nu-six.vercel.app?user=zhizhi2213&amp;theme=dark&amp;locale=zh_Hans&amp;hide_border=true&amp;date_format=j/n/Y<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>picture</span><span class="token punctuation">></span></span>
+</code></pre>
+<h3 id="6-Hexo-blog-配置">6. Hexo blog 配置</h3>
+<ol>
+<li>Hexo 生成 RSS
+<ul>
+<li>在你的 Hexo 博客目录（有 source/、themes/ 的那个根目录）里执行：</li>
+</ul>
+</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">      <span class="token function">npm</span> <span class="token function">install</span> hexo-generator-feed <span class="token parameter variable">--save</span><span class="token operator">=</span>hexo-generator-feed@3.0.0
+</code></pre>
+<ol start="2">
+<li>修改 根目录 _config.yml</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token comment"># 站点基本信息（确保正确，影响 feed 的链接）</span>
+<span class="token key atrule">url</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//wenjiew<span class="token punctuation">-</span>astro.github.io
+<span class="token key atrule">root</span><span class="token punctuation">:</span> /
+<span class="token key atrule">permalink</span><span class="token punctuation">:</span> <span class="token punctuation">:</span>year/<span class="token punctuation">:</span>month/<span class="token punctuation">:</span>day/<span class="token punctuation">:</span>title/
+
+<span class="token comment"># RSS 配置（hexo-generator-feed）</span>
+<span class="token key atrule">feed</span><span class="token punctuation">:</span>
+   <span class="token key atrule">type</span><span class="token punctuation">:</span> atom            <span class="token comment"># 可选 atom | rss2 | both</span>
+   <span class="token key atrule">path</span><span class="token punctuation">:</span> atom.xml        <span class="token comment"># 生成文件名（常见：atom.xml 或 rss2.xml）</span>
+   <span class="token key atrule">limit</span><span class="token punctuation">:</span> <span class="token number">10</span>             <span class="token comment"># 列出最近 N 篇</span>
+   <span class="token key atrule">hub</span><span class="token punctuation">:</span>
+   <span class="token key atrule">content</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>         <span class="token comment"># 是否包含全文（true/false）</span>
+</code></pre>
+<ol start="3">
+<li>
+<p>使用hexo启动 本地预览 提交</p>
+<p><a href="http://localhost:4000/atom.xml">http://localhost:4000/atom.xml</a></p>
+</li>
+<li>
+<p>修改 GitHub Actions</p>
+</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Recent Blog
+
+<span class="token key atrule">on</span><span class="token punctuation">:</span>
+   <span class="token key atrule">schedule</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">cron</span><span class="token punctuation">:</span> <span class="token string">"0 0 * * *"</span>   <span class="token comment"># 每天 00:00 UTC 跑一次</span>
+   <span class="token key atrule">workflow_dispatch</span><span class="token punctuation">:</span>
+
+<span class="token key atrule">jobs</span><span class="token punctuation">:</span>
+   <span class="token key atrule">build</span><span class="token punctuation">:</span>
+      <span class="token key atrule">runs-on</span><span class="token punctuation">:</span> ubuntu<span class="token punctuation">-</span>latest
+      <span class="token key atrule">name</span><span class="token punctuation">:</span> generate<span class="token punctuation">-</span>readme<span class="token punctuation">-</span>feed
+      <span class="token key atrule">steps</span><span class="token punctuation">:</span>
+         <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v4
+         <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> sarisia/actions<span class="token punctuation">-</span>readme<span class="token punctuation">-</span>feed@v1
+           <span class="token key atrule">with</span><span class="token punctuation">:</span>
+              <span class="token key atrule">url</span><span class="token punctuation">:</span> <span class="token string">"https://你的用户名.github.io/atom.xml"</span>  <span class="token comment"># ← 用你刚生成的 feed</span>
+              <span class="token key atrule">file</span><span class="token punctuation">:</span> <span class="token string">"README.md"</span>
+              <span class="token comment"># 可选：最多显示 5 篇、每项的格式</span>
+              <span class="token key atrule">max_item</span><span class="token punctuation">:</span> <span class="token number">5</span>
+              <span class="token key atrule">format</span><span class="token punctuation">:</span> <span class="token string">"- &lt;a href='${link}'>${title}&lt;/a> &lt;sub>(${pubDate})&lt;/sub>"</span>
+         <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> sarisia/actions<span class="token punctuation">-</span>commit@master
+
+</code></pre>
+<ol start="5">
+<li>修改readme<br>
+在 <a href="http://README.md">README.md</a> 里加：</li>
+</ol>
+<pre class="language-markdown"><code class="language-markdown"><span class="token title important"><span class="token punctuation">##</span> 📝 最近更新 {#最近更新}</span>
+<span class="token comment">&lt;!--START_SECTION:feed--></span>
+<span class="token comment">&lt;!--END_SECTION:feed--></span>
+</code></pre>
+<p>Action 每次跑，会自动把最新文章列表填充在这两行之间。</p>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">MyBatis源码深度解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring IOC与AOP详解</h4>
+                  <time class="related-posts-item-date">2026年2月10日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#1-ctrl-c-and-ctrl-v-复制参考主页的代码" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1. ctrl+c and ctrl+v 复制参考主页的代码</a><a href="#2-WakaTime-Token-配置" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2. WakaTime Token 配置</a><a href="#3-配置Token" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3. 配置Token</a><a href="#4-Repobeats-配置" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4. Repobeats 配置</a><a href="#5-readme-streak-stats配置" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5. readme-streak-stats配置</a><a href="#6-Hexo-blog-配置" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6. Hexo blog 配置</a><a href="#最近更新" class="toc-item toc-level-2" style="">📝 最近更新</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>
