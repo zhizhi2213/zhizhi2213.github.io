@@ -24,6 +24,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Install Dependencies
+        run: cd src && npm install
+
       - name: Build Blog
         run: node src/index.js
 
