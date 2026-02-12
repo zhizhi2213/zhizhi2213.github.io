@@ -12,9 +12,9 @@
   "license": "MIT",
   "dependencies": {
     "markdown-it": "^14.1.0",
-    "markdown-it-highlightjs": "^4.0.1",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-task-lists": "^2.1.1",
-    "highlight.js": "^11.10.0"
+    "markdown-it-prism": "^2.3.0",
+    "prismjs": "^1.29.0"
   }
 }

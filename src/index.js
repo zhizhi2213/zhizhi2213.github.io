@@ -1,12 +1,9 @@
 const fs = require('fs').promises;
 const path = require('path');
 const MarkdownIt = require('markdown-it');
-const hljs = require('markdown-it-highlightjs');
+const prism = require('markdown-it-prism');
 const anchor = require('markdown-it-anchor');
 const taskLists = require('markdown-it-task-lists');
-const highlight = require('highlight.js');
-
-hljs.initHighlightingOnLoad = false;
 
 const config = require('./config.json');
 
@@ -14,16 +11,7 @@ const md = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-  breaks: true,
-  highlight: function (str, lang) {
-    if (lang && highlight.getLanguage(lang)) {
-      try {
-        const result = highlight.highlight(str, { language: lang }).value;
-        return '<pre><code class="hljs language-' + lang + '">' + result + '</code></pre>';
-      } catch (__) {}
-    }
-    return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
-  }
+  breaks: true
 })
 .use(anchor, {
   level: 2,
@@ -33,6 +21,10 @@ const md = new MarkdownIt({
   enabled: true,
   label: true,
   labelAfter: true
+})
+.use(prism, {
+  defaultLanguageForUnknown: 'plaintext',
+  defaultLanguageForUnspecified: 'plaintext'
 });
 
 class BlogGenerator {

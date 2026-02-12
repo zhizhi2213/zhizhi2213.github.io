@@ -5,3 +5,6 @@ node_modules/
 static/
 atom.xml
 index.html
+.idea/
+*.xml
+*.html
