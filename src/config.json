@@ -22,7 +22,7 @@
     "repoId": "R_kgDOQ-4OZg",
     "category": "Announcements",
     "categoryId": "DIC_kwDOQ-4OZs4C2RLo",
-    "mapping": "pathname",
+    "mapping": "title",
     "reactionsEnabled": 1,
     "emitMetadata": 0,
     "lang": "zh-CN",
