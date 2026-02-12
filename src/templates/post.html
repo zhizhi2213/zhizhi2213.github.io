@@ -119,25 +119,6 @@
             {{post.content}}
           </div>
 
-          <section class="share-section">
-            <h3 class="share-title">分享这篇文章</h3>
-            <div class="share-buttons">
-              <button class="share-button share-twitter" data-platform="twitter" aria-label="分享到 Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
-                <span>Twitter</span>
-              </button>
-              <button class="share-button share-weibo" data-platform="weibo" aria-label="分享到微博">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 2C6.357 2 3 5.357 3 9.5c0 2.45 1.197 4.627 3.046 5.964-.042.533-.053 1.1.05 1.732.378 2.327 2.48 4.304 5.204 4.304 3.037 0 5.5-2.463 5.5-5.5 0-2.043-1.118-3.827-2.78-4.777.19-.615.3-1.268.3-1.948 0-3.643-2.857-6.5-6.5-6.5zm0 1.5c2.485 0 4.5 2.015 4.5 4.5 0 .405-.065.795-.18 1.167-.55-.125-1.125-.192-1.715-.192-3.59 0-6.5 2.91-6.5 6.5 0 .59.067 1.165.192 1.715-1.247-1.057-2.042-2.635-2.042-4.392 0-3.037 2.463-5.5 5.5-5.5 2.485 0 4.5 2.015 4.5 4.5 0 2.485-2.015 4.5-4.5 4.5-2.485 0-4.5-2.015-4.5-4.5 0-2.485 2.015-4.5 4.5-4.5zm5.5 7c.552 0 1 .448 1 1s-.448 1-1 1-1-.448-1-1 .448-1 1-1z"></path></svg>
-                <span>微博</span>
-              </button>
-              <button class="share-button share-link" data-platform="link" aria-label="复制链接">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
-                <span>复制链接</span>
-              </button>
-            </div>
-            <div class="share-toast" id="shareToast">链接已复制到剪贴板</div>
-          </section>
-
           {{#giscus}}
           <section class="comments-section">
             <div class="comments-container">

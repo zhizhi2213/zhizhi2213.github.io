@@ -1947,94 +1947,6 @@ h6:hover .headerlink {
   opacity: 1;
 }
 
-.share-section {
-  margin-top: 3rem;
-  padding: 2rem;
-  background: var(--bg-secondary);
-  border-radius: var(--border-radius);
-}
-
-.share-title {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: var(--text-primary);
-}
-
-.share-buttons {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.share-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  color: white;
-}
-
-.share-twitter {
-  background: #000;
-}
-
-.share-twitter:hover {
-  background: #333;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.share-weibo {
-  background: #E6162D;
-}
-
-.share-weibo:hover {
-  background: #d01227;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(230, 22, 45, 0.3);
-}
-
-.share-link {
-  background: var(--accent-color);
-}
-
-.share-link:hover {
-  background: #6366f1;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.share-button svg {
-  width: 18px;
-  height: 18px;
-}
-
-.share-toast {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--text-primary);
-  color: var(--bg-primary);
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 1000;
-}
-
-.share-toast.show {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-}
-
 .comments-section {
   margin-top: 4rem;
   padding-top: 3rem;
@@ -2063,32 +1975,6 @@ h6:hover .headerlink {
 }
 
 @media (max-width: 768px) {
-  .share-section {
-    padding: 1.5rem;
-  }
-
-  .share-title {
-    font-size: 1.1rem;
-  }
-
-  .share-buttons {
-    gap: 0.5rem;
-  }
-
-  .share-button {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .share-button span {
-    display: none;
-  }
-
-  .share-button svg {
-    width: 20px;
-    height: 20px;
-  }
-
   .comments-section {
     margin-top: 3rem;
     padding-top: 2rem;

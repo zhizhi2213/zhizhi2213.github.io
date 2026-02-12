@@ -431,39 +431,6 @@
     `;
   }
 
-  const shareButtons = document.querySelectorAll('.share-button');
-  const shareToast = document.getElementById('shareToast');
-  
-  if (shareButtons.length > 0) {
-    const pageUrl = encodeURIComponent(window.location.href);
-    const pageTitle = encodeURIComponent(document.title || document.querySelector('h1')?.textContent || '');
-
-    shareButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        const platform = button.dataset.platform;
-
-        if (platform === 'twitter') {
-          const twitterUrl = `https://twitter.com/intent/tweet?text=${pageTitle}&url=${pageUrl}`;
-          window.open(twitterUrl, '_blank', 'width=600,height=400');
-        } else if (platform === 'weibo') {
-          const weiboUrl = `https://service.weibo.com/share/share.php?title=${pageTitle}&url=${pageUrl}`;
-          window.open(weiboUrl, '_blank', 'width=600,height=400');
-        } else if (platform === 'link') {
-          navigator.clipboard.writeText(window.location.href).then(() => {
-            if (shareToast) {
-              shareToast.classList.add('show');
-              setTimeout(() => {
-                shareToast.classList.remove('show');
-              }, 2000);
-            }
-          }).catch(() => {
-            alert('复制失败，请手动复制链接');
-          });
-        }
-      });
-    });
-  }
-
   const readingModeToggle = document.getElementById('readingModeToggle');
   const postLayout = document.querySelector('.post-layout');
   if (readingModeToggle && postLayout) {
