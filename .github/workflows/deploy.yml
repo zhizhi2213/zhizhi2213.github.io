@@ -30,8 +30,13 @@ jobs:
       - name: Build Blog
         run: node src/index.js
 
+      - name: Prepare deployment directory
+        run: |
+          mkdir -p deploy
+          cp -r static/ atom.xml index.html deploy/ 2>/dev/null || true
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_dir: ./deploy
