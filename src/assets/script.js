@@ -277,18 +277,11 @@
     });
   });
 
-  const tocToggle = document.getElementById('tocToggle');
   const tocContent = document.getElementById('tocContent');
+  const tocItems = document.querySelectorAll('.toc-item');
+  const headings = document.querySelectorAll('.post-content h2[id], .post-content h3[id]');
 
-  if (tocToggle && tocContent) {
-    tocToggle.addEventListener('click', () => {
-      tocToggle.classList.toggle('collapsed');
-      tocContent.classList.toggle('collapsed');
-    });
-
-    const tocItems = document.querySelectorAll('.toc-item');
-    const headings = document.querySelectorAll('.post-content h2[id], .post-content h3[id]');
-
+  if (tocContent && tocItems.length > 0) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -350,15 +343,15 @@
   console.log('%c🎨 欢迎来到我的博客！', 'font-size: 24px; font-weight: bold; color: #6366f1;');
   console.log('%c这是一个用爱打造的静态博客', 'font-size: 14px; color: #64748b;');
 
-  const preBlocks = document.querySelectorAll('pre code[class*="language-"]');
-  if (preBlocks.length > 0) {
+  const preBlocksWithLang = document.querySelectorAll('pre code[class*="language-"]');
+  if (preBlocksWithLang.length > 0) {
     const prismScript = document.createElement('script');
     prismScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js';
     prismScript.async = true;
     
     prismScript.onload = () => {
       const languages = new Set();
-      preBlocks.forEach(block => {
+      preBlocksWithLang.forEach(block => {
         const classes = block.className.split(' ');
         classes.forEach(cls => {
           const match = cls.match(/language-(\w+)/);
@@ -471,15 +464,31 @@
     });
   }
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker 注册成功:', registration.scope);
-        })
-        .catch((error) => {
-          console.log('Service Worker 注册失败:', error);
-        });
+  const readingModeToggle = document.getElementById('readingModeToggle');
+  const postLayout = document.querySelector('.post-layout');
+  if (readingModeToggle && postLayout) {
+    const savedReadingMode = localStorage.getItem('readingMode') === 'true';
+    
+    function toggleReadingMode(isReadingMode) {
+      if (isReadingMode) {
+        postLayout.classList.add('reading-mode');
+        readingModeToggle.classList.add('active');
+        readingModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+      } else {
+        postLayout.classList.remove('reading-mode');
+        readingModeToggle.classList.remove('active');
+        readingModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+      }
+      localStorage.setItem('readingMode', isReadingMode);
+    }
+    
+    if (savedReadingMode) {
+      toggleReadingMode(true);
+    }
+    
+    readingModeToggle.addEventListener('click', () => {
+      const isActive = postLayout.classList.contains('reading-mode');
+      toggleReadingMode(!isActive);
     });
   }
 })();

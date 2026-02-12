@@ -3,24 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{site.title}} - {{site.subtitle}}</title>
-  <meta name="description" content="{{site.description}}">
+  <title>标签{{#currentTag}}: {{currentTag}}{{/currentTag}} - {{site.title}}</title>
   <meta name="theme-color" content="#6366f1">
-  <meta property="og:title" content="{{site.title}} - {{site.subtitle}}">
-  <meta property="og:description" content="{{site.description}}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{{site.url}}">
-  <meta property="og:site_name" content="{{site.title}}">
-  <meta property="og:locale" content="zh_CN">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{site.title}} - {{site.subtitle}}">
-  <meta name="twitter:description" content="{{site.description}}">
   <link rel="stylesheet" href="/static/assets/style.css">
 </head>
 <body>
-  <div class="background-animation"></div>
-  <div class="background-animation background-animation-2"></div>
-  
   <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
@@ -28,9 +15,9 @@
       <nav class="nav">
         <a href="/" class="logo">{{site.title}}</a>
         <div class="nav-links">
-          <a href="/" class="nav-link active">首页</a>
+          <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
-          <a href="/static/tags/" class="nav-link">标签</a>
+          <a href="/static/tags/" class="nav-link{{#currentTag}}{{/currentTag}} active">标签</a>
         </div>
         <div class="header-actions">
           <button class="search-toggle" aria-label="搜索">
@@ -79,17 +66,24 @@
 
   <main class="main" id="main-content">
     <div class="container">
-      <section class="hero">
-        <h1 class="hero-title">{{site.title}}</h1>
-        <p class="hero-subtitle">{{site.subtitle}}</p>
-        <div class="hero-divider"></div>
-      </section>
+      {{#currentTag}}
+      <div class="page-header">
+        <h1 class="page-title">标签: {{currentTag}}</h1>
+        <p class="page-description">共找到 <span class="posts-count">0</span> 篇文章</p>
+      </div>
+      {{/currentTag}}
 
-      <section class="posts-section">
-        <div class="posts-grid">
-          {{posts}}
-        </div>
-      </section>
+      {{^currentTag}}
+      <div class="page-header">
+        <h1 class="page-title">所有标签</h1>
+        <p class="page-description">点击标签查看相关文章</p>
+      </div>
+      <div class="tag-cloud">
+        {{tags}}
+      </div>
+      {{/currentTag}}
+
+      {{posts}}
     </div>
   </main>
 

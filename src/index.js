@@ -49,7 +49,7 @@ class BlogGenerator {
 
   async cleanOutput() {
     const rootDir = path.join(__dirname, '..');
-    const filesToClean = ['index.html', 'atom.xml', 'sitemap.xml', 'sw.js'];
+    const filesToClean = ['index.html', 'atom.xml', 'sitemap.xml'];
     const dirsToClean = ['static'];
 
     for (const file of filesToClean) {
@@ -342,9 +342,13 @@ ${post.content}`;
     
     for (const post of this.posts) {
       const relatedPosts = this.findRelatedPosts(post);
+      const postsWithActive = this.posts.map(p => ({
+        ...p,
+        isActive: p.slug === post.slug
+      }));
       const html = this.renderTemplate(template, {
         post,
-        posts: this.posts,
+        posts: postsWithActive,
         relatedPosts,
         giscus: this.config.giscus,
         formatDate: this.formatDate.bind(this)
@@ -651,6 +655,36 @@ ${urls.map(url => `  <url>
       });
     } else {
       html = html.replace(/\{\{#giscus\}\}[\s\S]*?\{\{\/giscus\}\}/g, '');
+    }
+
+    if (data.posts && data.post) {
+      html = html.replace(/\{\{#posts\}\}([\s\S]*?)\{\{\/posts\}\}/g, (match, content) => {
+        return data.posts.map(p => {
+          let itemContent = content;
+          itemContent = itemContent.replace(/\{\{slug\}\}/g, p.slug);
+          itemContent = itemContent.replace(/\{\{title\}\}/g, p.title);
+          if (p.isActive) {
+            itemContent = itemContent.replace(/\{\{#isActive\}\}([\s\S]*?)\{\{\/isActive\}\}/g, '$1');
+          } else {
+            itemContent = itemContent.replace(/\{\{#isActive\}\}[\s\S]*?\{\{\/isActive\}\}/g, '');
+          }
+          return itemContent;
+        }).join('');
+      });
+    }
+
+    if (data.relatedPosts) {
+      html = html.replace(/\{\{#relatedPosts\}\}([\s\S]*?)\{\{\/relatedPosts\}\}/g, (match, content) => {
+        return data.relatedPosts.map(p => {
+          let itemContent = content;
+          itemContent = itemContent.replace(/\{\{slug\}\}/g, p.slug);
+          itemContent = itemContent.replace(/\{\{title\}\}/g, p.title);
+          itemContent = itemContent.replace(/\{\{formatDate date\}\}/g, data.formatDate(p.date));
+          return itemContent;
+        }).join('');
+      });
+    } else {
+      html = html.replace(/\{\{#relatedPosts\}\}[\s\S]*?\{\{\/relatedPosts\}\}/g, '');
     }
 
     return html;
