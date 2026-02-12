@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trae-Java环境配置 - 吱吱的博客</title>
+  <meta name="description" content="{{post.excerpt}}">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <article class="post">
+        <div class="post-header">
+          <a href="/" class="back-link">← 返回首页</a>
+          <h1 class="post-title">Trae-Java环境配置</h1>
+          <div class="post-meta">
+            <span class="post-date">2026年1月26日</span>
+            
+          </div>
+        </div>
+        
+        <div class="post-content">
+          <h2 id="配置java环境" tabindex="-1">配置Java环境</h2>
+<h3 id="1.-安装java环境配置包-java-extension-pack-,spring-boot-extension-pack" tabindex="-1">1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3>
+<h3 id="2.-配置java环境-settings.json文件" tabindex="-1">2. 配置Java环境 settings.json文件</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.import.gradle.java.home"</span><span class="token operator">:</span> <span class="token string">"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"</span>
+<span class="token punctuation">}</span>
+ 
+</code></pre>
+<h3 id="3.配置maven环境-settings.json文件" tabindex="-1">3.配置maven环境 settings.json文件</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.configuration.maven.globalSettings"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.9.12\\conf\\all.xml"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.path"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.9.12\\bin\\mvn.cmd"</span>
+<span class="token punctuation">}</span>
+ 
+</code></pre>
+<h3 id="4.配置单元测试环境（可选）-配置vm参数（java-9+-引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）" tabindex="-1">4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.test.config"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"vmArgs"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"--add-opens=java.base/java.lang=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.math=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.net=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.io=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.time=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.security=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/sun.security.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--illegal-access=permit"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span> 
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="5.配置运行环境（可选）-配置vm参数（java-9+-引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）" tabindex="-1">5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<p>launch.json</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.2.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"configurations"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"java"</span><span class="token punctuation">,</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Current File"</span><span class="token punctuation">,</span>
+      <span class="token property">"request"</span><span class="token operator">:</span> <span class="token string">"launch"</span><span class="token punctuation">,</span>
+      <span class="token property">"mainClass"</span><span class="token operator">:</span> <span class="token string">"${file}"</span><span class="token punctuation">,</span>
+      <span class="token property">"vmArgs"</span> <span class="token operator">:</span><span class="token string">"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"java"</span><span class="token punctuation">,</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"BankSteelPurchaseFinanceApp"</span><span class="token punctuation">,</span>
+      <span class="token property">"request"</span><span class="token operator">:</span> <span class="token string">"launch"</span><span class="token punctuation">,</span>
+      <span class="token property">"mainClass"</span><span class="token operator">:</span> <span class="token string">"com.banksteel.purchase.BankSteelPurchaseFinanceApp"</span><span class="token punctuation">,</span>
+      <span class="token property">"projectName"</span><span class="token operator">:</span> <span class="token string">"banksteel-purchase-finance"</span><span class="token punctuation">,</span>
+      <span class="token property">"vmArgs"</span> <span class="token operator">:</span><span class="token string">"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>ps:<br>
+cursor 配置文件 settings.json</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"workbench.colorTheme"</span><span class="token operator">:</span> <span class="token string">"Default Light Modern"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.import.gradle.java.home"</span><span class="token operator">:</span> <span class="token string">"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.jdt.ls.java.home"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.options"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"java.configuration.maven.globalSettings"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.path"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.6.3\\bin\\mvn.cmd"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.excludedFolders"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+
+    <span class="token string">"**/.*"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/node_modules"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/target"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/bin"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/archetype-resources"</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"redhat.telemetry.enabled"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"java.configuration.maven.userSettings"</span><span class="token operator">:</span> <span class="token string">"&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?> &lt;settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"           xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\">      &lt;localRepository>C:\\repository&lt;/localRepository>     &lt;pluginGroups>&lt;/pluginGroups>     &lt;proxies>&lt;/proxies>   &lt;mirrors>     &lt;mirror>       &lt;id>banksteel-mirror&lt;/id>       &lt;name>Banksteel Maven Public Mirror&lt;/name>       &lt;url>http://nexus.registry.banksteel.com/repository/banksteel/&lt;/url>       &lt;mirrorOf>central&lt;/mirrorOf>       &lt;blocked>false&lt;/blocked>     &lt;/mirror>   &lt;/mirrors>     &lt;profiles>      &lt;profile>       &lt;id>dev&lt;/id>       &lt;repositories>              &lt;repository>           &lt;id>dev.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/dev-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>       &lt;/repositories>     &lt;/profile> \t \t &lt;profile>       &lt;id>test&lt;/id>       &lt;repositories>         &lt;repository>           &lt;id>test.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/test-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>       &lt;/repositories>     &lt;/profile> \t \t \t &lt;profile>       &lt;id>pre&lt;/id>       &lt;repositories>          &lt;repository>           &lt;id>pre.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/pre-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>        &lt;/repositories>     &lt;/profile> \t \t &lt;profile>       &lt;id>prod&lt;/id>       &lt;repositories>         &lt;!-- 生产仓库 -->         &lt;repository>           &lt;id>prod.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/snapshots/&lt;/url>           &lt;releases>             &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>             &lt;enabled>true&lt;/enabled>             &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>        &lt;/repositories>     &lt;/profile>   &lt;/profiles>    &lt;activeProfiles>     &lt;activeProfile>dev&lt;/activeProfile>   &lt;/activeProfiles> &lt;/settings>"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.terminal.useJavaHome"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"java.project.outputPath"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.settingsFile"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.6.3\\conf\\all.xml"</span><span class="token punctuation">,</span>
+  <span class="token property">"security.workspace.trust.untrustedFiles"</span><span class="token operator">:</span> <span class="token string">"open"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.test.config"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"vmArgs"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"--add-opens=java.base/java.lang=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.math=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.net=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.io=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.time=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.security=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/sun.security.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--illegal-access=permit"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="可能遇到的问题" tabindex="-1">可能遇到的问题</h3>
+<ol>
+<li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件<br>
+blocked 设置 false</li>
+</ol>
+<pre class="language-xml"><code class="language-xml">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>mirror</span><span class="token punctuation">></span></span>
+       ...
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>blocked</span><span class="token punctuation">></span></span>false<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>blocked</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>mirror</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>以上无法解决，建议本地仓库地址使用配置默认的也就是.m2下的仓库地址</p>
+
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/static/assets/script.js"></script>
+</body>
+</html>

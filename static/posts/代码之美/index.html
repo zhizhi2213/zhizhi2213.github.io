@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>代码之美 - 吱吱的博客</title>
+  <meta name="description" content="{{post.excerpt}}">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <article class="post">
+        <div class="post-header">
+          <a href="/" class="back-link">← 返回首页</a>
+          <h1 class="post-title">代码之美</h1>
+          <div class="post-meta">
+            <span class="post-date">2026年1月24日</span>
+            <span class="post-tag">编程</span><span class="post-tag">美学</span>
+          </div>
+        </div>
+        
+        <div class="post-content">
+          <h1>代码之美</h1>
+<p>优雅的代码就像诗歌一样令人愉悦。</p>
+<h2 id="编程哲学" tabindex="-1">编程哲学</h2>
+<blockquote>
+<p>“简单是复杂的终极境界。” - 达芬奇</p>
+</blockquote>
+<p>好的代码应该：</p>
+<ul>
+<li>易于理解</li>
+<li>易于维护</li>
+<li>高效运行</li>
+<li>遵循最佳实践</li>
+</ul>
+<pre class="language-javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">fibonacci</span><span class="token punctuation">(</span><span class="token parameter">n</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>n <span class="token operator">&lt;=</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">return</span> n<span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token function">fibonacci</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token function">fibonacci</span><span class="token punctuation">(</span>n <span class="token operator">-</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/static/assets/script.js"></script>
+</body>
+</html>

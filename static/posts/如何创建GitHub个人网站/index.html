@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何创建GitHub个人网站 - 吱吱的博客</title>
+  <meta name="description" content="{{post.excerpt}}">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+        </div>
+        <button class="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="container">
+      <article class="post">
+        <div class="post-header">
+          <a href="/" class="back-link">← 返回首页</a>
+          <h1 class="post-title">如何创建GitHub个人网站</h1>
+          <div class="post-meta">
+            <span class="post-date">2026年1月22日</span>
+            
+          </div>
+        </div>
+        
+        <div class="post-content">
+          <h2 id="如何创建github个人网站" tabindex="-1">如何创建GitHub个人网站</h2>
+<p>本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。</p>
+<h3 id="准备工作" tabindex="-1">准备工作</h3>
+<p>在开始之前，请确保你的电脑已经安装以下工具：</p>
+<ul>
+<li>Node.js (建议选择LTS版本)</li>
+<li>Git</li>
+</ul>
+<h4 id="1.-配置ssh密钥" tabindex="-1">1. 配置SSH密钥</h4>
+<ol>
+<li>生成SSH密钥：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"你的邮箱地址"</span>
+</code></pre>
+<ol start="2">
+<li>查看公钥内容：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">cat</span> ~/.ssh/id_rsa.pub  <span class="token comment"># Windows系统使用: type C:\Users\用户名\.ssh\id_rsa.pub</span>
+</code></pre>
+<ol start="3">
+<li>复制公钥内容，前往访问 GitHub SSH设置</li>
+</ol>
+<ul>
+<li>访问 GitHub SSH设置</li>
+<li>点击 “New SSH key”</li>
+<li>填写标题（如：My PC）</li>
+<li>粘贴公钥内容</li>
+<li>点击 “Add SSH key”</li>
+</ul>
+<ol start="4">
+<li>测试SSH连接：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    <span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com
+</code></pre>
+<h4 id="2.-创建github-pages仓库" tabindex="-1">2. 创建GitHub Pages仓库</h4>
+<ol>
+<li>登录GitHub，点击右上角 “+” 号，选择 “New repository”</li>
+<li>仓库名称必须为：<a href="http://xn--6qqv7i14ofosyrb.github.io">你的用户名.github.io</a></li>
+<li>选择 “Public”</li>
+<li>点击 “Create repository”</li>
+</ol>
+<h4 id="3.-安装hexo框架" tabindex="-1">3. 安装Hexo框架</h4>
+<ol>
+<li>全局安装Hexo-CLI：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> hexo-cli
+</code></pre>
+<ol start="2">
+<li>创建博客项目：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo init blog
+   <span class="token builtin class-name">cd</span> blog
+   <span class="token function">npm</span> <span class="token function">install</span>
+</code></pre>
+<ol start="3">
+<li>安装必要插件：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">npm</span> <span class="token function">install</span> hexo-deployer-git <span class="token parameter variable">--save</span>
+   <span class="token function">npm</span> <span class="token function">install</span> hexo-renderer-pug hexo-renderer-stylus <span class="token parameter variable">--save</span>
+</code></pre>
+<h4 id="4.-配置hexo" tabindex="-1">4. 配置Hexo</h4>
+<ol>
+<li>编辑根目录下的 _config.yml，修改以下配置：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token comment"># Site</span>
+<span class="token key atrule">title</span><span class="token punctuation">:</span> 你的网站标题
+<span class="token key atrule">subtitle</span><span class="token punctuation">:</span> 副标题
+<span class="token key atrule">description</span><span class="token punctuation">:</span> 网站描述
+<span class="token key atrule">keywords</span><span class="token punctuation">:</span> 关键词
+<span class="token key atrule">author</span><span class="token punctuation">:</span> 作者名
+<span class="token key atrule">language</span><span class="token punctuation">:</span> zh<span class="token punctuation">-</span>CN
+<span class="token key atrule">timezone</span><span class="token punctuation">:</span> Asia/Shanghai
+<span class="token comment"># URL</span>
+<span class="token key atrule">url</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//你的用户名.github.io
+<span class="token comment"># Deployment</span>
+<span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> git
+  <span class="token key atrule">repo</span><span class="token punctuation">:</span> git@github.com<span class="token punctuation">:</span>你的用户名/你的用户名.github.io.git
+  <span class="token key atrule">branch</span><span class="token punctuation">:</span> main
+</code></pre>
+<h4 id="5.-安装butterfly主题" tabindex="-1">5. 安装Butterfly主题</h4>
+<ol>
+<li>下载主题：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    <span class="token comment">#最好开启小飞机，还有问题开启TUN模式</span>
+    <span class="token function">git</span> clone https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+</code></pre>
+<ol start="2">
+<li>修改Hexo配置文件 <code>_config.yml</code>：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml">   <span class="token key atrule">theme</span><span class="token punctuation">:</span> butterfly
+</code></pre>
+<ol start="3">
+<li>创建主题配置文件：</li>
+</ol>
+<pre class="language-plaintext"><code class="language-plaintext"># 在博客根目录创建文件：_config.butterfly.yml
+# 从主题目录 themes/butterfly/_config.yml 复制配置到 _config.butterfly.yml
+</code></pre>
+<h4 id="6.-创建github-actions自动部署" tabindex="-1">6. 创建GitHub Actions自动部署</h4>
+<ol>
+<li>在博客根目录创建 .github/workflows/deploy.yml：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+
+<span class="token key atrule">on</span><span class="token punctuation">:</span>
+  <span class="token key atrule">push</span><span class="token punctuation">:</span>
+    <span class="token key atrule">branches</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> main
+
+<span class="token key atrule">jobs</span><span class="token punctuation">:</span>
+  <span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+    <span class="token key atrule">runs-on</span><span class="token punctuation">:</span> ubuntu<span class="token punctuation">-</span>latest
+    <span class="token key atrule">steps</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v2
+      <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/setup<span class="token punctuation">-</span>node@v2
+        <span class="token key atrule">with</span><span class="token punctuation">:</span>
+          <span class="token key atrule">node-version</span><span class="token punctuation">:</span> <span class="token string">'16'</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">run</span><span class="token punctuation">:</span> npm install
+      <span class="token punctuation">-</span> <span class="token key atrule">run</span><span class="token punctuation">:</span> npm run build
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+        <span class="token key atrule">uses</span><span class="token punctuation">:</span> peaceiris/actions<span class="token punctuation">-</span>gh<span class="token punctuation">-</span>pages@v3
+        <span class="token key atrule">with</span><span class="token punctuation">:</span>
+          <span class="token key atrule">github_token</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> secrets.GITHUB_TOKEN <span class="token punctuation">}</span><span class="token punctuation">}</span>
+          <span class="token key atrule">publish_dir</span><span class="token punctuation">:</span> ./public
+</code></pre>
+<h4 id="7.-本地预览与部署" tabindex="-1">7. 本地预览与部署</h4>
+<ol>
+<li>本地预览：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo clean   <span class="token comment"># 清除缓存</span>
+   hexo server  <span class="token comment"># 启动本地服务器</span>
+</code></pre>
+<p>访问 <a href="http://localhost:4000">http://localhost:4000</a> 预览效果</p>
+<ol start="2">
+<li>部署到GitHub：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo clean <span class="token comment"># 清除缓存</span>
+   hexo deploy <span class="token comment"># 部署到GitHub</span>
+</code></pre>
+<h4 id="8.-自定义域名（可选）" tabindex="-1">8. 自定义域名（可选）</h4>
+<pre><code>1. 在你的域名服务商处添加DNS记录：
+    - 类型：CNAME
+    - 主机记录：www 或 @
+    - 记录值：你的用户名.github.io
+2. 在博客的source目录下创建CNAME文件：
+</code></pre>
+<pre class="language-shell"><code class="language-shell">    <span class="token builtin class-name">echo</span> <span class="token string">"你的域名"</span> <span class="token operator">></span> source/CNAME
+</code></pre>
+<h4 id="9，写作博客" tabindex="-1">9，写作博客</h4>
+<ol>
+<li>创建博客</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    hexo new <span class="token string">'Github 首页美化教程'</span>
+</code></pre>
+<ol start="2">
+<li>
+<p>编辑生产的博客文件</p>
+</li>
+<li>
+<p>预览发布</p>
+</li>
+</ol>
+
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="/static/assets/script.js"></script>
+</body>
+</html>
