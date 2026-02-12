@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>标签 - 吱吱的博客</title>
+  <meta name="theme-color" content="#6366f1">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link active">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="container">
+      
+
+      
+      <div class="page-header">
+        <h1 class="page-title">所有标签</h1>
+        <p class="page-description">点击标签查看相关文章</p>
+      </div>
+      <div class="tag-cloud">
+        
+        <a href="/static/tags/Spring/" class="tag-cloud-item" style="font-size: calc(1rem + 2 * 0.1rem);">
+          Spring
+          <span class="tag-count">2</span>
+        </a>
+      
+        <a href="/static/tags/Java/" class="tag-cloud-item" style="font-size: calc(1rem + 2 * 0.1rem);">
+          Java
+          <span class="tag-count">2</span>
+        </a>
+      
+        <a href="/static/tags/IOC/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          IOC
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/AOP/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          AOP
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/设计模式/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          设计模式
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/随笔/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          随笔
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/生活/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          生活
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/技术/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          技术
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/思考/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          思考
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/编程/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          编程
+          <span class="tag-count">1</span>
+        </a>
+      
+        <a href="/static/tags/美学/" class="tag-cloud-item" style="font-size: calc(1rem + 1 * 0.1rem);">
+          美学
+          <span class="tag-count">1</span>
+        </a>
+      
+      </div>
+      
+
+      
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/MyBatis源码深度解析/">MyBatis源码深度解析</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月11日</span>
+            
+          </div>
+          <p class="post-excerpt">MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...</p>
+          <a href="/static/posts/MyBatis源码深度解析/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/ThreadLocal异步场景问题解析/">ThreadLocal异步场景问题解析</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月11日</span>
+            
+          </div>
+          <p class="post-excerpt">ThreadLocal 异步场景问题解析
+
+ 问题引入
+
+面试官问：ThreadLocal 在异步场景下有问题吗？
+
+这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。
+
+ 一、ThreadLocal 在异步场景下会失效吗？
+
+答案：是的...</p>
+          <a href="/static/posts/ThreadLocal异步场景问题解析/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/Spring-IOC与AOP详解/">Spring IOC与AOP详解</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月10日</span>
+            <span class="post-tag">Spring</span><span class="post-tag">IOC</span><span class="post-tag">AOP</span><span class="post-tag">Java</span>
+          </div>
+          <p class="post-excerpt">Spring IOC与AOP详解
+
+Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。
+
+ 第一部分：IOC（控制反转）
+
+ 什么是IOC？
+
+IOC（Inversion of Control...</p>
+          <a href="/static/posts/Spring-IOC与AOP详解/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/Spring源码中的设计模式详解/">Spring源码中的设计模式详解</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月9日</span>
+            <span class="post-tag">设计模式</span><span class="post-tag">Spring</span><span class="post-tag">Java</span>
+          </div>
+          <p class="post-excerpt">Spring源码中的设计模式详解
+
+Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。
+
+ 什么是设计模式？
+
+设计模式是一套被反复使用、多数人知晓的、...</p>
+          <a href="/static/posts/Spring源码中的设计模式详解/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/HashMap源码分析/">HashMap源码分析</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月9日</span>
+            
+          </div>
+          <p class="post-excerpt">HashMap 源码分析
+
+ 一、HashMap 简介
+
+HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提供了快速的键值对存储和查找功能。HashMap 允许使用 null 键和 null 值，并且不保证映射的顺序。
+
+ 主要特点
+
+- 键值对存储，基于哈希表实现
+- 允许 ...</p>
+          <a href="/static/posts/HashMap源码分析/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/java语法糖详解/">java语法糖详解</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月26日</span>
+            
+          </div>
+          <p class="post-excerpt">Java 语法糖
+
+原文(https://mp.weixin.qq.com/s/o4XdEMq1DL-nBS-f8Za5Aw)
+
+ 什么是语法糖？
+
+语法糖（Syntactic Sugar） 也称糖衣语法，是英国计算机学家 Peter.J.Landin 发明的一个术语，指在计算机语言中添加的某种语法...</p>
+          <a href="/static/posts/java语法糖详解/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/Trae-Java环境配置/">Trae-Java环境配置</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月26日</span>
+            
+          </div>
+          <p class="post-excerpt">配置Java环境
+ 1. 安装Java环境配置包 Java Extension Pack ,Spring Boot Extension Pack
+
+ 2. 配置Java环境 settings.json文件
+json
+{
+  "java.import.gradle.java.home": "C:\\P...</p>
+          <a href="/static/posts/Trae-Java环境配置/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/欢迎来到我的博客/">欢迎来到我的博客</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月26日</span>
+            <span class="post-tag">随笔</span><span class="post-tag">生活</span>
+          </div>
+          <p class="post-excerpt">欢迎来到我的博客
+
+这是使用全新的静态博客生成器创建的第一篇文章。
+
+ 特点
+
+这个博客生成器具有以下特点：
+
+- 简洁设计：极简主义风格
+- 快速加载：纯静态页面
+- 响应式：适配所有设备
+- 暗色模式：保护你的眼睛
+
+希望你喜欢这个全新的博客设计！</p>
+          <a href="/static/posts/欢迎来到我的博客/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/为什么Java中只有值传递/">为什么Java中只有值传递？</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月25日</span>
+            
+          </div>
+          <p class="post-excerpt">为什么Java中只有值传递？
+
+ 形参&实参
+
+方法的定义可能会用到 参数，参数在程序语言中分为：
+
+- 实参（实际参数，Arguments）：用于传递给函数/方法的参数，必须有确定的值。
+- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需要有确定的值。
+
+java
+St...</p>
+          <a href="/static/posts/为什么Java中只有值传递/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/关于技术分享/">关于技术分享</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月25日</span>
+            <span class="post-tag">技术</span><span class="post-tag">思考</span>
+          </div>
+          <p class="post-excerpt">关于技术分享
+
+技术是不断进步的，分享让知识流动得更快。
+
+ 学习方式
+
+1. 实践是最好的老师
+2. 记录学习笔记
+3. 与他人交流讨论
+4. 持续迭代改进
+
+让我们一起在技术的道路上前行！</p>
+          <a href="/static/posts/关于技术分享/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/代码之美/">代码之美</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月24日</span>
+            <span class="post-tag">编程</span><span class="post-tag">美学</span>
+          </div>
+          <p class="post-excerpt">代码之美
+
+优雅的代码就像诗歌一样令人愉悦。
+
+ 编程哲学
+
+> "简单是复杂的终极境界。" - 达芬奇
+
+好的代码应该：
+- 易于理解
+- 易于维护
+- 高效运行
+- 遵循最佳实践
+
+javascript
+function fibonacci(n) {
+  if (n <= 1) return n...</p>
+          <a href="/static/posts/代码之美/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/首页美化教程/">首页美化教程</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月23日</span>
+            
+          </div>
+          <p class="post-excerpt">参考教程(https://zhuanlan.zhihu.com/p/454597068 Github 首页美化教程（一）：打造个性化的GitHub首页)
+
+参考主页(https://github.com/sun0225SUN/ sun0225SUN (Guoqi Sun))
+
+ 1. ctrl+c ...</p>
+          <a href="/static/posts/首页美化教程/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/如何创建GitHub个人网站/">如何创建GitHub个人网站</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年1月22日</span>
+            
+          </div>
+          <p class="post-excerpt">如何创建GitHub个人网站
+
+本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。
+
+ 准备工作
+
+在开始之前，请确保你的电脑已经安装以下工具：
+
+- Node.js (建议选择LTS版本)
+- Git
+
+ 1. ...</p>
+          <a href="/static/posts/如何创建GitHub个人网站/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p>Powered by <a href="https://github.com">吱吱的博客</a></p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>
