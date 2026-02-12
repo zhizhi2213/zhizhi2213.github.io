@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>标签: Spring - 吱吱的博客</title>
+  <meta name="theme-color" content="#6366f1">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link active">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="container">
+      
+      <div class="page-header">
+        <h1 class="page-title">标签: Spring</h1>
+        <p class="page-description">共找到 <span class="posts-count">2</span> 篇文章</p>
+      </div>
+      
+
+      
+
+      
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/Spring-IOC与AOP详解/">Spring IOC与AOP详解</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月10日</span>
+            <span class="post-tag">Spring</span><span class="post-tag">IOC</span><span class="post-tag">AOP</span><span class="post-tag">Java</span>
+          </div>
+          <p class="post-excerpt">Spring IOC与AOP详解
+
+Spring框架是Java开发中最流行的框架之一，其核心特性IOC（控制反转）和AOP（面向切面编程）构成了Spring的基础。本文将深入解析这两个核心概念。
+
+ 第一部分：IOC（控制反转）
+
+ 什么是IOC？
+
+IOC（Inversion of Control...</p>
+          <a href="/static/posts/Spring-IOC与AOP详解/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+      <article class="post-card">
+        <div class="post-card-inner">
+          <h2 class="post-title">
+            <a href="/static/posts/Spring源码中的设计模式详解/">Spring源码中的设计模式详解</a>
+          </h2>
+          <div class="post-meta">
+            <span class="post-date">2026年2月9日</span>
+            <span class="post-tag">设计模式</span><span class="post-tag">Spring</span><span class="post-tag">Java</span>
+          </div>
+          <p class="post-excerpt">Spring源码中的设计模式详解
+
+Spring框架作为Java开发中最流行的框架之一，其优雅的架构设计离不开对设计模式的巧妙运用。本文将结合Spring源码，重点讲解代理模式、适配器模式、装饰器模式和工厂模式在Spring中的应用。
+
+ 什么是设计模式？
+
+设计模式是一套被反复使用、多数人知晓的、...</p>
+          <a href="/static/posts/Spring源码中的设计模式详解/" class="read-more">阅读全文 →</a>
+        </div>
+      </article>
+    
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p>Powered by <a href="https://github.com">吱吱的博客</a></p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>
