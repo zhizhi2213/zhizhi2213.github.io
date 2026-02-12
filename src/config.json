@@ -15,5 +15,17 @@
     "accentColor": "#6366f1",
     "fontFamily": "system-ui, -apple-system, sans-serif",
     "postsPerPage": 10
+  },
+  "giscus": {
+    "enabled": true,
+    "repo": "zhizhi2213/zhizhi2213.github.io",
+    "repoId": "R_kgDOH-1Z7w",
+    "category": "Announcements",
+    "categoryId": "DIC_kwDOH-1Z784CfY7Q",
+    "mapping": "pathname",
+    "reactionsEnabled": 1,
+    "emitMetadata": 0,
+    "lang": "zh-CN",
+    "theme": "preferred_color_scheme"
   }
 }

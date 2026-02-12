@@ -39,14 +39,17 @@ class BlogGenerator {
     await this.generateIndex();
     await this.generatePosts();
     await this.generateArchives();
+    await this.generateTags();
     await this.generateFeed();
+    await this.generateSitemap();
+    await this.generateSearchIndex();
     await this.copyAssets();
     console.log('✨ Blog generated successfully!');
   }
 
   async cleanOutput() {
     const rootDir = path.join(__dirname, '..');
-    const filesToClean = ['index.html', 'atom.xml'];
+    const filesToClean = ['index.html', 'atom.xml', 'sitemap.xml', 'sw.js'];
     const dirsToClean = ['static'];
 
     for (const file of filesToClean) {
@@ -83,9 +86,11 @@ class BlogGenerator {
       
       const relativePath = path.relative(postsDir, file);
       
+      const parsedContent = this.parseMarkdown(body);
       const post = {
         ...attributes,
-        content: this.parseMarkdown(body),
+        content: parsedContent.html,
+        toc: parsedContent.toc,
         slug: this.slugify(attributes.title || path.basename(file, '.md')),
         date: attributes.date || new Date().toISOString(),
         excerpt: this.createExcerpt(body),
@@ -143,7 +148,30 @@ class BlogGenerator {
   }
 
   parseMarkdown(content) {
-    return md.render(content);
+    let toc = [];
+    const headingRegex = /^(#{2,3})\s+(.+)$/gm;
+    
+    content = content.replace(headingRegex, (match, hashes, title) => {
+      const level = hashes.length;
+      const id = this.slugify(title);
+      toc.push({ level, title, id });
+      return `${hashes} ${title} {#${id}}`;
+    });
+    
+    let rendered = md.render(content);
+    
+    rendered = rendered.replace(/<h([23])[^>]*>(.+?)\s+\{#([^}]+)\}<\/h\1>/g, (match, level, title, id) => {
+      return `<h${level} id="${id}">${title}</h${level}>`;
+    });
+    
+    rendered = rendered.replace(/<img([^>]*?)(?:\s+loading=["'][^"']*["'])?([^>]*?)>/gi, (match, before, after) => {
+      if (before.includes('loading=') || after.includes('loading=')) {
+        return match;
+      }
+      return `<img${before} loading="lazy"${after}>`;
+    });
+    
+    return { html: rendered, toc };
   }
 
   async createSamplePosts() {
@@ -230,9 +258,11 @@ ${post.content}`;
       await fs.writeFile(filePath, content, 'utf-8');
       
       const parsed = this.parseFrontMatter(content);
+      const parsedContent = this.parseMarkdown(parsed.body);
       this.posts.push({
         ...parsed.attributes,
-        content: this.parseMarkdown(parsed.body),
+        content: parsedContent.html,
+        toc: parsedContent.toc,
         slug: this.slugify(post.title),
         date: post.date,
         excerpt: this.createExcerpt(parsed.body),
@@ -276,13 +306,47 @@ ${post.content}`;
     );
   }
 
+  findRelatedPosts(currentPost, maxCount = 3) {
+    const scored = this.posts
+      .filter(p => p.slug !== currentPost.slug)
+      .map(post => {
+        let score = 0;
+        
+        if (currentPost.tags && post.tags) {
+          const commonTags = currentPost.tags.filter(t => post.tags.includes(t));
+          score += commonTags.length * 10;
+        }
+        
+        const currentTitle = currentPost.title.toLowerCase();
+        const postTitle = post.title.toLowerCase();
+        const currentWords = currentTitle.split(/\s+/);
+        const postWords = postTitle.split(/\s+/);
+        
+        currentWords.forEach(word => {
+          if (word.length > 1 && postTitle.includes(word)) {
+            score += 2;
+          }
+        });
+        
+        return { post, score };
+      })
+      .sort((a, b) => b.score - a.score)
+      .slice(0, maxCount)
+      .map(item => item.post);
+    
+    return scored;
+  }
+
   async generatePosts() {
     const template = await this.loadTemplate('post.html');
     
     for (const post of this.posts) {
+      const relatedPosts = this.findRelatedPosts(post);
       const html = this.renderTemplate(template, {
         post,
         posts: this.posts,
+        relatedPosts,
+        giscus: this.config.giscus,
         formatDate: this.formatDate.bind(this)
       });
       
@@ -317,6 +381,48 @@ ${post.content}`;
     const archivesDir = path.join(__dirname, '..', 'static', 'archives');
     await fs.mkdir(archivesDir, { recursive: true });
     await fs.writeFile(path.join(archivesDir, 'index.html'), html);
+  }
+
+  async generateTags() {
+    const tags = {};
+    
+    this.posts.forEach(post => {
+      if (post.tags && Array.isArray(post.tags)) {
+        post.tags.forEach(tag => {
+          if (!tags[tag]) {
+            tags[tag] = [];
+          }
+          tags[tag].push(post);
+        });
+      }
+    });
+
+    const sortedTags = Object.entries(tags)
+      .sort((a, b) => b[1].length - a[1].length);
+
+    const template = await this.loadTemplate('tags.html');
+    const html = this.renderTemplate(template, {
+      tags: sortedTags,
+      posts: this.posts,
+      formatDate: this.formatDate.bind(this)
+    });
+
+    const tagsDir = path.join(__dirname, '..', 'static', 'tags');
+    await fs.mkdir(tagsDir, { recursive: true });
+    await fs.writeFile(path.join(tagsDir, 'index.html'), html);
+
+    for (const [tagName, tagPosts] of sortedTags) {
+      const tagHtml = this.renderTemplate(template, {
+        currentTag: tagName,
+        tags: sortedTags,
+        posts: tagPosts,
+        formatDate: this.formatDate.bind(this)
+      });
+
+      const tagDir = path.join(__dirname, '..', 'static', 'tags', this.slugify(tagName));
+      await fs.mkdir(tagDir, { recursive: true });
+      await fs.writeFile(path.join(tagDir, 'index.html'), tagHtml);
+    }
   }
 
   async generateFeed() {
@@ -356,6 +462,65 @@ ${this.posts.map(post => `  <entry>
     );
   }
 
+  async generateSitemap() {
+    const escapeXml = (text) => {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    };
+    
+    const lastMod = this.posts.length > 0 ? this.formatDateISO(this.posts[0].date) : new Date().toISOString();
+    
+    const urls = [
+      { loc: this.config.site.url + '/', lastmod: lastMod, priority: '1.0' },
+      { loc: this.config.site.url + '/static/archives/', lastmod: lastMod, priority: '0.8' },
+      { loc: this.config.site.url + '/static/tags/', lastmod: lastMod, priority: '0.8' }
+    ];
+    
+    this.posts.forEach(post => {
+      urls.push({
+        loc: this.config.site.url + `/static/posts/${post.slug}/`,
+        lastmod: this.formatDateISO(post.date),
+        priority: '0.9'
+      });
+    });
+    
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map(url => `  <url>
+    <loc>${escapeXml(url.loc)}</loc>
+    <lastmod>${url.lastmod}</lastmod>
+    <priority>${url.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+    await fs.writeFile(
+      path.join(__dirname, '..', 'sitemap.xml'),
+      sitemap
+    );
+  }
+
+  async generateSearchIndex() {
+    const searchIndex = this.posts.map(post => ({
+      title: post.title,
+      slug: post.slug,
+      excerpt: post.excerpt,
+      tags: post.tags || [],
+      date: post.date
+    }));
+
+    const assetsDir = path.join(__dirname, '..', 'static', 'assets');
+    await fs.mkdir(assetsDir, { recursive: true });
+
+    await fs.writeFile(
+      path.join(assetsDir, 'search-index.json'),
+      JSON.stringify(searchIndex, null, 2)
+    );
+  }
+
   async copyAssets() {
     const srcAssets = path.join(__dirname, 'assets');
     const dstAssets = path.join(__dirname, '..', 'static', 'assets');
@@ -369,10 +534,6 @@ ${this.posts.map(post => `  <entry>
         const dst = path.join(dstAssets, file);
         await fs.copyFile(src, dst);
       }
-      
-      const scriptSrc = path.join(__dirname, 'script.js');
-      const scriptDst = path.join(dstAssets, 'script.js');
-      await fs.copyFile(scriptSrc, scriptDst);
     } catch (e) {
       console.log('Assets directory not found');
     }
@@ -425,16 +586,73 @@ ${this.posts.map(post => `  <entry>
           </ul>
         </div>
       `).join('') : '');
+
+    if (data.currentTag) {
+      html = html.replace(/\{\{#currentTag\}\}([\s\S]*?)\{\{\/currentTag\}\}/g, (match, content) => {
+        return content.replace(/\{\{currentTag\}\}/g, data.currentTag);
+      });
+      html = html.replace(/\{\{\^currentTag\}\}[\s\S]*?\{\{\/currentTag\}\}/g, '');
+      if (data.posts) {
+        html = html.replace(/<span class="posts-count">(\d+)<\/span>/g, `<span class="posts-count">${data.posts.length}</span>`);
+      }
+    } else {
+      html = html.replace(/\{\{#currentTag\}\}[\s\S]*?\{\{\/currentTag\}\}/g, '');
+      html = html.replace(/\{\{\^currentTag\}\}([\s\S]*?)\{\{\/currentTag\}\}/g, '$1');
+    }
+
+    if (data.tags) {
+      html = html.replace(/\{\{tags\}\}/g, data.tags.map(([tag, posts]) => `
+        <a href="/static/tags/${this.slugify(tag)}/" class="tag-cloud-item" style="font-size: calc(1rem + ${posts.length} * 0.1rem);">
+          ${tag}
+          <span class="tag-count">${posts.length}</span>
+        </a>
+      `).join(''));
+    }
     
     if (data.post) {
       const post = data.post;
       html = html
         .replace(/\{\{post\.title\}\}/g, post.title)
+        .replace(/\{\{post\.excerpt\}\}/g, post.excerpt)
         .replace(/\{\{post\.date\}\}/g, data.formatDate(post.date))
         .replace(/\{\{post\.content\}\}/g, post.content)
+        .replace(/\{\{post\.slug\}\}/g, post.slug)
         .replace(/\{\{post\.tags\}\}/g, post.tags ? post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('') : '');
+
+      if (post.toc && post.toc.length > 0) {
+        html = html.replace(/\{\{#toc\}\}([\s\S]*?)\{\{\/toc\}\}/g, (match, content) => {
+          return content.replace(/\{\{toc\}\}/g, post.toc.map(item => {
+            const indent = item.level === 3 ? 'padding-left: 1.5rem;' : '';
+            return `<a href="#${item.id}" class="toc-item toc-level-${item.level}" style="${indent}">${item.title}</a>`;
+          }).join(''));
+        });
+      } else {
+        html = html.replace(/\{\{#toc\}\}[\s\S]*?\{\{\/toc\}\}/g, '');
+      }
+      
+      if (post.tags && post.tags.length > 0) {
+        html = html.replace(/\{\{#post\.tags\}\}([\s\S]*?)\{\{\/post\.tags\}\}/g, (match, content) => {
+          return content.replace(/\{\{post\.tags\}\}/g, post.tags.map(tag => 
+            content.replace(/\{\{\.\}\}/g, tag)
+          ).join(''));
+        });
+      } else {
+        html = html.replace(/\{\{#post\.tags\}\}[\s\S]*?\{\{\/post\.tags\}\}/g, '');
+      }
     }
-    
+
+    if (data.giscus && data.giscus.enabled) {
+      html = html.replace(/\{\{#giscus\}\}([\s\S]*?)\{\{\/giscus\}\}/g, (match, content) => {
+        let result = content;
+        Object.keys(data.giscus).forEach(key => {
+          result = result.replace(new RegExp(`\\{\\{giscus\\.${key}\\}\\}`, 'g'), data.giscus[key]);
+        });
+        return result;
+      });
+    } else {
+      html = html.replace(/\{\{#giscus\}\}[\s\S]*?\{\{\/giscus\}\}/g, '');
+    }
+
     return html;
   }
 }

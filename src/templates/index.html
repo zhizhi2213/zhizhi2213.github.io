@@ -5,11 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{site.title}} - {{site.subtitle}}</title>
   <meta name="description" content="{{site.description}}">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="{{site.title}} - {{site.subtitle}}">
+  <meta property="og:description" content="{{site.description}}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{site.url}}">
+  <meta property="og:site_name" content="{{site.title}}">
+  <meta property="og:locale" content="zh_CN">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{site.title}} - {{site.subtitle}}">
+  <meta name="twitter:description" content="{{site.description}}">
   <link rel="stylesheet" href="/static/assets/style.css">
 </head>
 <body>
   <div class="background-animation"></div>
   <div class="background-animation background-animation-2"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
     <div class="container">
@@ -18,15 +30,54 @@
         <div class="nav-links">
           <a href="/" class="nav-link active">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
         </div>
-        <button class="theme-toggle" aria-label="切换主题">
-          <span class="theme-icon">🌙</span>
-        </button>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
       </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">{{site.title}}</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <main class="main">
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
     <div class="container">
       <section class="hero">
         <h1 class="hero-title">{{site.title}}</h1>
@@ -45,9 +96,16 @@
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 {{site.author}}. All rights reserved.</p>
+      <p>Powered by <a href="https://github.com">{{site.title}}</a></p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
     </div>
   </footer>
 
-  <script src="/assets/script.js"></script>
+  <script src="/assets/script.js" defer></script>
 </body>
 </html>
