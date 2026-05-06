@@ -130,6 +130,15 @@ class BlogGenerator {
       const url = queue.shift();
       const contents = await this.fetchGitHubAPI(url);
       
+      // 检查是否是 GitHub API 错误响应
+      if (contents && contents.message) {
+        console.log(`⚠️ GitHub API Error: ${contents.message}`);
+        if (contents.documentation_url) {
+          console.log(`   Docs: ${contents.documentation_url}`);
+        }
+        throw new Error(`GitHub API Error: ${contents.message}`);
+      }
+      
       if (!Array.isArray(contents)) continue;
       
       for (const item of contents) {
@@ -158,17 +167,28 @@ class BlogGenerator {
       
       const options = { headers };
       
-      https.get(url, options, (res) => {
+      const req = https.get(url, options, (res) => {
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
           try {
-            resolve(JSON.parse(data));
+            const parsed = JSON.parse(data);
+            // 如果是错误响应但 HTTP 状态码是 200（不太可能）或 304，也返回
+            if (res.statusCode >= 400) {
+              reject(new Error(`HTTP ${res.statusCode}: ${parsed.message || data}`));
+            } else {
+              resolve(parsed);
+            }
           } catch (e) {
             reject(e);
           }
         });
-      }).on('error', reject);
+      });
+      req.on('error', reject);
+      req.setTimeout(10000, () => {
+        req.destroy();
+        reject(new Error('Request timeout'));
+      });
     });
   }
 
