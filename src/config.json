@@ -10,6 +10,12 @@
     "directory": "posts",
     "output": "posts"
   },
+  "github": {
+    "enabled": true,
+    "repo": "zhizhi2213/obsidian-notes",
+    "branch": "main",
+    "path": "blog"
+  },
   "output": ".",
   "theme": {
     "accentColor": "#6366f1",

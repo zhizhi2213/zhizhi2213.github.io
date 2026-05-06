@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const https = require('https');
 const MarkdownIt = require('markdown-it');
 const prism = require('markdown-it-prism');
 const anchor = require('markdown-it-anchor');
@@ -68,6 +69,122 @@ class BlogGenerator {
   }
 
   async loadPosts() {
+    const isRemoteBuild = process.env.GITHUB_TOKEN;
+    
+    if (isRemoteBuild) {
+      try {
+        await this.loadPostsFromGitHub();
+        console.log(`✨ Loaded ${this.posts.length} posts from GitHub`);
+        return;
+      } catch (e) {
+        console.log('⚠️ Failed to load from GitHub, falling back to local posts...');
+      }
+    }
+    
+    await this.loadPostsFromLocal();
+  }
+
+  async loadPostsFromGitHub() {
+    const githubConfig = this.config.github || {};
+    const repo = githubConfig.repo;
+    const branch = githubConfig.branch || 'main';
+    const postsPath = githubConfig.path || 'posts';
+    
+    const apiUrl = `https://api.github.com/repos/${repo}/contents/${postsPath}?ref=${branch}`;
+    
+    const contents = await this.fetchGitHubAPI(apiUrl);
+    
+    if (!Array.isArray(contents)) {
+      throw new Error('Invalid response from GitHub API');
+    }
+
+    const markdownFiles = contents.filter(item => 
+      item.name.endsWith('.md') || (item.type === 'dir')
+    );
+
+    for (const item of markdownFiles) {
+      let files = [item];
+      
+      if (item.type === 'dir') {
+        const dirContents = await this.fetchGitHubAPI(item.url);
+        files = dirContents.filter(f => f.name.endsWith('.md'));
+      }
+
+      for (const file of files) {
+        const content = await this.fetchGitHubFile(file.download_url);
+        const { attributes, body } = this.parseFrontMatter(content);
+        
+        const parsedContent = this.parseMarkdown(body);
+        const post = {
+          ...attributes,
+          content: parsedContent.html,
+          toc: parsedContent.toc,
+          slug: this.slugify(attributes.title || file.name.replace('.md', '')),
+          date: attributes.date || new Date().toISOString(),
+          excerpt: this.createExcerpt(body),
+          path: file.path
+        };
+        
+        this.posts.push(post);
+      }
+    }
+    
+    this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  fetchGitHubAPI(url) {
+    return new Promise((resolve, reject) => {
+      const headers = {
+        'User-Agent': 'BlogGenerator/1.0',
+        'Accept': 'application/vnd.github.v3+json'
+      };
+      
+      // 优先使用环境变量中的 token（适用于 GitHub Actions）
+      const token = process.env.GITHUB_TOKEN || this.config.github?.token;
+      if (token) {
+        headers['Authorization'] = `token ${token}`;
+      }
+      
+      const options = { headers };
+      
+      https.get(url, options, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }).on('error', reject);
+    });
+  }
+
+  fetchGitHubFile(url) {
+    return new Promise((resolve, reject) => {
+      const headers = {
+        'User-Agent': 'BlogGenerator/1.0',
+        'Accept': 'application/vnd.github.v3.raw'
+      };
+      
+      // 优先使用环境变量中的 token（适用于 GitHub Actions）
+      const token = process.env.GITHUB_TOKEN || this.config.github?.token;
+      if (token) {
+        headers['Authorization'] = `token ${token}`;
+      }
+      
+      const options = { headers };
+      
+      https.get(url, options, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => resolve(data));
+      }).on('error', reject);
+    });
+  }
+
+  async loadPostsFromLocal() {
     const postsDir = path.join(__dirname, this.config.posts.directory);
     
     try {

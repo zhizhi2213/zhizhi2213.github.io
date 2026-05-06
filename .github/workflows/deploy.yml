@@ -28,6 +28,8 @@ jobs:
         run: cd src && npm install
 
       - name: Build Blog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node src/index.js
 
       - name: Prepare deployment directory
