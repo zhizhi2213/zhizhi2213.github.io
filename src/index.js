@@ -95,7 +95,8 @@ class BlogGenerator {
     const allFiles = await this.getAllFilesRecursively(repo, branch, postsPath);
     const markdownFiles = allFiles.filter(f => f.name.endsWith('.md'));
     
-    console.log(`Found ${markdownFiles.length} markdown files`);
+    console.log(`Total files found: ${allFiles.length}`);
+    console.log(`Markdown files: ${markdownFiles.length}`);
     
     for (const file of markdownFiles) {
       try {
@@ -115,41 +116,53 @@ class BlogGenerator {
         
         this.posts.push(post);
       } catch (e) {
-        console.log(`Failed to load: ${file.path}`);
+        console.log(`Failed to load: ${file.path} - ${e.message}`);
       }
     }
     
+    console.log(`Successfully loaded ${this.posts.length} posts`);
     this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
   }
 
   async getAllFilesRecursively(repo, branch, path) {
     const files = [];
     const queue = [`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`];
+    let dirCount = 0;
+    let fileCount = 0;
+    
+    console.log('Starting recursive file fetch...');
     
     while (queue.length > 0) {
       const url = queue.shift();
+      console.log(`Fetching: ${url}`);
       const contents = await this.fetchGitHubAPI(url);
       
-      // 检查是否是 GitHub API 错误响应
       if (contents && contents.message) {
         console.log(`⚠️ GitHub API Error: ${contents.message}`);
-        if (contents.documentation_url) {
-          console.log(`   Docs: ${contents.documentation_url}`);
-        }
         throw new Error(`GitHub API Error: ${contents.message}`);
       }
       
-      if (!Array.isArray(contents)) continue;
+      if (!Array.isArray(contents)) {
+        console.log('⚠️ Response is not an array:', JSON.stringify(contents).substring(0, 200));
+        continue;
+      }
+      
+      console.log(`  Got ${contents.length} items`);
       
       for (const item of contents) {
         if (item.type === 'dir') {
+          dirCount++;
           queue.push(item.url);
+          console.log(`  [DIR] ${item.path}`);
         } else {
+          fileCount++;
           files.push(item);
+          console.log(`  [FILE] ${item.path}`);
         }
       }
     }
     
+    console.log(`Scanned: ${dirCount} directories, ${fileCount} files`);
     return files;
   }
 
