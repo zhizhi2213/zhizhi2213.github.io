@@ -593,7 +593,8 @@ ${post.content}`;
     const updated = this.posts.length > 0 ? this.formatDateISO(this.posts[0].date) : new Date().toISOString();
     
     const escapeXml = (text) => {
-      return text
+      if (!text) return '';
+      return String(text)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -612,11 +613,11 @@ ${post.content}`;
     <name>${escapeXml(this.config.site.author)}</name>
   </author>
 ${this.posts.map(post => `  <entry>
-    <title>${escapeXml(post.title)}</title>
+    <title>${escapeXml(post.title || post.slug)}</title>
     <link href="${this.config.site.url}/static/posts/${post.slug}/"/>
     <updated>${this.formatDateISO(post.date)}</updated>
     <id>${this.config.site.url}/static/posts/${post.slug}/</id>
-    <summary>${escapeXml(post.excerpt)}</summary>
+    <summary>${escapeXml(post.excerpt || post.title || post.slug)}</summary>
   </entry>`).join('\n')}
 </feed>`;
 
@@ -628,7 +629,8 @@ ${this.posts.map(post => `  <entry>
 
   async generateSitemap() {
     const escapeXml = (text) => {
-      return text
+      if (!text) return '';
+      return String(text)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
