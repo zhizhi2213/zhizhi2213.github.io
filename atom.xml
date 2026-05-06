@@ -3,70 +3,10 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-01-26T00:00:00.000Z</updated>
+  <updated>2026-05-06T07:30:51.308Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
-  <entry>
-    <title>欢迎来到我的博客</title>
-    <link href="https://zhizhi2213.github.io/static/posts/欢迎来到我的博客/"/>
-    <updated>2026-01-26T00:00:00.000Z</updated>
-    <id>https://zhizhi2213.github.io/static/posts/欢迎来到我的博客/</id>
-    <summary>欢迎来到我的博客
 
-这是使用全新的静态博客生成器创建的第一篇文章。
-
- 特点
-
-这个博客生成器具有以下特点：
-
-- 简洁设计：极简主义风格
-- 快速加载：纯静态页面
-- 响应式：适配所有设备
-- 暗色模式：保护你的眼睛
-
-希望你喜欢这个全新的博客设计！</summary>
-  </entry>
-  <entry>
-    <title>关于技术分享</title>
-    <link href="https://zhizhi2213.github.io/static/posts/关于技术分享/"/>
-    <updated>2026-01-25T00:00:00.000Z</updated>
-    <id>https://zhizhi2213.github.io/static/posts/关于技术分享/</id>
-    <summary>关于技术分享
-
-技术是不断进步的，分享让知识流动得更快。
-
- 学习方式
-
-1. 实践是最好的老师
-2. 记录学习笔记
-3. 与他人交流讨论
-4. 持续迭代改进
-
-让我们一起在技术的道路上前行！</summary>
-  </entry>
-  <entry>
-    <title>代码之美</title>
-    <link href="https://zhizhi2213.github.io/static/posts/代码之美/"/>
-    <updated>2026-01-24T00:00:00.000Z</updated>
-    <id>https://zhizhi2213.github.io/static/posts/代码之美/</id>
-    <summary>代码之美
-
-优雅的代码就像诗歌一样令人愉悦。
-
- 编程哲学
-
-&gt; &quot;简单是复杂的终极境界。&quot; - 达芬奇
-
-好的代码应该：
-- 易于理解
-- 易于维护
-- 高效运行
-- 遵循最佳实践
-
-javascript
-function fibonacci(n) {
-  if (n &lt;= 1) return n...</summary>
-  </entry>
 </feed>
