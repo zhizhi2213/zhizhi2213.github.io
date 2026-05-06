@@ -477,8 +477,8 @@ ${post.content}`;
           score += commonTags.length * 10;
         }
         
-        const currentTitle = currentPost.title.toLowerCase();
-        const postTitle = post.title.toLowerCase();
+        const currentTitle = (currentPost.title || currentPost.slug || '').toLowerCase();
+        const postTitle = (post.title || post.slug || '').toLowerCase();
         const currentWords = currentTitle.split(/\s+/);
         const postWords = postTitle.split(/\s+/);
         
