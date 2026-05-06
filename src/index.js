@@ -90,27 +90,15 @@ class BlogGenerator {
     const branch = githubConfig.branch || 'main';
     const postsPath = githubConfig.path || 'posts';
     
-    const apiUrl = `https://api.github.com/repos/${repo}/contents/${postsPath}?ref=${branch}`;
+    console.log(`Loading posts from ${repo}/${postsPath}...`);
     
-    const contents = await this.fetchGitHubAPI(apiUrl);
+    const allFiles = await this.getAllFilesRecursively(repo, branch, postsPath);
+    const markdownFiles = allFiles.filter(f => f.name.endsWith('.md'));
     
-    if (!Array.isArray(contents)) {
-      throw new Error('Invalid response from GitHub API');
-    }
-
-    const markdownFiles = contents.filter(item => 
-      item.name.endsWith('.md') || (item.type === 'dir')
-    );
-
-    for (const item of markdownFiles) {
-      let files = [item];
-      
-      if (item.type === 'dir') {
-        const dirContents = await this.fetchGitHubAPI(item.url);
-        files = dirContents.filter(f => f.name.endsWith('.md'));
-      }
-
-      for (const file of files) {
+    console.log(`Found ${markdownFiles.length} markdown files`);
+    
+    for (const file of markdownFiles) {
+      try {
         const content = await this.fetchGitHubFile(file.download_url);
         const { attributes, body } = this.parseFrontMatter(content);
         
@@ -126,10 +114,34 @@ class BlogGenerator {
         };
         
         this.posts.push(post);
+      } catch (e) {
+        console.log(`Failed to load: ${file.path}`);
       }
     }
     
     this.posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  async getAllFilesRecursively(repo, branch, path) {
+    const files = [];
+    const queue = [`https://api.github.com/repos/${repo}/contents/${path}?ref=${branch}`];
+    
+    while (queue.length > 0) {
+      const url = queue.shift();
+      const contents = await this.fetchGitHubAPI(url);
+      
+      if (!Array.isArray(contents)) continue;
+      
+      for (const item of contents) {
+        if (item.type === 'dir') {
+          queue.push(item.url);
+        } else {
+          files.push(item);
+        }
+      }
+    }
+    
+    return files;
   }
 
   fetchGitHubAPI(url) {
@@ -139,7 +151,6 @@ class BlogGenerator {
         'Accept': 'application/vnd.github.v3+json'
       };
       
-      // 优先使用环境变量中的 token（适用于 GitHub Actions）
       const token = process.env.GITHUB_TOKEN || this.config.github?.token;
       if (token) {
         headers['Authorization'] = `token ${token}`;
@@ -168,7 +179,6 @@ class BlogGenerator {
         'Accept': 'application/vnd.github.v3.raw'
       };
       
-      // 优先使用环境变量中的 token（适用于 GitHub Actions）
       const token = process.env.GITHUB_TOKEN || this.config.github?.token;
       if (token) {
         headers['Authorization'] = `token ${token}`;
