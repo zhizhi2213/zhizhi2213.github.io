@@ -9,21 +9,19 @@
     <name>zhizhi2213</name>
   </author>
   <entry>
-    <title>Ghostty使用</title>
-    <link href="https://zhizhi2213.github.io/static/posts/Ghostty使用/"/>
+    <title>IDEA快捷键（Mac）</title>
+    <link href="https://zhizhi2213.github.io/static/posts/IDEA快捷键-Mac/"/>
     <updated>2026-02-11T13:00:00.000Z</updated>
-    <id>https://zhizhi2213.github.io/static/posts/Ghostty使用/</id>
-    <summary>Ghostty使用
+    <id>https://zhizhi2213.github.io/static/posts/IDEA快捷键-Mac/</id>
+    <summary>Mac 版 IDEA 最实用、高频必用快捷键
 
- 待开发
+ 一、通用 / 窗口
 
-1
-
-2
-
-3
-
-4</summary>
+- 打开设置：Command + ,
+- 打开最近项目：Command + Shift + E
+- 快速搜索任何东西（类 / 文件 / 方法 / 设置）：Double Shift
+- 搜索类：Command + O
+- 搜索文件...</summary>
   </entry>
   <entry>
     <title>MyBatis源码深度解析</title>
