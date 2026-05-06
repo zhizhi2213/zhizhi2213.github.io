@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreadLocal异步场景问题解析 - 吱吱的博客</title>
+  <meta name="description" content="ThreadLocal 异步场景问题解析
+
+ 问题引入
+
+面试官问：ThreadLocal 在异步场景下有问题吗？
+
+这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。
+
+ 一、ThreadLocal 在异步场景下会失效吗？
+
+答案：是的...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="ThreadLocal异步场景问题解析">
+  <meta property="og:description" content="ThreadLocal 异步场景问题解析
+
+ 问题引入
+
+面试官问：ThreadLocal 在异步场景下有问题吗？
+
+这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。
+
+ 一、ThreadLocal 在异步场景下会失效吗？
+
+答案：是的...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/ThreadLocal异步场景问题解析/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年2月11日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ThreadLocal异步场景问题解析">
+  <meta name="twitter:description" content="ThreadLocal 异步场景问题解析
+
+ 问题引入
+
+面试官问：ThreadLocal 在异步场景下有问题吗？
+
+这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。
+
+ 一、ThreadLocal 在异步场景下会失效吗？
+
+答案：是的...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Ghostty使用/" class="posts-sidebar-link">Ghostty使用</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link active">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">ThreadLocal异步场景问题解析</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年2月11日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
+          </div>
+
+          <div class="post-content">
+            <h1>ThreadLocal 异步场景问题解析</h1>
+<h2 id="问题引入">问题引入</h2>
+<p><strong>面试官问：ThreadLocal 在异步场景下有问题吗？</strong></p>
+<p>这是一个非常经典的并发编程面试题，考察候选人对 ThreadLocal 原理的理解，以及在异步场景下的使用经验。</p>
+<h2 id="一-ThreadLocal-在异步场景下会失效吗">一、ThreadLocal 在异步场景下会失效吗？</h2>
+<p><strong>答案：是的，ThreadLocal 在异步场景下会失效。</strong></p>
+<h3 id="1-1-失效原因">1.1 失效原因</h3>
+<p>ThreadLocal 的值默认是无法跨线程传递的，原因如下：</p>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Thread</span> <span class="token keyword">implements</span> <span class="token class-name">Runnable</span> <span class="token punctuation">{</span>
+    <span class="token class-name">ThreadLocal<span class="token punctuation">.</span>ThreadLocalMap</span> threadLocals <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+    <span class="token class-name">ThreadLocal<span class="token punctuation">.</span>ThreadLocalMap</span> inheritableThreadLocals <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>从 Thread 类的源码可以看出，每个 Thread 对象都有自己独立的 <code>ThreadLocalMap</code>。ThreadLocal 的值就存储在这个 Map 中，key 是 ThreadLocal 对象本身，value 是存储的数据。</p>
+<p><strong>核心问题：</strong></p>
+<ul>
+<li>父线程和子线程是两个不同的 Thread 对象</li>
+<li>它们各自拥有独立的 ThreadLocalMap</li>
+<li>因此父线程中的 ThreadLocal 值无法自动传递给子线程</li>
+</ul>
+<h3 id="1-2-代码示例">1.2 代码示例</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ThreadLocalDemo</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> threadLocal <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        threadLocal<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">"主线程的值"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">{</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"子线程获取到的值: "</span> <span class="token operator">+</span> threadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"主线程的值: "</span> <span class="token operator">+</span> threadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>输出结果：</strong></p>
+<pre class="language-plaintext"><code class="language-plaintext">主线程的值: 主线程的值
+子线程获取到的值: null
+</code></pre>
+<p>可以看到，子线程中获取到的是 <code>null</code>，说明 ThreadLocal 的值没有传递到子线程。</p>
+<h2 id="二-如何跨线程传递-ThreadLocal-的值">二、如何跨线程传递 ThreadLocal 的值？</h2>
+<p>针对这个问题，主要有两种解决方案：</p>
+<h3 id="2-1-方案一-JDK-的-InheritableThreadLocal">2.1 方案一：JDK 的 InheritableThreadLocal</h3>
+<p>InheritableThreadLocal 是 JDK 提供的一种特殊 ThreadLocal，可以在创建子线程时将父线程的值复制给子线程。</p>
+<h4 id="2.1.1-使用示例" tabindex="-1">2.1.1 使用示例</h4>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">InheritableThreadLocalDemo</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">InheritableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> inheritableThreadLocal <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">InheritableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        inheritableThreadLocal<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">"主线程的值"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">{</span>
+            <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"子线程获取到的值: "</span> <span class="token operator">+</span> inheritableThreadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"主线程的值: "</span> <span class="token operator">+</span> inheritableThreadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>输出结果：</strong></p>
+<pre class="language-plaintext"><code class="language-plaintext">主线程的值: 主线程的值
+子线程获取到的值: 主线程的值
+</code></pre>
+<h4 id="2.1.2-原理分析" tabindex="-1">2.1.2 原理分析</h4>
+<p>InheritableThreadLocal 继承自 ThreadLocal，重写了三个核心方法：</p>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">InheritableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> <span class="token keyword">extends</span> <span class="token class-name">ThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">protected</span> <span class="token class-name">T</span> <span class="token function">childValue</span><span class="token punctuation">(</span><span class="token class-name">T</span> parentValue<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> parentValue<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token class-name">ThreadLocalMap</span> <span class="token function">getMap</span><span class="token punctuation">(</span><span class="token class-name">Thread</span> t<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> t<span class="token punctuation">.</span>inheritableThreadLocals<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">void</span> <span class="token function">createMap</span><span class="token punctuation">(</span><span class="token class-name">Thread</span> t<span class="token punctuation">,</span> <span class="token class-name">T</span> firstValue<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        t<span class="token punctuation">.</span>inheritableThreadLocals <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocalMap</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> firstValue<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>核心机制：</strong></p>
+<ol>
+<li>Thread 类中有两个 ThreadLocalMap：<code>threadLocals</code> 和 <code>inheritableThreadLocals</code></li>
+<li>InheritableThreadLocal 使用 <code>inheritableThreadLocals</code> 来存储值</li>
+<li>当创建子线程时，Thread 的构造方法会调用 <code>Thread.init()</code> 方法：<pre class="language-java"><code class="language-java"><span class="token keyword">if</span> <span class="token punctuation">(</span>parent<span class="token punctuation">.</span>inheritableThreadLocals <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>inheritableThreadLocals <span class="token operator">=</span> 
+        <span class="token class-name">ThreadLocal</span><span class="token punctuation">.</span><span class="token function">createInheritedMap</span><span class="token punctuation">(</span>parent<span class="token punctuation">.</span>inheritableThreadLocals<span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+</li>
+</ol>
+<h4 id="2.1.3-线程池场景下的问题" tabindex="-1">2.1.3 线程池场景下的问题</h4>
+<p>InheritableThreadLocal 在线程池场景下会失效，原因如下：</p>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">InheritableThreadLocalPoolDemo</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">InheritableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> inheritableThreadLocal <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">InheritableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ExecutorService</span> executor <span class="token operator">=</span> <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newFixedThreadPool</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">3</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            inheritableThreadLocal<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">"任务-"</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            executor<span class="token punctuation">.</span><span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">{</span>
+                <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"线程名: "</span> <span class="token operator">+</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
+                                 <span class="token string">", 获取到的值: "</span> <span class="token operator">+</span> inheritableThreadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>可能输出：</strong></p>
+<pre class="language-plaintext"><code class="language-plaintext">线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-0
+</code></pre>
+<p><strong>问题分析：</strong></p>
+<ul>
+<li>线程池会复用线程，不会每次都创建新线程</li>
+<li>InheritableThreadLocal 只在线程创建时复制一次值</li>
+<li>后续复用线程时，仍然使用的是第一次复制过来的值</li>
+<li>这会导致线程拿到的可能是上一个任务传下来的脏数据</li>
+</ul>
+<h3 id="2-2-方案二-阿里的-TransmittableThreadLocal-TTL">2.2 方案二：阿里的 TransmittableThreadLocal (TTL)</h3>
+<p>TransmittableThreadLocal 是阿里开源的 TTL 库提供的解决方案，专门解决线程池场景下 ThreadLocal 的传递问题。</p>
+<h4 id="2.2.1-使用示例" tabindex="-1">2.2.1 使用示例</h4>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TransmittableThreadLocalDemo</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> transmittableThreadLocal <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token class-name">ExecutorService</span> executor <span class="token operator">=</span> <span class="token class-name">TtlExecutors</span><span class="token punctuation">.</span><span class="token function">getTtlExecutorService</span><span class="token punctuation">(</span>
+        <span class="token class-name">Executors</span><span class="token punctuation">.</span><span class="token function">newFixedThreadPool</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> <span class="token number">3</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            transmittableThreadLocal<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span><span class="token string">"任务-"</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            
+            executor<span class="token punctuation">.</span><span class="token function">submit</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-></span> <span class="token punctuation">{</span>
+                <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"线程名: "</span> <span class="token operator">+</span> <span class="token class-name">Thread</span><span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> 
+                                 <span class="token string">", 获取到的值: "</span> <span class="token operator">+</span> transmittableThreadLocal<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p><strong>输出结果：</strong></p>
+<pre class="language-plaintext"><code class="language-plaintext">线程名: pool-1-thread-1, 获取到的值: 任务-0
+线程名: pool-1-thread-1, 获取到的值: 任务-1
+线程名: pool-1-thread-1, 获取到的值: 任务-2
+</code></pre>
+<p>可以看到，即使线程池复用线程，每个任务都能获取到正确的值。</p>
+<h4 id="2.2.2-原理分析" tabindex="-1">2.2.2 原理分析</h4>
+<p>TransmittableThreadLocal 的核心思想是：<strong>将 ThreadLocal 的值与任务绑定，而不是与线程绑定。</strong></p>
+<p><strong>工作流程：</strong></p>
+<ol>
+<li>
+<p><strong>捕获阶段：</strong> 在提交任务到线程池时，捕获父线程的 ThreadLocal 值</p>
+<pre class="language-java"><code class="language-java"><span class="token comment">// TtlRunnable 源码简化</span>
+<span class="token keyword">public</span> <span class="token class-name">TtlRunnable</span><span class="token punctuation">(</span><span class="token class-name">Runnable</span> runnable<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>captured <span class="token operator">=</span> <span class="token class-name">TransmittableThreadLocal<span class="token punctuation">.</span>Transmitter</span><span class="token punctuation">.</span><span class="token function">capture</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>runnable <span class="token operator">=</span> runnable<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li>
+<p><strong>恢复阶段：</strong> 任务执行前，将捕获的值设置到当前线程</p>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Object</span> backup <span class="token operator">=</span> <span class="token class-name">TransmittableThreadLocal<span class="token punctuation">.</span>Transmitter</span><span class="token punctuation">.</span><span class="token function">replay</span><span class="token punctuation">(</span>captured<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+        runnable<span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+        <span class="token class-name">TransmittableThreadLocal<span class="token punctuation">.</span>Transmitter</span><span class="token punctuation">.</span><span class="token function">restore</span><span class="token punctuation">(</span>backup<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+</li>
+<li>
+<p><strong>清理阶段：</strong> 任务执行完成后，恢复线程原来的值</p>
+</li>
+</ol>
+<p><strong>核心机制对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>InheritableThreadLocal</th>
+<th>TransmittableThreadLocal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>绑定对象</td>
+<td>线程</td>
+<td>任务</td>
+</tr>
+<tr>
+<td>复制时机</td>
+<td>线程创建时</td>
+<td>任务提交时</td>
+</tr>
+<tr>
+<td>线程池支持</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>简单父子线程</td>
+<td>线程池、异步场景</td>
+</tr>
+</tbody>
+</table>
+<h2 id="三-面试回答总结">三、面试回答总结</h2>
+<p><strong>面试官：ThreadLocal 异步场景有问题吗？</strong></p>
+<p><strong>完整回答：</strong></p>
+<blockquote>
+<p>ThreadLocal 在异步场景下确实会有问题。它的值存储在每个线程独立的 ThreadLocalMap 中，父子线程是两个不同的对象，因此值无法自动传递。</p>
+<p>解决方案主要有两种：</p>
+<ol>
+<li>
+<p><strong>InheritableThreadLocal</strong>：JDK 提供的方案，在创建子线程时将父线程的值复制给子线程。但它在线程池场景下会失效，因为线程池会复用线程，导致线程拿到的可能是脏数据。</p>
+</li>
+<li>
+<p><strong>TransmittableThreadLocal</strong>：阿里开源的 TTL 库提供的方案。它的原理是在提交任务到线程池时，把父线程的 ThreadLocal 值捕获下来，和任务绑定在一起。等线程池里的某个线程要执行这个任务时，再把捕获的值设置到这个线程上，任务执行完再清理掉。</p>
+</li>
+</ol>
+<p>简单说，InheritableThreadLocal 是跟线程绑定的，只在创建时有效；而 TTL 是跟任务绑定的，完美支持线程池。</p>
+</blockquote>
+<h2 id="四-实际应用场景">四、实际应用场景</h2>
+<h3 id="4-1-分布式追踪">4.1 分布式追踪</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TraceContext</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> traceId <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">setTraceId</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        traceId<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">getTraceId</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> traceId<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        traceId<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="4-2-用户上下文传递">4.2 用户上下文传递</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">UserContext</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">User</span><span class="token punctuation">></span></span> currentUser <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">setCurrentUser</span><span class="token punctuation">(</span><span class="token class-name">User</span> user<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        currentUser<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>user<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">User</span> <span class="token function">getCurrentUser</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> currentUser<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="4-3-数据库动态数据源切换">4.3 数据库动态数据源切换</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DataSourceContextHolder</span> <span class="token punctuation">{</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> dataSourceKey <span class="token operator">=</span> 
+        <span class="token keyword">new</span> <span class="token class-name">TransmittableThreadLocal</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">setDataSourceKey</span><span class="token punctuation">(</span><span class="token class-name">String</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        dataSourceKey<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">String</span> <span class="token function">getDataSourceKey</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> dataSourceKey<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">clearDataSourceKey</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        dataSourceKey<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="五-注意事项">五、注意事项</h2>
+<ol>
+<li><strong>内存泄漏风险</strong>：使用 ThreadLocal 后一定要调用 <code>remove()</code> 方法清理，否则可能导致内存泄漏</li>
+<li><strong>TTL 装饰器</strong>：使用 TTL 时，需要用 <code>TtlExecutors</code>、<code>TtlForkJoinPool</code> 等装饰器包装线程池</li>
+<li><strong>性能考虑</strong>：TTL 的捕获和恢复机制会带来一定的性能开销，在高并发场景下需要注意</li>
+<li><strong>值不可变</strong>：ThreadLocal 中存储的对象最好是不可变的，避免多线程修改带来的问题</li>
+</ol>
+<h2 id="六-总结">六、总结</h2>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>适用场景</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ThreadLocal</td>
+<td>单线程</td>
+<td>简单高效</td>
+<td>无法跨线程</td>
+</tr>
+<tr>
+<td>InheritableThreadLocal</td>
+<td>简单父子线程</td>
+<td>JDK 原生支持</td>
+<td>线程池失效</td>
+</tr>
+<tr>
+<td>TransmittableThreadLocal</td>
+<td>线程池、异步</td>
+<td>完美支持线程池</td>
+<td>需要引入依赖</td>
+</tr>
+</tbody>
+</table>
+<p>在实际项目中，推荐使用 TransmittableThreadLocal，因为它能够完美解决线程池场景下 ThreadLocal 传递的问题。</p>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Ghostty使用/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Ghostty使用</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">MyBatis源码深度解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring IOC与AOP详解</h4>
+                  <time class="related-posts-item-date">2026年2月10日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#问题引入" class="toc-item toc-level-2" style="">问题引入</a><a href="#一-ThreadLocal-在异步场景下会失效吗" class="toc-item toc-level-2" style="">一、ThreadLocal 在异步场景下会失效吗？</a><a href="#1-1-失效原因" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1.1 失效原因</a><a href="#1-2-代码示例" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1.2 代码示例</a><a href="#二-如何跨线程传递-ThreadLocal-的值" class="toc-item toc-level-2" style="">二、如何跨线程传递 ThreadLocal 的值？</a><a href="#2-1-方案一-JDK-的-InheritableThreadLocal" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.1 方案一：JDK 的 InheritableThreadLocal</a><a href="#2-2-方案二-阿里的-TransmittableThreadLocal-TTL" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.2 方案二：阿里的 TransmittableThreadLocal (TTL)</a><a href="#三-面试回答总结" class="toc-item toc-level-2" style="">三、面试回答总结</a><a href="#四-实际应用场景" class="toc-item toc-level-2" style="">四、实际应用场景</a><a href="#4-1-分布式追踪" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.1 分布式追踪</a><a href="#4-2-用户上下文传递" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.2 用户上下文传递</a><a href="#4-3-数据库动态数据源切换" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.3 数据库动态数据源切换</a><a href="#五-注意事项" class="toc-item toc-level-2" style="">五、注意事项</a><a href="#六-总结" class="toc-item toc-level-2" style="">六、总结</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>

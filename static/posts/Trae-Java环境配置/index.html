@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trae-Java环境配置 - 吱吱的博客</title>
+  <meta name="description" content="配置Java环境
+ 1. 安装Java环境配置包 Java Extension Pack ,Spring Boot Extension Pack
+
+ 2. 配置Java环境 settings.json文件
+json
+{
+  "java.import.gradle.java.home": "C:\\P...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="Trae-Java环境配置">
+  <meta property="og:description" content="配置Java环境
+ 1. 安装Java环境配置包 Java Extension Pack ,Spring Boot Extension Pack
+
+ 2. 配置Java环境 settings.json文件
+json
+{
+  "java.import.gradle.java.home": "C:\\P...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/Trae-Java环境配置/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年1月26日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Trae-Java环境配置">
+  <meta name="twitter:description" content="配置Java环境
+ 1. 安装Java环境配置包 Java Extension Pack ,Spring Boot Extension Pack
+
+ 2. 配置Java环境 settings.json文件
+json
+{
+  "java.import.gradle.java.home": "C:\\P...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Ghostty使用/" class="posts-sidebar-link">Ghostty使用</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link active">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">Trae-Java环境配置</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年1月26日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
+          </div>
+
+          <div class="post-content">
+            <h2 id="配置Java环境">配置Java环境</h2>
+<h3 id="1-安装Java环境配置包-Java-Extension-Pack-Spring-Boot-Extension-Pack">1. 安装Java环境配置包 <code>Java Extension Pack</code> ,<code>Spring Boot Extension Pack</code></h3>
+<h3 id="2-配置Java环境-settings-json文件">2. 配置Java环境 settings.json文件</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.import.gradle.java.home"</span><span class="token operator">:</span> <span class="token string">"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"</span>
+<span class="token punctuation">}</span>
+ 
+</code></pre>
+<h3 id="3-配置maven环境-settings-json文件">3.配置maven环境 settings.json文件</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.configuration.maven.globalSettings"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.9.12\\conf\\all.xml"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.path"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.9.12\\bin\\mvn.cmd"</span>
+<span class="token punctuation">}</span>
+ 
+</code></pre>
+<h3 id="4-配置单元测试环境-可选-配置vm参数-Java-9-引入了模块系统-默认不允许通过反射访问模块内部-所以需要明确开放这些包给未命名模块使用">4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"java.test.config"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"vmArgs"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"--add-opens=java.base/java.lang=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.math=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.net=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.io=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.time=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.security=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/sun.security.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--illegal-access=permit"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span> 
+<span class="token punctuation">}</span>
+
+</code></pre>
+<h3 id="5-配置运行环境-可选-配置vm参数-Java-9-引入了模块系统-默认不允许通过反射访问模块内部-所以需要明确开放这些包给未命名模块使用">5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</h3>
+<p>launch.json</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"version"</span><span class="token operator">:</span> <span class="token string">"0.2.0"</span><span class="token punctuation">,</span>
+  <span class="token property">"configurations"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"java"</span><span class="token punctuation">,</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Current File"</span><span class="token punctuation">,</span>
+      <span class="token property">"request"</span><span class="token operator">:</span> <span class="token string">"launch"</span><span class="token punctuation">,</span>
+      <span class="token property">"mainClass"</span><span class="token operator">:</span> <span class="token string">"${file}"</span><span class="token punctuation">,</span>
+      <span class="token property">"vmArgs"</span> <span class="token operator">:</span><span class="token string">"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"type"</span><span class="token operator">:</span> <span class="token string">"java"</span><span class="token punctuation">,</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"BankSteelPurchaseFinanceApp"</span><span class="token punctuation">,</span>
+      <span class="token property">"request"</span><span class="token operator">:</span> <span class="token string">"launch"</span><span class="token punctuation">,</span>
+      <span class="token property">"mainClass"</span><span class="token operator">:</span> <span class="token string">"com.banksteel.purchase.BankSteelPurchaseFinanceApp"</span><span class="token punctuation">,</span>
+      <span class="token property">"projectName"</span><span class="token operator">:</span> <span class="token string">"banksteel-purchase-finance"</span><span class="token punctuation">,</span>
+      <span class="token property">"vmArgs"</span> <span class="token operator">:</span><span class="token string">"--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.math=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED"</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>ps:<br>
+cursor 配置文件 settings.json</p>
+<pre class="language-json"><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"workbench.colorTheme"</span><span class="token operator">:</span> <span class="token string">"Default Light Modern"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.import.gradle.java.home"</span><span class="token operator">:</span> <span class="token string">"C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.16.8-hotspot"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.jdt.ls.java.home"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.options"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"java.configuration.maven.globalSettings"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.executable.path"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.6.3\\bin\\mvn.cmd"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.excludedFolders"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+
+    <span class="token string">"**/.*"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/node_modules"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/target"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/bin"</span><span class="token punctuation">,</span>
+    <span class="token string">"**/archetype-resources"</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"redhat.telemetry.enabled"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"java.configuration.maven.userSettings"</span><span class="token operator">:</span> <span class="token string">"&lt;?xml version=\"1.0\" encoding=\"UTF-8\"?> &lt;settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"           xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd\">      &lt;localRepository>C:\\repository&lt;/localRepository>     &lt;pluginGroups>&lt;/pluginGroups>     &lt;proxies>&lt;/proxies>   &lt;mirrors>     &lt;mirror>       &lt;id>banksteel-mirror&lt;/id>       &lt;name>Banksteel Maven Public Mirror&lt;/name>       &lt;url>http://nexus.registry.banksteel.com/repository/banksteel/&lt;/url>       &lt;mirrorOf>central&lt;/mirrorOf>       &lt;blocked>false&lt;/blocked>     &lt;/mirror>   &lt;/mirrors>     &lt;profiles>      &lt;profile>       &lt;id>dev&lt;/id>       &lt;repositories>              &lt;repository>           &lt;id>dev.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/dev-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>       &lt;/repositories>     &lt;/profile> \t \t &lt;profile>       &lt;id>test&lt;/id>       &lt;repositories>         &lt;repository>           &lt;id>test.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/test-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>       &lt;/repositories>     &lt;/profile> \t \t \t &lt;profile>       &lt;id>pre&lt;/id>       &lt;repositories>          &lt;repository>           &lt;id>pre.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/pre-snapshots/&lt;/url>           &lt;releases>               &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>               &lt;enabled>true&lt;/enabled>               &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>        &lt;/repositories>     &lt;/profile> \t \t &lt;profile>       &lt;id>prod&lt;/id>       &lt;repositories>         &lt;!-- 生产仓库 -->         &lt;repository>           &lt;id>prod.snapshot&lt;/id>           &lt;url>http://nexus.registry.banksteel.com/repository/snapshots/&lt;/url>           &lt;releases>             &lt;enabled>false&lt;/enabled>           &lt;/releases>           &lt;snapshots>             &lt;enabled>true&lt;/enabled>             &lt;updatePolicy>always&lt;/updatePolicy>           &lt;/snapshots>         &lt;/repository>        &lt;/repositories>     &lt;/profile>   &lt;/profiles>    &lt;activeProfiles>     &lt;activeProfile>dev&lt;/activeProfile>   &lt;/activeProfiles> &lt;/settings>"</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.terminal.useJavaHome"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"java.project.outputPath"</span><span class="token operator">:</span> <span class="token string">""</span><span class="token punctuation">,</span>
+  <span class="token property">"maven.settingsFile"</span><span class="token operator">:</span> <span class="token string">"C:\\work\\apache-maven-3.6.3\\conf\\all.xml"</span><span class="token punctuation">,</span>
+  <span class="token property">"security.workspace.trust.untrustedFiles"</span><span class="token operator">:</span> <span class="token string">"open"</span><span class="token punctuation">,</span>
+  <span class="token property">"java.test.config"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"vmArgs"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token string">"--add-opens=java.base/java.lang=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.math=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.lang.invoke=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.net=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.util.concurrent=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.io=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.time=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/java.security=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--add-opens=java.base/sun.security.util=ALL-UNNAMED"</span><span class="token punctuation">,</span>
+      <span class="token string">"--illegal-access=permit"</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="可能遇到的问题">可能遇到的问题</h3>
+<ol>
+<li>拉取私库时因为maven版本过高，私库不支持https,需要设置maven配置文件<br>
+blocked 设置 false</li>
+</ol>
+<pre class="language-xml"><code class="language-xml">    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>mirror</span><span class="token punctuation">></span></span>
+       ...
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>blocked</span><span class="token punctuation">></span></span>false<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>blocked</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>mirror</span><span class="token punctuation">></span></span>
+</code></pre>
+<p>以上无法解决，建议本地仓库地址使用配置默认的也就是.m2下的仓库地址</p>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Ghostty使用/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Ghostty使用</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">MyBatis源码深度解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#配置Java环境" class="toc-item toc-level-2" style="">配置Java环境</a><a href="#1-安装Java环境配置包-Java-Extension-Pack-Spring-Boot-Extension-Pack" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1. 安装Java环境配置包 `Java Extension Pack` ,`Spring Boot Extension Pack`</a><a href="#2-配置Java环境-settings-json文件" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2. 配置Java环境 settings.json文件</a><a href="#3-配置maven环境-settings-json文件" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.配置maven环境 settings.json文件</a><a href="#4-配置单元测试环境-可选-配置vm参数-Java-9-引入了模块系统-默认不允许通过反射访问模块内部-所以需要明确开放这些包给未命名模块使用" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.配置单元测试环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</a><a href="#5-配置运行环境-可选-配置vm参数-Java-9-引入了模块系统-默认不允许通过反射访问模块内部-所以需要明确开放这些包给未命名模块使用" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.配置运行环境（可选） 配置vm参数（Java 9+ 引入了模块系统，默认不允许通过反射访问模块内部，所以需要明确开放这些包给未命名模块使用）</a><a href="#可能遇到的问题" class="toc-item toc-level-3" style="padding-left: 1.5rem;">可能遇到的问题</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>

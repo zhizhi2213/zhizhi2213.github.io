@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>如何创建GitHub个人网站 - 吱吱的博客</title>
+  <meta name="description" content="如何创建GitHub个人网站
+
+本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。
+
+ 准备工作
+
+在开始之前，请确保你的电脑已经安装以下工具：
+
+- Node.js (建议选择LTS版本)
+- Git
+
+ 1. ...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="如何创建GitHub个人网站">
+  <meta property="og:description" content="如何创建GitHub个人网站
+
+本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。
+
+ 准备工作
+
+在开始之前，请确保你的电脑已经安装以下工具：
+
+- Node.js (建议选择LTS版本)
+- Git
+
+ 1. ...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/如何创建GitHub个人网站/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年1月22日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="如何创建GitHub个人网站">
+  <meta name="twitter:description" content="如何创建GitHub个人网站
+
+本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。
+
+ 准备工作
+
+在开始之前，请确保你的电脑已经安装以下工具：
+
+- Node.js (建议选择LTS版本)
+- Git
+
+ 1. ...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Ghostty使用/" class="posts-sidebar-link">Ghostty使用</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link active">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">如何创建GitHub个人网站</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年1月22日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
+          </div>
+
+          <div class="post-content">
+            <h2 id="如何创建GitHub个人网站">如何创建GitHub个人网站</h2>
+<p>本文将详细介绍如何从零开始搭建一个基于GitHub Pages的个人网站，包括环境配置、仓库创建、Hexo框架安装以及主题配置等全过程。</p>
+<h3 id="准备工作">准备工作</h3>
+<p>在开始之前，请确保你的电脑已经安装以下工具：</p>
+<ul>
+<li>Node.js (建议选择LTS版本)</li>
+<li>Git</li>
+</ul>
+<h4 id="1.-配置ssh密钥" tabindex="-1">1. 配置SSH密钥</h4>
+<ol>
+<li>生成SSH密钥：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   ssh-keygen <span class="token parameter variable">-t</span> rsa <span class="token parameter variable">-C</span> <span class="token string">"你的邮箱地址"</span>
+</code></pre>
+<ol start="2">
+<li>查看公钥内容：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">cat</span> ~/.ssh/id_rsa.pub  <span class="token comment"># Windows系统使用: type C:\Users\用户名\.ssh\id_rsa.pub</span>
+</code></pre>
+<ol start="3">
+<li>复制公钥内容，前往访问 GitHub SSH设置</li>
+</ol>
+<ul>
+<li>访问 GitHub SSH设置</li>
+<li>点击 “New SSH key”</li>
+<li>填写标题（如：My PC）</li>
+<li>粘贴公钥内容</li>
+<li>点击 “Add SSH key”</li>
+</ul>
+<ol start="4">
+<li>测试SSH连接：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    <span class="token function">ssh</span> <span class="token parameter variable">-T</span> git@github.com
+</code></pre>
+<h4 id="2.-创建github-pages仓库" tabindex="-1">2. 创建GitHub Pages仓库</h4>
+<ol>
+<li>登录GitHub，点击右上角 “+” 号，选择 “New repository”</li>
+<li>仓库名称必须为：<a href="http://xn--6qqv7i14ofosyrb.github.io">你的用户名.github.io</a></li>
+<li>选择 “Public”</li>
+<li>点击 “Create repository”</li>
+</ol>
+<h4 id="3.-安装hexo框架" tabindex="-1">3. 安装Hexo框架</h4>
+<ol>
+<li>全局安装Hexo-CLI：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> hexo-cli
+</code></pre>
+<ol start="2">
+<li>创建博客项目：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo init blog
+   <span class="token builtin class-name">cd</span> blog
+   <span class="token function">npm</span> <span class="token function">install</span>
+</code></pre>
+<ol start="3">
+<li>安装必要插件：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   <span class="token function">npm</span> <span class="token function">install</span> hexo-deployer-git <span class="token parameter variable">--save</span>
+   <span class="token function">npm</span> <span class="token function">install</span> hexo-renderer-pug hexo-renderer-stylus <span class="token parameter variable">--save</span>
+</code></pre>
+<h4 id="4.-配置hexo" tabindex="-1">4. 配置Hexo</h4>
+<ol>
+<li>编辑根目录下的 _config.yml，修改以下配置：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token comment"># Site</span>
+<span class="token key atrule">title</span><span class="token punctuation">:</span> 你的网站标题
+<span class="token key atrule">subtitle</span><span class="token punctuation">:</span> 副标题
+<span class="token key atrule">description</span><span class="token punctuation">:</span> 网站描述
+<span class="token key atrule">keywords</span><span class="token punctuation">:</span> 关键词
+<span class="token key atrule">author</span><span class="token punctuation">:</span> 作者名
+<span class="token key atrule">language</span><span class="token punctuation">:</span> zh<span class="token punctuation">-</span>CN
+<span class="token key atrule">timezone</span><span class="token punctuation">:</span> Asia/Shanghai
+<span class="token comment"># URL</span>
+<span class="token key atrule">url</span><span class="token punctuation">:</span> https<span class="token punctuation">:</span>//你的用户名.github.io
+<span class="token comment"># Deployment</span>
+<span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> git
+  <span class="token key atrule">repo</span><span class="token punctuation">:</span> git@github.com<span class="token punctuation">:</span>你的用户名/你的用户名.github.io.git
+  <span class="token key atrule">branch</span><span class="token punctuation">:</span> main
+</code></pre>
+<h4 id="5.-安装butterfly主题" tabindex="-1">5. 安装Butterfly主题</h4>
+<ol>
+<li>下载主题：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    <span class="token comment">#最好开启小飞机，还有问题开启TUN模式</span>
+    <span class="token function">git</span> clone https://github.com/jerryc127/hexo-theme-butterfly.git themes/butterfly
+</code></pre>
+<ol start="2">
+<li>修改Hexo配置文件 <code>_config.yml</code>：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml">   <span class="token key atrule">theme</span><span class="token punctuation">:</span> butterfly
+</code></pre>
+<ol start="3">
+<li>创建主题配置文件：</li>
+</ol>
+<pre class="language-plaintext"><code class="language-plaintext"># 在博客根目录创建文件：_config.butterfly.yml
+# 从主题目录 themes/butterfly/_config.yml 复制配置到 _config.butterfly.yml
+</code></pre>
+<h4 id="6.-创建github-actions自动部署" tabindex="-1">6. 创建GitHub Actions自动部署</h4>
+<ol>
+<li>在博客根目录创建 .github/workflows/deploy.yml：</li>
+</ol>
+<pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+
+<span class="token key atrule">on</span><span class="token punctuation">:</span>
+  <span class="token key atrule">push</span><span class="token punctuation">:</span>
+    <span class="token key atrule">branches</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> main
+
+<span class="token key atrule">jobs</span><span class="token punctuation">:</span>
+  <span class="token key atrule">deploy</span><span class="token punctuation">:</span>
+    <span class="token key atrule">runs-on</span><span class="token punctuation">:</span> ubuntu<span class="token punctuation">-</span>latest
+    <span class="token key atrule">steps</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/checkout@v2
+      <span class="token punctuation">-</span> <span class="token key atrule">uses</span><span class="token punctuation">:</span> actions/setup<span class="token punctuation">-</span>node@v2
+        <span class="token key atrule">with</span><span class="token punctuation">:</span>
+          <span class="token key atrule">node-version</span><span class="token punctuation">:</span> <span class="token string">'16'</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">run</span><span class="token punctuation">:</span> npm install
+      <span class="token punctuation">-</span> <span class="token key atrule">run</span><span class="token punctuation">:</span> npm run build
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> Deploy
+        <span class="token key atrule">uses</span><span class="token punctuation">:</span> peaceiris/actions<span class="token punctuation">-</span>gh<span class="token punctuation">-</span>pages@v3
+        <span class="token key atrule">with</span><span class="token punctuation">:</span>
+          <span class="token key atrule">github_token</span><span class="token punctuation">:</span> $<span class="token punctuation">{</span><span class="token punctuation">{</span> secrets.GITHUB_TOKEN <span class="token punctuation">}</span><span class="token punctuation">}</span>
+          <span class="token key atrule">publish_dir</span><span class="token punctuation">:</span> ./public
+</code></pre>
+<h4 id="7.-本地预览与部署" tabindex="-1">7. 本地预览与部署</h4>
+<ol>
+<li>本地预览：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo clean   <span class="token comment"># 清除缓存</span>
+   hexo server  <span class="token comment"># 启动本地服务器</span>
+</code></pre>
+<p>访问 <a href="http://localhost:4000">http://localhost:4000</a> 预览效果</p>
+<ol start="2">
+<li>部署到GitHub：</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">   hexo clean <span class="token comment"># 清除缓存</span>
+   hexo deploy <span class="token comment"># 部署到GitHub</span>
+</code></pre>
+<h4 id="8.-自定义域名（可选）" tabindex="-1">8. 自定义域名（可选）</h4>
+<pre><code>1. 在你的域名服务商处添加DNS记录：
+    - 类型：CNAME
+    - 主机记录：www 或 @
+    - 记录值：你的用户名.github.io
+2. 在博客的source目录下创建CNAME文件：
+</code></pre>
+<pre class="language-shell"><code class="language-shell">    <span class="token builtin class-name">echo</span> <span class="token string">"你的域名"</span> <span class="token operator">></span> source/CNAME
+</code></pre>
+<h4 id="9，写作博客" tabindex="-1">9，写作博客</h4>
+<ol>
+<li>创建博客</li>
+</ol>
+<pre class="language-shell"><code class="language-shell">    hexo new <span class="token string">'Github 首页美化教程'</span>
+</code></pre>
+<ol start="2">
+<li>
+<p>编辑生产的博客文件</p>
+</li>
+<li>
+<p>预览发布</p>
+</li>
+</ol>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Ghostty使用/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Ghostty使用</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">MyBatis源码深度解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#如何创建GitHub个人网站" class="toc-item toc-level-2" style="">如何创建GitHub个人网站</a><a href="#准备工作" class="toc-item toc-level-3" style="padding-left: 1.5rem;">准备工作</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyBatis源码深度解析 - 吱吱的博客</title>
+  <meta name="description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
+  <meta name="theme-color" content="#6366f1">
+  <meta property="og:title" content="MyBatis源码深度解析">
+  <meta property="og:description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/MyBatis源码深度解析/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年2月11日">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MyBatis源码深度解析">
+  <meta name="twitter:description" content="MyBatis 源码深度解析
+
+ 一、MyBatis 简介
+
+MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div class="background-animation"></div>
+  <div class="background-animation background-animation-2"></div>
+  
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+  
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <aside class="posts-sidebar">
+          <h3 class="posts-sidebar-title">文章目录</h3>
+          <nav class="posts-sidebar-content" id="postsSidebarContent">
+            <ul class="posts-sidebar-list">
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Ghostty使用/" class="posts-sidebar-link">Ghostty使用</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link active">MyBatis源码深度解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link">HashMap源码分析</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
+              </li>
+              
+              <li class="posts-sidebar-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
+              </li>
+              
+            </ul>
+          </nav>
+        </aside>
+
+        <article class="post">
+          <div class="post-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1 class="post-title">MyBatis源码深度解析</h1>
+            <div class="post-meta">
+              <span class="post-date">2026年2月11日</span>
+              <span class="post-views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              
+            </div>
+          </div>
+
+          <div class="post-content">
+            <h1>MyBatis 源码深度解析</h1>
+<h2 id="一-MyBatis-简介">一、MyBatis 简介</h2>
+<p>MyBatis 是一款优秀的持久层框架，它支持定制化 SQL、存储过程以及高级映射。MyBatis 避免了几乎所有的 JDBC 代码和手动设置参数以及获取结果集的工作。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs（Plain Old Java Objects，普通的 Java对象）映射成数据库中的记录。</p>
+<h3 id="核心特点">核心特点</h3>
+<ul>
+<li>基于 SQL 映射的持久层框架</li>
+<li>支持动态 SQL 语句</li>
+<li>支持缓存机制</li>
+<li>提供了与 Spring 的无缝集成</li>
+<li>灵活的映射配置（XML 或注解）</li>
+</ul>
+<h2 id="二-MyBatis-核心架构">二、MyBatis 核心架构</h2>
+<p>MyBatis 的核心架构由以下几个层次组成：</p>
+<pre class="language-plaintext"><code class="language-plaintext">┌─────────────────────────────────────────┐
+│         API Interface Layer             │
+│  (SqlSession, Mapper Interface)         │
+├─────────────────────────────────────────┤
+│      Data Processing Layer              │
+│  (ParameterHandler, ResultSetHandler)  │
+├─────────────────────────────────────────┤
+│       Statement Handling Layer          │
+│      (StatementHandler, Executor)      │
+├─────────────────────────────────────────┤
+│       Core Supporting Layer             │
+│  (Configuration, XMLConfigBuilder)      │
+└─────────────────────────────────────────┘
+</code></pre>
+<h3 id="2-1-核心组件">2.1 核心组件</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Configuration</span> <span class="token punctuation">{</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Environment</span> environment<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> safeRowBoundsEnabled<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> safeResultHandlerEnabled<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> mapUnderscoreToCamelCase<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> aggressiveLazyLoading<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> multipleResultSetsEnabled<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> useGeneratedKeys<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> useColumnLabel<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> cacheEnabled<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">boolean</span> callSettersOnNulls<span class="token punctuation">;</span>
+    
+    <span class="token keyword">protected</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">MappedStatement</span><span class="token punctuation">></span></span> mappedStatements <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StrictMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">MappedStatement</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Mapped Statements collection"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">Cache</span><span class="token punctuation">></span></span> caches <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StrictMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Cache</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Caches collection"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">ResultMap</span><span class="token punctuation">></span></span> resultMaps <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StrictMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ResultMap</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Result Maps collection"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">ParameterMap</span><span class="token punctuation">></span></span> parameterMaps <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StrictMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ParameterMap</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Parameter Maps collection"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">KeyGenerator</span><span class="token punctuation">></span></span> keyGenerators <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">StrictMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">KeyGenerator</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token string">"Key Generators collection"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">protected</span> <span class="token class-name">TypeHandlerRegistry</span> typeHandlerRegistry <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TypeHandlerRegistry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">TypeAliasRegistry</span> typeAliasRegistry <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">TypeAliasRegistry</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">ObjectFactory</span> objectFactory <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultObjectFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">ObjectWrapperFactory</span> objectWrapperFactory <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultObjectWrapperFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">ReflectorFactory</span> reflectorFactory <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DefaultReflectorFactory</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="三-MyBatis-初始化流程">三、MyBatis 初始化流程</h2>
+<h3 id="3-1-整体初始化流程图">3.1 整体初始化流程图</h3>
+<pre class="language-plaintext"><code class="language-plaintext">┌─────────────┐
+│  加载配置文件  │
+│ mybatis.xml │
+└──────┬──────┘
+       │
+       ▼
+┌──────────────────────┐
+│   SqlSessionFactory  │
+│    .Builder.build()  │
+└──────┬───────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│ XMLConfigBuilder    │
+│   解析配置文件       │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│ XMLMapperBuilder    │
+│   解析映射文件       │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│   Configuration     │
+│   (核心配置对象)     │
+└──────┬──────────────┘
+       │
+       ▼
+┌─────────────────────┐
+│  DefaultSqlSession  │
+│   Factory          │
+└─────────────────────┘
+</code></pre>
+<h3 id="3-2-初始化源码分析">3.2 初始化源码分析</h3>
+<h4 id="3.2.1-sqlsessionfactory-构建" tabindex="-1">3.2.1 SqlSessionFactory 构建</h4>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SqlSessionFactoryBuilder</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">SqlSessionFactory</span> <span class="token function">build</span><span class="token punctuation">(</span><span class="token class-name">InputStream</span> inputStream<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token function">build</span><span class="token punctuation">(</span>inputStream<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">SqlSessionFactory</span> <span class="token function">build</span><span class="token punctuation">(</span><span class="token class-name">InputStream</span> inputStream<span class="token punctuation">,</span> <span class="token class-name">String</span> environment<span class="token punctuation">,</span> <span class="token class-name">Properties</span> properties<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">XMLConfigBuilder</span> parser <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">XMLConfigBuilder</span><span class="token punctuation">(</span>inputStream<span class="token punctuation">,</span> environment<span class="token punctuation">,</span> properties<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token function">build</span><span class="token punctuation">(</span>parser<span class="token punctuation">.</span><span class="token function">parse</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token class-name">ExceptionFactory</span><span class="token punctuation">.</span><span class="token function">wrapException</span><span class="token punctuation">(</span><span class="token string">"Error building SqlSession."</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ErrorContext</span><span class="token punctuation">.</span><span class="token function">instance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                inputStream<span class="token punctuation">.</span><span class="token function">close</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token comment">// ignore</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">SqlSessionFactory</span> <span class="token function">build</span><span class="token punctuation">(</span><span class="token class-name">Configuration</span> config<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">DefaultSqlSessionFactory</span><span class="token punctuation">(</span>config<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="3.2.2-xmlconfigbuilder-解析配置" tabindex="-1">3.2.2 XMLConfigBuilder 解析配置</h4>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">XMLConfigBuilder</span> <span class="token keyword">extends</span> <span class="token class-name">BaseBuilder</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">boolean</span> parsed<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">XPathParser</span> parser<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> environment<span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">Configuration</span> <span class="token function">parse</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>parsed<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BuilderException</span><span class="token punctuation">(</span><span class="token string">"Each XMLConfigBuilder can only be used once."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        parsed <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token function">parseConfiguration</span><span class="token punctuation">(</span>parser<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"/configuration"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> configuration<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">parseConfiguration</span><span class="token punctuation">(</span><span class="token class-name">XNode</span> root<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token function">propertiesElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"properties"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">settingsAsProperties</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"settings"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">typeAliasesElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"typeAliases"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">pluginElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"plugins"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">objectFactoryElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"objectFactory"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">objectWrapperFactoryElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"objectWrapperFactory"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">reflectorFactoryElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"reflectorFactory"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">settingsElement</span><span class="token punctuation">(</span>settings<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">environmentsElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"environments"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">databaseIdProviderElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"databaseIdProvider"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">typeHandlerElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"typeHandlers"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">mapperElement</span><span class="token punctuation">(</span>root<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"mappers"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BuilderException</span><span class="token punctuation">(</span><span class="token string">"Error parsing SQL Mapper Configuration. Cause: "</span> <span class="token operator">+</span> e<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="3.2.3-mapper-解析" tabindex="-1">3.2.3 Mapper 解析</h4>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">XMLMapperBuilder</span> <span class="token keyword">extends</span> <span class="token class-name">BaseBuilder</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">parse</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>configuration<span class="token punctuation">.</span><span class="token function">isResourceLoaded</span><span class="token punctuation">(</span>resource<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">configurationElement</span><span class="token punctuation">(</span>parser<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"/mapper"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            configuration<span class="token punctuation">.</span><span class="token function">addLoadedResource</span><span class="token punctuation">(</span>resource<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">bindMapperForNamespace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">parsePendingResultMaps</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">parsePendingCacheRefs</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">parsePendingStatements</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">configurationElement</span><span class="token punctuation">(</span><span class="token class-name">XNode</span> context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">String</span> namespace <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">getStringAttribute</span><span class="token punctuation">(</span><span class="token string">"namespace"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>namespace <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">||</span> namespace<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BuilderException</span><span class="token punctuation">(</span><span class="token string">"Mapper's namespace cannot be empty"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            builderAssistant<span class="token punctuation">.</span><span class="token function">setCurrentNamespace</span><span class="token punctuation">(</span>namespace<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">cacheRefElement</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"cache-ref"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">cacheElement</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNode</span><span class="token punctuation">(</span><span class="token string">"cache"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">parameterMapElement</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNodes</span><span class="token punctuation">(</span><span class="token string">"/mapper/parameterMap"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">resultMapElements</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNodes</span><span class="token punctuation">(</span><span class="token string">"/mapper/resultMap"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">sqlElement</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNodes</span><span class="token punctuation">(</span><span class="token string">"/mapper/sql"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">buildStatementFromContext</span><span class="token punctuation">(</span>context<span class="token punctuation">.</span><span class="token function">evalNodes</span><span class="token punctuation">(</span><span class="token string">"select|insert|update|delete"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BuilderException</span><span class="token punctuation">(</span><span class="token string">"Error parsing Mapper XML. Cause: "</span> <span class="token operator">+</span> e<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="四-SQL-执行核心流程">四、SQL 执行核心流程</h2>
+<h3 id="4-1-SQL-执行完整流程图">4.1 SQL 执行完整流程图</h3>
+<pre class="language-plaintext"><code class="language-plaintext">┌──────────────┐
+│  获取 Mapper  │
+│   接口实例    │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────┐
+│ MapperProxy      │
+│  (动态代理)       │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│  MapperMethod    │
+│  (方法封装)       │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│  SqlSession      │
+│  (会话管理)       │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│  Executor        │
+│  (执行器)         │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│ StatementHandler │
+│  (语句处理)       │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│  ParameterHandler│
+│  (参数设置)       │
+└──────┬───────────┘
+       │
+       ▼
+┌──────────────────┐
+│  ResultSet       │
+│  Handler         │
+│  (结果集处理)     │
+└──────────────────┘
+</code></pre>
+<h3 id="4-2-Mapper-动态代理机制">4.2 Mapper 动态代理机制</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">MapperProxy</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> <span class="token keyword">implements</span> <span class="token class-name">InvocationHandler</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlSession</span> sqlSession<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> mapperInterface<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Method</span><span class="token punctuation">,</span> <span class="token class-name">MapperMethod</span><span class="token punctuation">></span></span> methodCache<span class="token punctuation">;</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Object</span> proxy<span class="token punctuation">,</span> <span class="token class-name">Method</span> method<span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">getDeclaringClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">isDefaultMethod</span><span class="token punctuation">(</span>method<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> <span class="token function">invokeDefaultMethod</span><span class="token punctuation">(</span>proxy<span class="token punctuation">,</span> method<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Throwable</span> t<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token class-name">ExceptionUtil</span><span class="token punctuation">.</span><span class="token function">unwrapThrowable</span><span class="token punctuation">(</span>t<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">final</span> <span class="token class-name">MapperMethod</span> mapperMethod <span class="token operator">=</span> <span class="token function">cachedMapperMethod</span><span class="token punctuation">(</span>method<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> mapperMethod<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token class-name">MapperMethod</span> <span class="token function">cachedMapperMethod</span><span class="token punctuation">(</span><span class="token class-name">Method</span> method<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">MapperMethod</span> mapperMethod <span class="token operator">=</span> methodCache<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>method<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>mapperMethod <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            mapperMethod <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">MapperMethod</span><span class="token punctuation">(</span>mapperInterface<span class="token punctuation">,</span> method<span class="token punctuation">,</span> sqlSession<span class="token punctuation">.</span><span class="token function">getConfiguration</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            methodCache<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>method<span class="token punctuation">,</span> mapperMethod<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> mapperMethod<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="4-3-MapperMethod-执行逻辑">4.3 MapperMethod 执行逻辑</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">MapperMethod</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlCommand</span> command<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">MethodSignature</span> method<span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">execute</span><span class="token punctuation">(</span><span class="token class-name">SqlSession</span> sqlSession<span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Object</span> result<span class="token punctuation">;</span>
+        <span class="token keyword">switch</span> <span class="token punctuation">(</span>command<span class="token punctuation">.</span><span class="token function">getType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">case</span> <span class="token constant">INSERT</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token class-name">Object</span> param <span class="token operator">=</span> method<span class="token punctuation">.</span><span class="token function">convertArgsToSqlCommandParam</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                result <span class="token operator">=</span> <span class="token function">rowCountResult</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">.</span><span class="token function">insert</span><span class="token punctuation">(</span>command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> param<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">case</span> <span class="token constant">UPDATE</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token class-name">Object</span> param <span class="token operator">=</span> method<span class="token punctuation">.</span><span class="token function">convertArgsToSqlCommandParam</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                result <span class="token operator">=</span> <span class="token function">rowCountResult</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> param<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">case</span> <span class="token constant">DELETE</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+                <span class="token class-name">Object</span> param <span class="token operator">=</span> method<span class="token punctuation">.</span><span class="token function">convertArgsToSqlCommandParam</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                result <span class="token operator">=</span> <span class="token function">rowCountResult</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span>command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> param<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">case</span> <span class="token constant">SELECT</span><span class="token operator">:</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">returnsVoid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> method<span class="token punctuation">.</span><span class="token function">hasResultHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token function">executeWithResultHandler</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    result <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">returnsMany</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    result <span class="token operator">=</span> <span class="token function">executeForMany</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">returnsMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    result <span class="token operator">=</span> <span class="token function">executeForMap</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">returnsCursor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    result <span class="token operator">=</span> <span class="token function">executeForCursor</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">Object</span> param <span class="token operator">=</span> method<span class="token punctuation">.</span><span class="token function">convertArgsToSqlCommandParam</span><span class="token punctuation">(</span>args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    result <span class="token operator">=</span> sqlSession<span class="token punctuation">.</span><span class="token function">selectOne</span><span class="token punctuation">(</span>command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> param<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">case</span> <span class="token constant">FLUSH</span><span class="token operator">:</span>
+                result <span class="token operator">=</span> sqlSession<span class="token punctuation">.</span><span class="token function">flushStatements</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">break</span><span class="token punctuation">;</span>
+            <span class="token keyword">default</span><span class="token operator">:</span>
+                <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BindingException</span><span class="token punctuation">(</span><span class="token string">"Unknown execution method for: "</span> <span class="token operator">+</span> command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>result <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> method<span class="token punctuation">.</span><span class="token function">getReturnType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">isPrimitive</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>method<span class="token punctuation">.</span><span class="token function">returnsVoid</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">BindingException</span><span class="token punctuation">(</span><span class="token string">"Mapper method '"</span> <span class="token operator">+</span> command<span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> 
+                <span class="token operator">+</span> <span class="token string">" attempted to return null from a method with a primitive return type ("</span> <span class="token operator">+</span> method<span class="token punctuation">.</span><span class="token function">getReturnType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">")."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> result<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="4-4-SqlSession-执行流程">4.4 SqlSession 执行流程</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DefaultSqlSession</span> <span class="token keyword">implements</span> <span class="token class-name">SqlSession</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Configuration</span> configuration<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Executor</span> executor<span class="token punctuation">;</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">selectList</span><span class="token punctuation">(</span><span class="token class-name">String</span> statement<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">MappedStatement</span> ms <span class="token operator">=</span> configuration<span class="token punctuation">.</span><span class="token function">getMappedStatement</span><span class="token punctuation">(</span>statement<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> executor<span class="token punctuation">.</span><span class="token function">query</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> <span class="token function">wrapCollection</span><span class="token punctuation">(</span>parameter<span class="token punctuation">)</span><span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">Executor</span><span class="token punctuation">.</span><span class="token constant">NO_RESULT_HANDLER</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token class-name">ExceptionFactory</span><span class="token punctuation">.</span><span class="token function">wrapException</span><span class="token punctuation">(</span><span class="token string">"Error querying database. Cause: "</span> <span class="token operator">+</span> e<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ErrorContext</span><span class="token punctuation">.</span><span class="token function">instance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> <span class="token class-name">T</span> <span class="token function">selectOne</span><span class="token punctuation">(</span><span class="token class-name">String</span> statement<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span> list <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">T</span><span class="token punctuation">></span></span><span class="token function">selectList</span><span class="token punctuation">(</span>statement<span class="token punctuation">,</span> parameter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>list<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> list<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>list<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">TooManyResultsException</span><span class="token punctuation">(</span><span class="token string">"Expected one result (or null) to be returned by selectOne(), but found: "</span> <span class="token operator">+</span> list<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="五-Executor-执行器">五、Executor 执行器</h2>
+<h3 id="5-1-Executor-继承体系">5.1 Executor 继承体系</h3>
+<pre class="language-plaintext"><code class="language-plaintext">        ┌──────────────┐
+        │   Executor   │
+        └──────┬───────┘
+               │
+       ┌───────┴────────┐
+       │                │
+┌──────▼──────┐  ┌─────▼──────────┐
+│ BaseExecutor│  │ CachingExecutor│
+└──────┬──────┘  └────────────────┘
+       │
+  ┌────┼────────┬────────┐
+  │    │        │        │
+┌─▼─┐┌─▼───┐┌──▼──┐┌───▼────┐
+│Simple│Reuse│Batch│Closed│
+│Executor│Executor│Executor│Executor│
+└───┘└─────┘└─────┘└────────┘
+</code></pre>
+<h3 id="5-2-BaseExecutor-核心实现">5.2 BaseExecutor 核心实现</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">BaseExecutor</span> <span class="token keyword">implements</span> <span class="token class-name">Executor</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">protected</span> <span class="token class-name">Transaction</span> transaction<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Wrapper</span> wrapper<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">ConcurrentLinkedQueue</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">DeferredLoad</span><span class="token punctuation">></span></span> deferredLoads<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">PerpetualCache</span> localCache<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">PerpetualCache</span> localOutputParameterCache<span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Configuration</span> configuration<span class="token punctuation">;</span>
+    
+    <span class="token keyword">protected</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">BatchResult</span><span class="token punctuation">></span></span> batchResults <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">protected</span> <span class="token keyword">int</span> queryStack <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">query</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">BoundSql</span> boundSql <span class="token operator">=</span> ms<span class="token punctuation">.</span><span class="token function">getBoundSql</span><span class="token punctuation">(</span>parameter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">CacheKey</span> key <span class="token operator">=</span> <span class="token function">createCacheKey</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token function">query</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> resultHandler<span class="token punctuation">,</span> key<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@SuppressWarnings</span><span class="token punctuation">(</span><span class="token string">"unchecked"</span><span class="token punctuation">)</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">query</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">,</span> <span class="token class-name">CacheKey</span> key<span class="token punctuation">,</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ErrorContext</span><span class="token punctuation">.</span><span class="token function">instance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">resource</span><span class="token punctuation">(</span>ms<span class="token punctuation">.</span><span class="token function">getResource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">activity</span><span class="token punctuation">(</span><span class="token string">"executing a query"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">object</span><span class="token punctuation">(</span>ms<span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>closed<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">ExecutorException</span><span class="token punctuation">(</span><span class="token string">"Executor was closed."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>queryStack <span class="token operator">==</span> <span class="token number">0</span> <span class="token operator">&amp;&amp;</span> ms<span class="token punctuation">.</span><span class="token function">isFlushCacheRequired</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token function">clearLocalCache</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> list<span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            queryStack<span class="token operator">++</span><span class="token punctuation">;</span>
+            list <span class="token operator">=</span> resultHandler <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">?</span> <span class="token punctuation">(</span><span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span><span class="token punctuation">)</span> localCache<span class="token punctuation">.</span><span class="token function">getObject</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span> <span class="token operator">:</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>list <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">handleLocallyCachedOutputParameters</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> key<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                list <span class="token operator">=</span> <span class="token function">queryFromDatabase</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> resultHandler<span class="token punctuation">,</span> key<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            queryStack<span class="token operator">--</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>queryStack <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">DeferredLoad</span> deferredLoad <span class="token operator">:</span> deferredLoads<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                deferredLoad<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            deferredLoads<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>configuration<span class="token punctuation">.</span><span class="token function">getLocalCacheScope</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token class-name">LocalCacheScope</span><span class="token punctuation">.</span><span class="token constant">STATEMENT</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">clearLocalCache</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> list<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">queryFromDatabase</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">,</span> <span class="token class-name">CacheKey</span> key<span class="token punctuation">,</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> list<span class="token punctuation">;</span>
+        localCache<span class="token punctuation">.</span><span class="token function">putObject</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> <span class="token constant">EXECUTION_PLACEHOLDER</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            list <span class="token operator">=</span> <span class="token function">doQuery</span><span class="token punctuation">(</span>ms<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> resultHandler<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            localCache<span class="token punctuation">.</span><span class="token function">removeObject</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        localCache<span class="token punctuation">.</span><span class="token function">putObject</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> list<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>ms<span class="token punctuation">.</span><span class="token function">getStatementType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token class-name">StatementType</span><span class="token punctuation">.</span><span class="token constant">CALLABLE</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            localOutputParameterCache<span class="token punctuation">.</span><span class="token function">putObject</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> parameter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> list<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">protected</span> <span class="token keyword">abstract</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">doQuery</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">,</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="5-3-SimpleExecutor-实现">5.3 SimpleExecutor 实现</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SimpleExecutor</span> <span class="token keyword">extends</span> <span class="token class-name">BaseExecutor</span> <span class="token punctuation">{</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">doQuery</span><span class="token punctuation">(</span><span class="token class-name">MappedStatement</span> ms<span class="token punctuation">,</span> <span class="token class-name">Object</span> parameter<span class="token punctuation">,</span> <span class="token class-name">RowBounds</span> rowBounds<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">,</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Statement</span> stmt <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">Configuration</span> configuration <span class="token operator">=</span> ms<span class="token punctuation">.</span><span class="token function">getConfiguration</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token class-name">StatementHandler</span> handler <span class="token operator">=</span> configuration<span class="token punctuation">.</span><span class="token function">newStatementHandler</span><span class="token punctuation">(</span>wrapper<span class="token punctuation">,</span> ms<span class="token punctuation">,</span> parameter<span class="token punctuation">,</span> rowBounds<span class="token punctuation">,</span> resultHandler<span class="token punctuation">,</span> boundSql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            stmt <span class="token operator">=</span> <span class="token function">prepareStatement</span><span class="token punctuation">(</span>handler<span class="token punctuation">,</span> ms<span class="token punctuation">.</span><span class="token function">getStatementLog</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> handler<span class="token punctuation">.</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span><span class="token function">query</span><span class="token punctuation">(</span>stmt<span class="token punctuation">,</span> resultHandler<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            <span class="token function">closeStatement</span><span class="token punctuation">(</span>stmt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token class-name">Statement</span> <span class="token function">prepareStatement</span><span class="token punctuation">(</span><span class="token class-name">StatementHandler</span> handler<span class="token punctuation">,</span> <span class="token class-name">Log</span> statementLog<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Statement</span> stmt<span class="token punctuation">;</span>
+        <span class="token class-name">Connection</span> connection <span class="token operator">=</span> <span class="token function">getConnection</span><span class="token punctuation">(</span>statementLog<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        stmt <span class="token operator">=</span> handler<span class="token punctuation">.</span><span class="token function">prepare</span><span class="token punctuation">(</span>connection<span class="token punctuation">,</span> transaction<span class="token punctuation">.</span><span class="token function">getTimeout</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        handler<span class="token punctuation">.</span><span class="token function">parameterize</span><span class="token punctuation">(</span>stmt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> stmt<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="六-StatementHandler-语句处理器">六、StatementHandler 语句处理器</h2>
+<h3 id="6-1-StatementHandler-继承体系">6.1 StatementHandler 继承体系</h3>
+<pre class="language-plaintext"><code class="language-plaintext">         ┌──────────────────┐
+         │ StatementHandler│
+         └────────┬─────────┘
+                  │
+    ┌─────────────┼─────────────┐
+    │             │             │
+┌───▼───┐   ┌───▼────┐   ┌───▼────┐
+│Base   │   │Callable│   │Routing │
+│Statement│ │Handler │ │Handler │
+│Handler│   └────────┘   └────────┘
+└───┬───┘
+    │
+┌───┼────────────┬──────────┐
+│   │            │          │
+┌▼─┐┌▼──────┐┌────▼───┐┌────▼────┐
+│Simple│Prepare│Callable│Callable│
+│Statement│dStatement│Handler │Handler │
+│Handler│Handler│Handler │Handler │
+└────┘└─────┘└────────┘└────────┘
+</code></pre>
+<h3 id="6-2-PreparedStatementHandler-实现">6.2 PreparedStatementHandler 实现</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">PreparedStatementHandler</span> <span class="token keyword">extends</span> <span class="token class-name">BaseStatementHandler</span> <span class="token punctuation">{</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">query</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> statement<span class="token punctuation">,</span> <span class="token class-name">ResultHandler</span> resultHandler<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">PreparedStatement</span> ps <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token class-name">PreparedStatement</span><span class="token punctuation">)</span> statement<span class="token punctuation">;</span>
+        ps<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> resultSetHandler<span class="token punctuation">.</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span><span class="token function">handleResultSets</span><span class="token punctuation">(</span>ps<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">protected</span> <span class="token class-name">Statement</span> <span class="token function">instantiateStatement</span><span class="token punctuation">(</span><span class="token class-name">Connection</span> connection<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">String</span> sql <span class="token operator">=</span> boundSql<span class="token punctuation">.</span><span class="token function">getSql</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>mappedStatement<span class="token punctuation">.</span><span class="token function">getKeyGenerator</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">instanceof</span> <span class="token class-name">Jdbc3KeyGenerator</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> keyColumnNames <span class="token operator">=</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getKeyColumns</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>keyColumnNames <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">,</span> <span class="token class-name">PreparedStatement</span><span class="token punctuation">.</span><span class="token constant">RETURN_GENERATED_KEYS</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">,</span> keyColumnNames<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>mappedStatement<span class="token punctuation">.</span><span class="token function">getResultSetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">,</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getResultSetType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token class-name">ResultSet</span><span class="token punctuation">.</span><span class="token constant">CONCUR_READ_ONLY</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">parameterize</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> statement<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        parameterHandler<span class="token punctuation">.</span><span class="token function">setParameters</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">PreparedStatement</span><span class="token punctuation">)</span> statement<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="6-3-ParameterHandler-参数处理器">6.3 ParameterHandler 参数处理器</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ParameterHandler</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Object</span> <span class="token function">getParameterObject</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">void</span> <span class="token function">setParameters</span><span class="token punctuation">(</span><span class="token class-name">PreparedStatement</span> ps<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DefaultParameterHandler</span> <span class="token keyword">implements</span> <span class="token class-name">ParameterHandler</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">TypeHandlerRegistry</span> typeHandlerRegistry<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">MappedStatement</span> mappedStatement<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Object</span> parameterObject<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">BoundSql</span> boundSql<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Configuration</span> configuration<span class="token punctuation">;</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setParameters</span><span class="token punctuation">(</span><span class="token class-name">PreparedStatement</span> ps<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ErrorContext</span><span class="token punctuation">.</span><span class="token function">instance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">activity</span><span class="token punctuation">(</span><span class="token string">"setting parameters"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">object</span><span class="token punctuation">(</span>mappedStatement<span class="token punctuation">.</span><span class="token function">getParameterMap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ParameterMapping</span><span class="token punctuation">></span></span> parameterMappings <span class="token operator">=</span> boundSql<span class="token punctuation">.</span><span class="token function">getParameterMappings</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>parameterMappings <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> parameterMappings<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">ParameterMapping</span> parameterMapping <span class="token operator">=</span> parameterMappings<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>parameterMapping<span class="token punctuation">.</span><span class="token function">getMode</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token class-name">ParameterMode</span><span class="token punctuation">.</span><span class="token constant">OUT</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">Object</span> value<span class="token punctuation">;</span>
+                    <span class="token class-name">String</span> propertyName <span class="token operator">=</span> parameterMapping<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>boundSql<span class="token punctuation">.</span><span class="token function">hasAdditionalParameter</span><span class="token punctuation">(</span>propertyName<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        value <span class="token operator">=</span> boundSql<span class="token punctuation">.</span><span class="token function">getAdditionalParameter</span><span class="token punctuation">(</span>propertyName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>parameterObject <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        value <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span>typeHandlerRegistry<span class="token punctuation">.</span><span class="token function">hasTypeHandler</span><span class="token punctuation">(</span>parameterObject<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        value <span class="token operator">=</span> parameterObject<span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                        <span class="token class-name">MetaObject</span> metaObject <span class="token operator">=</span> configuration<span class="token punctuation">.</span><span class="token function">newMetaObject</span><span class="token punctuation">(</span>parameterObject<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                        value <span class="token operator">=</span> metaObject<span class="token punctuation">.</span><span class="token function">getValue</span><span class="token punctuation">(</span>propertyName<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span>
+                    <span class="token class-name">TypeHandler</span> typeHandler <span class="token operator">=</span> parameterMapping<span class="token punctuation">.</span><span class="token function">getTypeHandler</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token class-name">JdbcType</span> jdbcType <span class="token operator">=</span> parameterMapping<span class="token punctuation">.</span><span class="token function">getJdbcType</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>value <span class="token operator">==</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> jdbcType <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        jdbcType <span class="token operator">=</span> configuration<span class="token punctuation">.</span><span class="token function">getJdbcTypeForNull</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span>
+                    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+                        typeHandler<span class="token punctuation">.</span><span class="token function">setParameter</span><span class="token punctuation">(</span>ps<span class="token punctuation">,</span> i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> value<span class="token punctuation">,</span> jdbcType<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">TypeException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">TypeException</span><span class="token punctuation">(</span><span class="token string">"Could not set parameters for mapping: "</span> <span class="token operator">+</span> parameterMapping <span class="token operator">+</span> <span class="token string">". Cause: "</span> <span class="token operator">+</span> e<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                        <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">TypeException</span><span class="token punctuation">(</span><span class="token string">"Could not set parameters for mapping: "</span> <span class="token operator">+</span> parameterMapping <span class="token operator">+</span> <span class="token string">". Cause: "</span> <span class="token operator">+</span> e<span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token punctuation">}</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h3 id="6-4-ResultSetHandler-结果集处理器">6.4 ResultSetHandler 结果集处理器</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">ResultSetHandler</span> <span class="token punctuation">{</span>
+    <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">handleResultSets</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> stmt<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
+    <span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token class-name">Cursor</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">E</span><span class="token punctuation">></span></span> <span class="token function">handleCursorResultSets</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> stmt<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
+    <span class="token keyword">void</span> <span class="token function">handleOutputParameters</span><span class="token punctuation">(</span><span class="token class-name">CallableStatement</span> cs<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DefaultResultSetHandler</span> <span class="token keyword">implements</span> <span class="token class-name">ResultSetHandler</span> <span class="token punctuation">{</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Object</span><span class="token punctuation">></span></span> <span class="token function">handleResultSets</span><span class="token punctuation">(</span><span class="token class-name">Statement</span> stmt<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token class-name">ErrorContext</span><span class="token punctuation">.</span><span class="token function">instance</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">activity</span><span class="token punctuation">(</span><span class="token string">"handling results"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">object</span><span class="token punctuation">(</span>mappedStatement<span class="token punctuation">.</span><span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token keyword">final</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Object</span><span class="token punctuation">></span></span> multipleResults <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> resultSetCount <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token class-name">ResultSetWrapper</span> rsw <span class="token operator">=</span> <span class="token function">getFirstResultSet</span><span class="token punctuation">(</span>stmt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">ResultMap</span><span class="token punctuation">></span></span> resultMaps <span class="token operator">=</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getResultMaps</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> resultMapCount <span class="token operator">=</span> resultMaps<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">validateResultMapsCount</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMapCount<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        
+        <span class="token keyword">while</span> <span class="token punctuation">(</span>rsw <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> resultMapCount <span class="token operator">></span> resultSetCount<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">ResultMap</span> resultMap <span class="token operator">=</span> resultMaps<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>resultSetCount<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">handleResultSet</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMap<span class="token punctuation">,</span> multipleResults<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            rsw <span class="token operator">=</span> <span class="token function">getNextResultSet</span><span class="token punctuation">(</span>stmt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">cleanUpAfterHandlingResultSet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            resultSetCount<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> resultSets <span class="token operator">=</span> mappedStatement<span class="token punctuation">.</span><span class="token function">getResultSets</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>resultSets <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">while</span> <span class="token punctuation">(</span>rsw <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> resultSetCount <span class="token operator">&lt;</span> resultSets<span class="token punctuation">.</span>length<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token class-name">ResultMapping</span> parentMapping <span class="token operator">=</span> nextResultMaps<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>resultSets<span class="token punctuation">[</span>resultSetCount<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>parentMapping <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token class-name">String</span> nestedResultMapId <span class="token operator">=</span> parentMapping<span class="token punctuation">.</span><span class="token function">getNestedResultMapId</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token class-name">ResultMap</span> resultMap <span class="token operator">=</span> configuration<span class="token punctuation">.</span><span class="token function">getResultMap</span><span class="token punctuation">(</span>nestedResultMapId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    <span class="token function">handleResultSet</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMap<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> parentMapping<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+                rsw <span class="token operator">=</span> <span class="token function">getNextResultSet</span><span class="token punctuation">(</span>stmt<span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token function">cleanUpAfterHandlingResultSet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                resultSetCount<span class="token operator">++</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+        
+        <span class="token keyword">return</span> <span class="token function">collapseSingleResultList</span><span class="token punctuation">(</span>multipleResults<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">handleResultSet</span><span class="token punctuation">(</span><span class="token class-name">ResultSetWrapper</span> rsw<span class="token punctuation">,</span> <span class="token class-name">ResultMap</span> resultMap<span class="token punctuation">,</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Object</span><span class="token punctuation">></span></span> multipleResults<span class="token punctuation">,</span> <span class="token class-name">ResultMapping</span> parentMapping<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>parentMapping <span class="token operator">!=</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token function">handleRowValuesForNestedResultMap</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMap<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> parentMapping<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">if</span> <span class="token punctuation">(</span>resultHandler <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token function">handleRowValuesForDefaultResultMap</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMap<span class="token punctuation">,</span> multipleResults<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                    <span class="token function">handleRowValuesForSimpleResultMap</span><span class="token punctuation">(</span>rsw<span class="token punctuation">,</span> resultMap<span class="token punctuation">,</span> resultHandler<span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+            <span class="token function">closeResultSet</span><span class="token punctuation">(</span>rsw<span class="token punctuation">.</span><span class="token function">getResultSet</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="七-缓存机制">七、缓存机制</h2>
+<h3 id="7-1-MyBatis-缓存结构">7.1 MyBatis 缓存结构</h3>
+<pre class="language-plaintext"><code class="language-plaintext">┌─────────────────────────────────┐
+│      Cache 接口                 │
+└────────────┬────────────────────┘
+             │
+    ┌────────┴────────┐
+    │                 │
+┌───▼─────┐    ┌────▼──────┐
+│Perpetual│    │  Blocking │
+│Cache    │    │Cache      │
+└─────────┘    └───────────┘
+    │
+    │
+┌───▼───────────────────────┐
+│    装饰器模式                │
+│  LruCache / FifoCache     │
+│  SoftCache / WeakCache     │
+│  LoggingCache / SyncCache  │
+└───────────────────────────┘
+</code></pre>
+<h3 id="7-2-缓存实现">7.2 缓存实现</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">PerpetualCache</span> <span class="token keyword">implements</span> <span class="token class-name">Cache</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> id<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Object</span><span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">></span></span> cache <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">HashMap</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">PerpetualCache</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>id <span class="token operator">=</span> id<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> id<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">getSize</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> cache<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">putObject</span><span class="token punctuation">(</span><span class="token class-name">Object</span> key<span class="token punctuation">,</span> <span class="token class-name">Object</span> value<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        cache<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>key<span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">getObject</span><span class="token punctuation">(</span><span class="token class-name">Object</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> cache<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">removeObject</span><span class="token punctuation">(</span><span class="token class-name">Object</span> key<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> cache<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        cache<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="八-动态-SQL-机制">八、动态 SQL 机制</h2>
+<h3 id="8-1-动态-SQL-执行流程">8.1 动态 SQL 执行流程</h3>
+<pre class="language-plaintext"><code class="language-plaintext">┌──────────────────┐
+│  解析 XML        │
+│  动态 SQL 标签   │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  SqlSource       │
+│  (SQL 源)        │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  DynamicContext  │
+│  (动态上下文)     │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  SqlNode         │
+│  (SQL 节点)       │
+└────────┬─────────┘
+         │
+         ▼
+┌──────────────────┐
+│  BoundSql        │
+│  (绑定 SQL)      │
+└──────────────────┘
+</code></pre>
+<h3 id="8-2-SqlNode-实现">8.2 SqlNode 实现</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">SqlNode</span> <span class="token punctuation">{</span>
+    <span class="token keyword">boolean</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">DynamicContext</span> context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">IfSqlNode</span> <span class="token keyword">implements</span> <span class="token class-name">SqlNode</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">ExpressionEvaluator</span> evaluator<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> test<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlNode</span> contents<span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">IfSqlNode</span><span class="token punctuation">(</span><span class="token class-name">SqlNode</span> contents<span class="token punctuation">,</span> <span class="token class-name">String</span> test<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>test <span class="token operator">=</span> test<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>contents <span class="token operator">=</span> contents<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>evaluator <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ExpressionEvaluator</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">DynamicContext</span> context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>evaluator<span class="token punctuation">.</span><span class="token function">evaluateBoolean</span><span class="token punctuation">(</span>test<span class="token punctuation">,</span> context<span class="token punctuation">.</span><span class="token function">getBindings</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            contents<span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ForEachSqlNode</span> <span class="token keyword">implements</span> <span class="token class-name">SqlNode</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token constant">ITEM_PREFIX</span> <span class="token operator">=</span> <span class="token string">"__frch_"</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">ExpressionEvaluator</span> evaluator<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> collectionExpression<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">SqlNode</span> contents<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> <span class="token keyword">open</span><span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> close<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> separator<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> item<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> index<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> itemName<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">String</span> indexName<span class="token punctuation">;</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">apply</span><span class="token punctuation">(</span><span class="token class-name">DynamicContext</span> context<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">></span></span> bindings <span class="token operator">=</span> context<span class="token punctuation">.</span><span class="token function">getBindings</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">final</span> <span class="token class-name">Iterable</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> iterable <span class="token operator">=</span> evaluator<span class="token punctuation">.</span><span class="token function">evaluateIterable</span><span class="token punctuation">(</span>collectionExpression<span class="token punctuation">,</span> bindings<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>iterable<span class="token punctuation">.</span><span class="token function">iterator</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">hasNext</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">boolean</span> first <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+        <span class="token function">applyOpen</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Object</span> o <span class="token operator">:</span> iterable<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token class-name">DynamicContext</span> oldContext <span class="token operator">=</span> context<span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>first<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                first <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token function">applySeparator</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token function">applyItem</span><span class="token punctuation">(</span>context<span class="token punctuation">,</span> o<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            contents<span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">FilteredDynamicContext</span><span class="token punctuation">(</span>oldContext<span class="token punctuation">,</span> index<span class="token punctuation">,</span> item<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            i<span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token function">applyClose</span><span class="token punctuation">(</span>context<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="九-插件机制">九、插件机制</h2>
+<h3 id="9-1-拦截器链">9.1 拦截器链</h3>
+<pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">Interceptor</span> <span class="token punctuation">{</span>
+    <span class="token class-name">Object</span> <span class="token function">intercept</span><span class="token punctuation">(</span><span class="token class-name">Invocation</span> invocation<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span><span class="token punctuation">;</span>
+    <span class="token class-name">Object</span> <span class="token function">plugin</span><span class="token punctuation">(</span><span class="token class-name">Object</span> target<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword">void</span> <span class="token function">setProperties</span><span class="token punctuation">(</span><span class="token class-name">Properties</span> properties<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">InterceptorChain</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Interceptor</span><span class="token punctuation">></span></span> interceptors <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token punctuation">></span></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">pluginAll</span><span class="token punctuation">(</span><span class="token class-name">Object</span> target<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token class-name">Interceptor</span> interceptor <span class="token operator">:</span> interceptors<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            target <span class="token operator">=</span> interceptor<span class="token punctuation">.</span><span class="token function">plugin</span><span class="token punctuation">(</span>target<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> target<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">addInterceptor</span><span class="token punctuation">(</span><span class="token class-name">Interceptor</span> interceptor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        interceptors<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>interceptor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Interceptor</span><span class="token punctuation">></span></span> <span class="token function">getInterceptors</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token class-name">Collections</span><span class="token punctuation">.</span><span class="token function">unmodifiableList</span><span class="token punctuation">(</span>interceptors<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Plugin</span> <span class="token keyword">implements</span> <span class="token class-name">InvocationHandler</span> <span class="token punctuation">{</span>
+    
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Object</span> target<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Interceptor</span> interceptor<span class="token punctuation">;</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span><span class="token punctuation">,</span> <span class="token class-name">Set</span><span class="token punctuation">&lt;</span><span class="token class-name">Method</span><span class="token punctuation">></span><span class="token punctuation">></span></span> signatureMap<span class="token punctuation">;</span>
+    
+    <span class="token keyword">private</span> <span class="token class-name">Plugin</span><span class="token punctuation">(</span><span class="token class-name">Object</span> target<span class="token punctuation">,</span> <span class="token class-name">Interceptor</span> interceptor<span class="token punctuation">,</span> <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span><span class="token punctuation">,</span> <span class="token class-name">Set</span><span class="token punctuation">&lt;</span><span class="token class-name">Method</span><span class="token punctuation">></span><span class="token punctuation">></span></span> signatureMap<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>target <span class="token operator">=</span> target<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>interceptor <span class="token operator">=</span> interceptor<span class="token punctuation">;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>signatureMap <span class="token operator">=</span> signatureMap<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token class-name">Object</span> <span class="token function">wrap</span><span class="token punctuation">(</span><span class="token class-name">Object</span> target<span class="token punctuation">,</span> <span class="token class-name">Interceptor</span> interceptor<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token class-name">Map</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Class</span><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span><span class="token punctuation">,</span> <span class="token class-name">Set</span><span class="token punctuation">&lt;</span><span class="token class-name">Method</span><span class="token punctuation">></span><span class="token punctuation">></span></span> signatureMap <span class="token operator">=</span> <span class="token function">getSignatureMap</span><span class="token punctuation">(</span>interceptor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span> type <span class="token operator">=</span> target<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">Class</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token operator">?</span><span class="token punctuation">></span></span><span class="token punctuation">[</span><span class="token punctuation">]</span> interfaces <span class="token operator">=</span> <span class="token function">getAllInterfaces</span><span class="token punctuation">(</span>type<span class="token punctuation">,</span> signatureMap<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>interfaces<span class="token punctuation">.</span>length <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token class-name">Proxy</span><span class="token punctuation">.</span><span class="token function">newProxyInstance</span><span class="token punctuation">(</span>
+                type<span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+                interfaces<span class="token punctuation">,</span>
+                <span class="token keyword">new</span> <span class="token class-name">Plugin</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> interceptor<span class="token punctuation">,</span> signatureMap<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">return</span> target<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">Object</span> <span class="token function">invoke</span><span class="token punctuation">(</span><span class="token class-name">Object</span> proxy<span class="token punctuation">,</span> <span class="token class-name">Method</span> method<span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Throwable</span> <span class="token punctuation">{</span>
+        <span class="token keyword">try</span> <span class="token punctuation">{</span>
+            <span class="token class-name">Set</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Method</span><span class="token punctuation">></span></span> methods <span class="token operator">=</span> signatureMap<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>method<span class="token punctuation">.</span><span class="token function">getDeclaringClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>methods <span class="token operator">!=</span> <span class="token keyword">null</span> <span class="token operator">&amp;&amp;</span> methods<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>method<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">return</span> interceptor<span class="token punctuation">.</span><span class="token function">intercept</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Invocation</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> method<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">return</span> method<span class="token punctuation">.</span><span class="token function">invoke</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> args<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token class-name">ExceptionUtil</span><span class="token punctuation">.</span><span class="token function">unwrapThrowable</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<h2 id="十-总结">十、总结</h2>
+<h3 id="10-1-MyBatis-核心流程总结">10.1 MyBatis 核心流程总结</h3>
+<ol>
+<li>
+<p><strong>初始化阶段</strong>：</p>
+<ul>
+<li>解析配置文件（XMLConfigBuilder）</li>
+<li>解析 Mapper 文件（XMLMapperBuilder）</li>
+<li>构建 Configuration 对象</li>
+<li>创建 SqlSessionFactory</li>
+</ul>
+</li>
+<li>
+<p><strong>执行阶段</strong>：</p>
+<ul>
+<li>通过 MapperProxy 动态代理执行方法</li>
+<li>MapperMethod 封装方法调用</li>
+<li>SqlSession 管理会话</li>
+<li>Executor 执行 SQL</li>
+<li>StatementHandler 处理语句</li>
+<li>ParameterHandler 设置参数</li>
+<li>ResultSetHandler 处理结果集</li>
+</ul>
+</li>
+<li>
+<p><strong>扩展机制</strong>：</p>
+<ul>
+<li>插件机制（Interceptor + Plugin）</li>
+<li>缓存机制（Cache 接口 + 装饰器）</li>
+<li>动态 SQL（SqlNode + DynamicContext）</li>
+</ul>
+</li>
+</ol>
+<h3 id="10-2-设计模式总结">10.2 设计模式总结</h3>
+<table>
+<thead>
+<tr>
+<th>设计模式</th>
+<th>应用场景</th>
+<th>典型类</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>工厂模式</td>
+<td>创建 SqlSessionFactory</td>
+<td>SqlSessionFactoryBuilder</td>
+</tr>
+<tr>
+<td>建造者模式</td>
+<td>构建复杂对象</td>
+<td>XMLConfigBuilder, XMLMapperBuilder</td>
+</tr>
+<tr>
+<td>代理模式</td>
+<td>Mapper 接口代理</td>
+<td>MapperProxy</td>
+</tr>
+<tr>
+<td>策略模式</td>
+<td>不同的执行器</td>
+<td>SimpleExecutor, ReuseExecutor, BatchExecutor</td>
+</tr>
+<tr>
+<td>装饰器模式</td>
+<td>缓存功能增强</td>
+<td>LruCache, FifoCache</td>
+</tr>
+<tr>
+<td>模板方法模式</td>
+<td>执行器基类</td>
+<td>BaseExecutor</td>
+</tr>
+<tr>
+<td>责任链模式</td>
+<td>插件拦截</td>
+<td>InterceptorChain</td>
+</tr>
+</tbody>
+</table>
+<h3 id="10-3-学习建议">10.3 学习建议</h3>
+<ol>
+<li>从简单示例入手，理解基本用法</li>
+<li>重点理解初始化流程和执行流程</li>
+<li>深入研究动态 SQL 的实现机制</li>
+<li>学习插件机制和缓存机制</li>
+<li>结合源码调试，加深理解</li>
+</ol>
+<p>通过本文的学习，你应该能够：</p>
+<ul>
+<li>理解 MyBatis 的整体架构和核心组件</li>
+<li>掌握 MyBatis 的初始化和执行流程</li>
+<li>了解动态 SQL、缓存、插件等核心机制的实现原理</li>
+<li>具备阅读和深入 MyBatis 源码的能力</li>
+</ul>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论区</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关文章</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Ghostty使用/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Ghostty使用</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">ThreadLocal异步场景问题解析</h4>
+                  <time class="related-posts-item-date">2026年2月11日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/Spring-IOC与AOP详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Spring IOC与AOP详解</h4>
+                  <time class="related-posts-item-date">2026年2月10日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <a href="#一-MyBatis-简介" class="toc-item toc-level-2" style="">一、MyBatis 简介</a><a href="#核心特点" class="toc-item toc-level-3" style="padding-left: 1.5rem;">核心特点</a><a href="#二-MyBatis-核心架构" class="toc-item toc-level-2" style="">二、MyBatis 核心架构</a><a href="#2-1-核心组件" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.1 核心组件</a><a href="#三-MyBatis-初始化流程" class="toc-item toc-level-2" style="">三、MyBatis 初始化流程</a><a href="#3-1-整体初始化流程图" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.1 整体初始化流程图</a><a href="#3-2-初始化源码分析" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.2 初始化源码分析</a><a href="#四-SQL-执行核心流程" class="toc-item toc-level-2" style="">四、SQL 执行核心流程</a><a href="#4-1-SQL-执行完整流程图" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.1 SQL 执行完整流程图</a><a href="#4-2-Mapper-动态代理机制" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.2 Mapper 动态代理机制</a><a href="#4-3-MapperMethod-执行逻辑" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.3 MapperMethod 执行逻辑</a><a href="#4-4-SqlSession-执行流程" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.4 SqlSession 执行流程</a><a href="#五-Executor-执行器" class="toc-item toc-level-2" style="">五、Executor 执行器</a><a href="#5-1-Executor-继承体系" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.1 Executor 继承体系</a><a href="#5-2-BaseExecutor-核心实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.2 BaseExecutor 核心实现</a><a href="#5-3-SimpleExecutor-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.3 SimpleExecutor 实现</a><a href="#六-StatementHandler-语句处理器" class="toc-item toc-level-2" style="">六、StatementHandler 语句处理器</a><a href="#6-1-StatementHandler-继承体系" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.1 StatementHandler 继承体系</a><a href="#6-2-PreparedStatementHandler-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.2 PreparedStatementHandler 实现</a><a href="#6-3-ParameterHandler-参数处理器" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.3 ParameterHandler 参数处理器</a><a href="#6-4-ResultSetHandler-结果集处理器" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.4 ResultSetHandler 结果集处理器</a><a href="#七-缓存机制" class="toc-item toc-level-2" style="">七、缓存机制</a><a href="#7-1-MyBatis-缓存结构" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.1 MyBatis 缓存结构</a><a href="#7-2-缓存实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.2 缓存实现</a><a href="#八-动态-SQL-机制" class="toc-item toc-level-2" style="">八、动态 SQL 机制</a><a href="#8-1-动态-SQL-执行流程" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.1 动态 SQL 执行流程</a><a href="#8-2-SqlNode-实现" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.2 SqlNode 实现</a><a href="#九-插件机制" class="toc-item toc-level-2" style="">九、插件机制</a><a href="#9-1-拦截器链" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9.1 拦截器链</a><a href="#十-总结" class="toc-item toc-level-2" style="">十、总结</a><a href="#10-1-MyBatis-核心流程总结" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.1 MyBatis 核心流程总结</a><a href="#10-2-设计模式总结" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.2 设计模式总结</a><a href="#10-3-学习建议" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10.3 学习建议</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>
