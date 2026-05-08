@@ -266,7 +266,7 @@ num2 = 20
 0
 </code></pre>
 <p>解析：</p>
-<p>这里我的理解是这里还是传递的实参指向的值，这不过这个值是个地址罢了，所以形参只���拷贝了这个地址，指向的还是同一个对象。方法中修改了这个对象内部的值，所以影响到了实参。<br>
+<p>这里我的理解是这里还是传递的实参指向的值，这不过这个值是个地址罢了��所以形参只是拷贝了这个地址，指向的还是同一个对象。方法中修改了这个对象内部的值，所以影响到了实参。<br>
 如果你直接修改array这个值，是不会影响到实参的。</p>
 <p>看了这个案例很多人肯定觉得 Java 对引用类型的参数采用的是引用传递。</p>
 <p>实际上，并不是的，这里传递的还是值，不过，这个值是实参的地址罢了！</p>
@@ -299,7 +299,7 @@ person2:小张
 xiaoZhang:小张
 xiaoLi:小李
 </code></pre>
-<p>解���：</p>
+<p>解析：</p>
 <p>这里很好理解了，就是交换了新参指向的地址而已，没有修改地址指向的内部的属性，所以没有改变。</p>
 <p>怎么回事？？？两个引用类型的形参互换并没有影响实参啊！</p>
 <p><code>swap</code> 方法的参数 <code>person1</code> 和 <code>person2</code> 只是拷贝的实参 <code>xiaoZhang</code> 和 <code>xiaoLi</code> 的地址。因此， <code>person1</code> 和 <code>person2</code> 的互换只是拷贝的两个地址的互换罢了，并不会影响到实参 <code>xiaoZhang</code> 和 <code>xiaoLi</code> 。</p>
@@ -384,7 +384,7 @@ invoke after: 11
               <li class="related-posts-item">
                 <a href="/static/posts/IDEA快捷键-Mac/" class="related-posts-link">
                   <h4 class="related-posts-item-title">IDEA快捷键（Mac）</h4>
-                  <time class="related-posts-item-date">2026年2月11日</time>
+                  <time class="related-posts-item-date">2026年5月6日</time>
                 </a>
               </li>
               
