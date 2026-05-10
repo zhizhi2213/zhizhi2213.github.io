@@ -489,7 +489,7 @@ IOC（Inversion of Control...">
     <span class="token comment">// 实现代码</span>
 <span class="token punctuation">}</span>
 
-<span class="token comment">// Request：Web应用中，���个HTTP请求一个实例</span>
+<span class="token comment">// Request：Web应用中，每个HTTP请求一个实例</span>
 <span class="token annotation punctuation">@Service</span>
 <span class="token annotation punctuation">@Scope</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token class-name">WebApplicationContext</span><span class="token punctuation">.</span><span class="token constant">SCOPE_REQUEST</span><span class="token punctuation">,</span> proxyMode <span class="token operator">=</span> <span class="token class-name">ScopedProxyMode</span><span class="token punctuation">.</span><span class="token constant">TARGET_CLASS</span><span class="token punctuation">)</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RequestBean</span> <span class="token punctuation">{</span>
