@@ -649,7 +649,7 @@ C/C++的条件编译相比，确实更有局限性。在 Java 语言设计之初
 </code></pre>
 <p>很明显，反编译之后的代码要比我们自己的代码复杂的多。所以，使用了 assert 这个语法糖我们节省了很多代码。其实断言的底层实现就是<br>
 if 语言，如果断言结果为 true，则什么都不做，程序继续执行，如果断言结果为 false，则程序抛出 AssertError<br>
-来打断程序的���行。-enableassertions会设置$assertionsDisabled 字段的值。</p>
+来打断程序的执行。-enableassertions会设置$assertionsDisabled 字段的值。</p>
 <p>数值字面量<br>
 在 java 7 中，数值字面量，不管是整数还是浮点数，都允许在数字之间插入任意多个下划线。这些下划线不会对字面量的数值产生影响，目的就是方便阅读。</p>
 <p>比如：</p>
@@ -786,7 +786,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 <h3 id="Lambda-表达式">Lambda 表达式</h3>
 <p>关于 lambda 表达式，有人可能会有质疑，因为网上有人说他并不是语法糖。其实我想纠正下这个说法。Lambda<br>
 表达式不是匿名内部类的语法糖，但是他也是一个语法糖。实现方式其实是依赖了几个 JVM 底层提供的 lambda 相关 api。</p>
-<p>先来看一个简���的 lambda 表达式。遍历一个 list：</p>
+<p>先来看一个简单的 lambda 表达式。遍历一个 list：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> strList <span class="token operator">=</span> <span class="token class-name">ImmutableList</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token string">"Hollis"</span><span class="token punctuation">,</span> <span class="token string">"公众号：Hollis"</span><span class="token punctuation">,</span> <span class="token string">"博客：www.hollischuang.com"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -796,7 +796,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 
 <span class="token punctuation">}</span>
 </code></pre>
-<p>为啥说他并不是内部类的语法糖呢，前面讲内部类我们说过，内部类在编译之后会有两个 class 文件，但是，包含 lambda 表达式的类编译后只有一个文件。</p>
+<p>为啥说他并不是���部类的语法糖呢，前面讲内部类我们说过，内部类在编译之后会有两个 class 文件，但是，包含 lambda 表达式的类编译后只有一个文件。</p>
 <p>反编译后代码如下:</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token comment">/* varargs */</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">ImmutableList</span> strList <span class="token operator">=</span> <span class="token class-name">ImmutableList</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token class-name">Object</span><span class="token punctuation">)</span> <span class="token string">"Hollis"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token class-name">Object</span><span class="token punctuation">)</span> <span class="token string">"\u516c\u4f17\u53f7\uff1aHollis"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token class-name">Object</span><span class="token punctuation">)</span> "
@@ -812,7 +812,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 </code></pre>
 <p>可以看到，在forEach方法中，其实是调用了java.lang.invoke.LambdaMetafactory#metafactory方法，该方法的第四个参数 implMethod<br>
 指定了方法实现。可以看到这里其实是调用了一个lambda$main$0方法进行了输出。</p>
-<p>再来看一个稍微复杂一点的，先对 List 进行过滤，然后���输出：</p>
+<p>再来看一个稍微复杂一点的，先对 List 进行过滤，然后再输出：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> strList <span class="token operator">=</span> <span class="token class-name">ImmutableList</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token string">"Hollis"</span><span class="token punctuation">,</span> <span class="token string">"公众号：Hollis"</span><span class="token punctuation">,</span> <span class="token string">"博客：www.hollischuang.com"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
@@ -889,7 +889,7 @@ List，擦除动作导致这两个方法的特征签名变得一模一样。</p>
 <span class="token punctuation">}</span>
 </code></pre>
 <p>以上代码输出结果为：2！</p>
-<p>有些同学可能会误认为泛型类是不同的类，对应不同的字节码，其实<br>
+<p>有些同学���能会误认为泛型类是不同的类，对应不同的字节码，其实<br>
 由于经过类型擦除，所有的泛型类实例都关联到同一份字节码上，泛型类的静态变量是共享的。上面例子里的GT<Integer>.var和GT<String><br>
 .var其实是一个变量。</p>
 <h3 id="自动装箱与拆箱">自动装箱与拆箱</h3>
@@ -918,7 +918,7 @@ students.remove(stu);
 </code></pre>
 <p>会抛出ConcurrentModificationException异常。</p>
 <p>Iterator 是工作在一个独立的线程中，并且拥有一个 mutex 锁。 Iterator<br>
-被创建之后会建立一个指向原来对象的单链索引表，当原来的对象数量发生变化时，这个索引表的内容不会同步改变，所以当索引指针往后移动的时候就找不到要迭代的对象，所以按照<br>
+被创建之后会建立一个指向原来对象的单链索引表，当原来的对象数量发生变化时，这个索引表的内容不会同步改变，所以当索引指针往后移动的时候就找不到要迭���的对象，所以按照<br>
 fail-fast 原则 Iterator 会马上抛出java.util.ConcurrentModificationException异常。</p>
 <p>所以 Iterator 在工作的时候是不允许被迭代的对象被改变的。但你可以使用 Iterator 本身的方法remove()<br>
 来删除对象，Iterator.remove() 方法会在删除当前迭代对象的同时维护索引的一致性。</p>
