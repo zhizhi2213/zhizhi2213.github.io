@@ -3,11 +3,26 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-05-06T13:00:00.000Z</updated>
+  <updated>2026-05-16T11:30:00.000Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
+  <entry>
+    <title>zoxide &amp; fzf 安装与使用指南（终端提效神器）</title>
+    <link href="https://zhizhi2213.github.io/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/"/>
+    <updated>2026-05-16T11:30:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/</id>
+    <summary>zoxide 是一个更智能的 cd 命令，它会记住你经常访问的目录，让你通过模糊匹配快速跳转。配合 fzf，可以实现强大的交互式搜索。
+
+ 一、 安装步骤
+
+在 macOS 上，推荐使用 Homebrew 进行安装：
+
+bash
+ 安装 zoxide 和 fzf
+brew install zoxid...</summary>
+  </entry>
   <entry>
     <title>IDEA快捷键（Mac）</title>
     <link href="https://zhizhi2213.github.io/static/posts/IDEA快捷键-Mac/"/>

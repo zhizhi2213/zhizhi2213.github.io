@@ -1,5 +1,16 @@
 [
   {
+    "title": "zoxide & fzf 安装与使用指南（终端提效神器）",
+    "slug": "zoxide-fzf-安装与使用指南-终端提效神器",
+    "excerpt": "zoxide 是一个更智能的 cd 命令，它会记住你经常访问的目录，让你通过模糊匹配快速跳转。配合 fzf，可以实现强大的交互式搜索。\n\n 一、 安装步骤\n\n在 macOS 上，推荐使用 Homebrew 进行安装：\n\nbash\n 安装 zoxide 和 fzf\nbrew install zoxid...",
+    "tags": [
+      "Mac",
+      "Terminal",
+      "Efficiency"
+    ],
+    "date": "2026-05-16 11:30:00"
+  },
+  {
     "title": "IDEA快捷键（Mac）",
     "slug": "IDEA快捷键-Mac",
     "excerpt": "Mac 版 IDEA 最实用、高频必用快捷键\n\n 一、通用 / 窗口\n\n- 打开设置：Command + ,\n- 打开最近项目：Command + Shift + E\n- 快速搜索任何东西（类 / 文件 / 方法 / 设置）：Double Shift\n- 搜索类：Command + O\n- 搜索文件...",
