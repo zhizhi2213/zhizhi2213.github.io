@@ -3,11 +3,25 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-05-16T11:30:00.000Z</updated>
+  <updated>2026-05-20T16:20:00.000Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
+  <entry>
+    <title>WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</title>
+    <link href="https://zhizhi2213.github.io/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/"/>
+    <updated>2026-05-20T16:20:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/</id>
+    <summary>&gt; 项目地址：https://github.com/darrylmorley/whatcable
+&gt; 作者：Darryl Morley | 开源协议：MIT | Stars：3.8k+
+
+---
+
+ 一、问题背景：USB-C 的&quot;黑盒&quot;困境
+
+USB-C 接口统一了充电、数据传输和视频输出，但一个 ...</summary>
+  </entry>
   <entry>
     <title>zoxide &amp; fzf 安装与使用指南（终端提效神器）</title>
     <link href="https://zhizhi2213.github.io/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/"/>
