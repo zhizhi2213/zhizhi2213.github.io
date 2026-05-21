@@ -14,7 +14,7 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
 
 - 键值对存储，基于哈希表实现
 - 允许 ...">
-  <meta name="theme-color" content="#6366f1">
+  <meta name="theme-color" content="#2f6feb">
   <meta property="og:title" content="HashMap源码分析">
   <meta property="og:description" content="HashMap 源码分析
 
@@ -49,11 +49,6 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
-  <div class="background-animation"></div>
-  <div class="background-animation background-animation-2"></div>
-  
-  <div class="reading-progress-bar" id="readingProgressBar"></div>
-  
   <a href="#main-content" class="skip-link">跳转到主要内容</a>
   
   <header class="header">
@@ -64,6 +59,7 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
           <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
           <a href="/static/tags/" class="nav-link">标签</a>
+          <a href="/static/about/" class="nav-link">关于</a>
         </div>
         <div class="header-actions">
           <button class="search-toggle" aria-label="搜索">
@@ -91,6 +87,7 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
             <a href="/" class="mobile-menu-link">首页</a>
             <a href="/static/archives/" class="mobile-menu-link">归档</a>
             <a href="/static/tags/" class="mobile-menu-link">标签</a>
+            <a href="/static/about/" class="mobile-menu-link">关于</a>
           </div>
         </div>
       </div>
@@ -110,97 +107,63 @@ HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提
     </div>
   </div>
 
+  <!-- 静默编译占位符，不在前台显示 -->
+  <div style="display: none;">
+    
+    <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</a>
+    
+    <a href="/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/">zoxide & fzf 安装与使用指南（终端提效神器）</a>
+    
+    <a href="/static/posts/IDEA快捷键-Mac/">IDEA快捷键（Mac）</a>
+    
+    <a href="/static/posts/MyBatis源码深度解析/">MyBatis源码深度解析</a>
+    
+    <a href="/static/posts/ThreadLocal异步场景问题解析/">ThreadLocal异步场景问题解析</a>
+    
+    <a href="/static/posts/Spring-IOC与AOP详解/">Spring IOC与AOP详解</a>
+    
+    <a href="/static/posts/Spring源码中的设计模式详解/">Spring源码中的设计模式详解</a>
+    
+    <a href="/static/posts/HashMap源码分析/">HashMap源码分析</a>
+    
+    <a href="/static/posts/java语法糖详解/">java语法糖详解</a>
+    
+    <a href="/static/posts/Trae-Java环境配置/">Trae-Java环境配置</a>
+    
+    <a href="/static/posts/欢迎来到我的博客/">欢迎来到我的博客</a>
+    
+    <a href="/static/posts/为什么Java中只有值传递/">为什么Java中只有值传递？</a>
+    
+    <a href="/static/posts/关于技术分享/">关于技术分享</a>
+    
+    <a href="/static/posts/代码之美/">代码之美</a>
+    
+    <a href="/static/posts/首页美化教程/">首页美化教程</a>
+    
+    <a href="/static/posts/如何创建GitHub个人网站/">如何创建GitHub个人网站</a>
+    
+  </div>
+
   <main class="main" id="main-content">
     <div class="post-layout-container">
       <div class="post-layout">
-        <aside class="posts-sidebar">
-          <h3 class="posts-sidebar-title">文章目录</h3>
-          <nav class="posts-sidebar-content" id="postsSidebarContent">
-            <ul class="posts-sidebar-list">
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/" class="posts-sidebar-link">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/" class="posts-sidebar-link">zoxide & fzf 安装与使用指南（终端提效神器）</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/IDEA快捷键-Mac/" class="posts-sidebar-link">IDEA快捷键（Mac）</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/MyBatis源码深度解析/" class="posts-sidebar-link">MyBatis源码深度解析</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/ThreadLocal异步场景问题解析/" class="posts-sidebar-link">ThreadLocal异步场景问题解析</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/Spring-IOC与AOP详解/" class="posts-sidebar-link">Spring IOC与AOP详解</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/Spring源码中的设计模式详解/" class="posts-sidebar-link">Spring源码中的设计模式详解</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/HashMap源码分析/" class="posts-sidebar-link active">HashMap源码分析</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/java语法糖详解/" class="posts-sidebar-link">java语法糖详解</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/Trae-Java环境配置/" class="posts-sidebar-link">Trae-Java环境配置</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/欢迎来到我的博客/" class="posts-sidebar-link">欢迎来到我的博客</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/为什么Java中只有值传递/" class="posts-sidebar-link">为什么Java中只有值传递？</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/关于技术分享/" class="posts-sidebar-link">关于技术分享</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/代码之美/" class="posts-sidebar-link">代码之美</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/首页美化教程/" class="posts-sidebar-link">首页美化教程</a>
-              </li>
-              
-              <li class="posts-sidebar-item">
-                <a href="/static/posts/如何创建GitHub个人网站/" class="posts-sidebar-link">如何创建GitHub个人网站</a>
-              </li>
-              
-            </ul>
-          </nav>
-        </aside>
-
         <article class="post">
-          <div class="post-header">
+          <header class="article-header">
             <a href="/" class="back-link">← 返回首页</a>
-            <h1 class="post-title">HashMap源码分析</h1>
-            <div class="post-meta">
-              <span class="post-date">2026年2月9日</span>
-              <span class="post-views" id="postViews">
+            <h1>HashMap源码分析</h1>
+            <div class="article-meta">
+              <span class="date">2026年2月9日</span>
+              <span class="views" id="postViews">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                 <span>加载中...</span>
               </span>
-              
+              <span class="tags-list">
+                
+              </span>
             </div>
-          </div>
+          </header>
 
-          <div class="post-content">
+          <div class="post-content article-body">
             <h1>HashMap 源码分析</h1>
 <h2 id="一-HashMap-简介">一、HashMap 简介</h2>
 <p>HashMap 是 Java 中最常用的集合类之一，它基于哈希表实现，提供了快速的键值对存储和查找功能。HashMap 允许使用 null 键和 null 值，并且不保证映射的顺序。</p>
@@ -763,7 +726,7 @@ JDK 1.8：数组 + 链表 + 红黑树</p>
           
           <section class="comments-section">
             <div class="comments-container">
-              <h3 class="comments-title">评论区</h3>
+              <h3 class="comments-title">评论</h3>
               <div class="giscus-wrapper">
                 <script src="https://giscus.app/client.js"
                   data-repo="zhizhi2213/zhizhi2213.github.io"
@@ -787,7 +750,7 @@ JDK 1.8：数组 + 链表 + 红黑树</p>
           
 
           <aside class="related-posts">
-            <h3 class="related-posts-title">相关文章</h3>
+            <h3 class="related-posts-title">相关推荐</h3>
             <ul class="related-posts-list">
               
               <li class="related-posts-item">
@@ -818,6 +781,7 @@ JDK 1.8：数组 + 链表 + 红黑树</p>
         
         <aside class="toc-container">
           <nav class="toc-content" id="tocContent">
+            <div class="toc-title">目录</div>
             <a href="#一-HashMap-简介" class="toc-item toc-level-2" style="">一、HashMap 简介</a><a href="#主要特点" class="toc-item toc-level-3" style="padding-left: 1.5rem;">主要特点</a><a href="#二-核心数据结构" class="toc-item toc-level-2" style="">二、核心数据结构</a><a href="#2-1-Node-节点" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.1 Node 节点</a><a href="#2-2-底层结构" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2.2 底层结构</a><a href="#三-关键参数" class="toc-item toc-level-2" style="">三、关键参数</a><a href="#3-1-初始参数" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.1 初始参数</a><a href="#3-2-构造方法" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.2 构造方法</a><a href="#3-3-tableSizeFor-方法" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3.3 tableSizeFor 方法</a><a href="#四-Hash-算法" class="toc-item toc-level-2" style="">四、Hash 算法</a><a href="#4-1-hash-方法" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.1 hash 方法</a><a href="#4-2-索引计算" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4.2 索引计算</a><a href="#五-put-方法源码分析" class="toc-item toc-level-2" style="">五、put 方法源码分析</a><a href="#5-1-put-方法入口" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.1 put 方法入口</a><a href="#5-2-putVal-方法详解" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5.2 putVal 方法详解</a><a href="#六-get-方法源码分析" class="toc-item toc-level-2" style="">六、get 方法源码分析</a><a href="#6-1-get-方法入口" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.1 get 方法入口</a><a href="#6-2-getNode-方法详解" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6.2 getNode 方法详解</a><a href="#七-扩容机制-resize" class="toc-item toc-level-2" style="">七、扩容机制（resize）</a><a href="#7-1-resize-方法详解" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.1 resize 方法详解</a><a href="#7-2-扩容优化" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7.2 扩容优化</a><a href="#八-红黑树转换" class="toc-item toc-level-2" style="">八、红黑树转换</a><a href="#8-1-treeifyBin-方法" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.1 treeifyBin 方法</a><a href="#8-2-为什么是-8-和-6" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8.2 为什么是 8 和 6？</a><a href="#九-线程安全问题" class="toc-item toc-level-2" style="">九、线程安全问题</a><a href="#9-1-并发扩容问题" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9.1 并发扩容问题</a><a href="#9-2-JDK-1-8-的改进" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9.2 JDK 1.8 的改进</a><a href="#9-3-解决方案" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9.3 解决方案</a><a href="#十-常见面试题" class="toc-item toc-level-2" style="">十、常见面试题</a><a href="#1-HashMap-的底层数据结构" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1. HashMap 的底层数据结构？</a><a href="#2-为什么-JDK-1-8-要引入红黑树" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2. 为什么 JDK 1.8 要引入红黑树？</a><a href="#3-HashMap-的扩容机制是什么" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3. HashMap 的扩容机制是什么？</a><a href="#4-为什么-HashMap-的容量必须是-2-的-n-次幂" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4. 为什么 HashMap 的容量必须是 2 的 n 次幂？</a><a href="#5-HashMap-的负载因子为什么是-0-75" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5. HashMap 的负载因子为什么是 0.75？</a><a href="#6-HashMap-是线程安全的吗" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6. HashMap 是线程安全的吗？</a><a href="#7-HashMap-中-key-为-null-时怎么处理" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7. HashMap 中 key 为 null 时怎么处理？</a><a href="#8-HashMap-和-ConcurrentHashMap-的区别" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8. HashMap 和 ConcurrentHashMap 的区别？</a><a href="#9-HashMap-和-Hashtable-的区别" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9. HashMap 和 Hashtable 的区别？</a><a href="#10-如何优化-HashMap-的性能" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10. 如何优化 HashMap 的性能？</a><a href="#十一-使用建议" class="toc-item toc-level-2" style="">十一、使用建议</a><a href="#11-1-初始化容量" class="toc-item toc-level-3" style="padding-left: 1.5rem;">11.1 初始化容量</a><a href="#11-2-选择合适的负载因子" class="toc-item toc-level-3" style="padding-left: 1.5rem;">11.2 选择合适的负载因子</a><a href="#11-3-避免大对象作为-key" class="toc-item toc-level-3" style="padding-left: 1.5rem;">11.3 避免大对象作为 key</a><a href="#十二-总结" class="toc-item toc-level-2" style="">十二、总结</a>
           </nav>
         </aside>
@@ -829,6 +793,7 @@ JDK 1.8：数组 + 链表 + 红黑树</p>
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p>Powered by <a href="https://github.com/zhizhi2213">吱吱的博客</a></p>
       <p class="footer-links">
         <a href="/atom.xml" aria-label="RSS 订阅">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
@@ -840,10 +805,6 @@ JDK 1.8：数组 + 链表 + 红黑树</p>
 
   <button class="back-to-top" id="backToTop" aria-label="返回顶部">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-  </button>
-
-  <button class="reading-mode-toggle" id="readingModeToggle" aria-label="阅读模式" title="切换阅读模式">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
   </button>
 
   <script src="/static/assets/script.js" defer></script>

@@ -11,28 +11,34 @@
   let searchIndex = [];
   let searchTimeout = null;
   
+  // ─── Theme Management ───
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   updateThemeIcon(savedTheme);
   
   function updateThemeIcon(theme) {
-    themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    if (themeIcon) {
+      themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
   }
   
-  themeToggle.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
-    updateThemeIcon(newTheme);
-    
-    themeToggle.style.transform = 'rotate(360deg)';
-    setTimeout(() => {
-      themeToggle.style.transform = '';
-    }, 300);
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcon(newTheme);
+      
+      themeToggle.style.transform = 'rotate(360deg)';
+      setTimeout(() => {
+        themeToggle.style.transform = '';
+      }, 300);
+    });
+  }
   
+  // ─── Search Functionality ───
   async function loadSearchIndex() {
     if (searchIndex.length > 0) return searchIndex;
     
@@ -109,15 +115,21 @@
   }
   
   function openSearchModal() {
-    searchModal.classList.add('active');
-    searchInput.focus();
-    loadSearchIndex();
+    if (searchModal) {
+      searchModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      searchInput.focus();
+      loadSearchIndex();
+    }
   }
   
   function closeSearchModal() {
-    searchModal.classList.remove('active');
-    searchInput.value = '';
-    searchResults.innerHTML = '';
+    if (searchModal) {
+      searchModal.classList.remove('active');
+      document.body.style.overflow = '';
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+    }
   }
   
   if (searchToggle) {
@@ -161,29 +173,17 @@
       openSearchModal();
     }
     
-    if (e.key === 'Escape' && searchModal.classList.contains('active')) {
+    if (e.key === 'Escape' && searchModal && searchModal.classList.contains('active')) {
       closeSearchModal();
     }
   });
   
-  const postCards = document.querySelectorAll('.post-card');
-  postCards.forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.1}s`;
-    
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      card.style.setProperty('--mouse-x', `${x}%`);
-      card.style.setProperty('--mouse-y', `${y}%`);
-    });
-  });
-  
+  // ─── Smooth Anchor Scroll ───
   const links = document.querySelectorAll('a[href^="#"]');
   links.forEach(link => {
     link.addEventListener('click', function(e) {
       const href = this.getAttribute('href');
-      if (href === '#') return;
+      if (href === '#' || href.startsWith('#tocContent')) return;
       
       const target = document.querySelector(href);
       if (target) {
@@ -193,6 +193,7 @@
     });
   });
   
+  // ─── Entry Fade-in Animation ───
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -200,31 +201,30 @@
         entry.target.style.transform = 'translateY(0)';
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.05 });
   
-  const animateElements = document.querySelectorAll('.post-card, .archive-item');
+  const animateElements = document.querySelectorAll('.post-item, .archive-item');
   animateElements.forEach(el => {
     el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    el.style.transform = 'translateY(15px)';
+    el.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
     observer.observe(el);
   });
   
-  let lastScrollTop = 0;
+  // ─── Header Shadow Scroll ───
   const header = document.querySelector('.header');
+  if (header) {
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > 20) {
+        header.style.boxShadow = 'var(--shadow-sm)';
+      } else {
+        header.style.boxShadow = 'none';
+      }
+    });
+  }
   
-  window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    if (scrollTop > 100) {
-      header.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-    } else {
-      header.style.boxShadow = 'none';
-    }
-    
-    lastScrollTop = scrollTop;
-  });
-  
+  // ─── Code Blocks Enhancements ───
   const preBlocks = document.querySelectorAll('pre');
   preBlocks.forEach(pre => {
     const code = pre.querySelector('code');
@@ -232,20 +232,20 @@
     
     const lang = pre.getAttribute('data-lang') || 'text';
     
-    const header = document.createElement('div');
-    header.className = 'code-header';
+    const headerEl = document.createElement('div');
+    headerEl.className = 'code-header';
     
     const langLabel = document.createElement('span');
     langLabel.className = 'code-lang';
-    langLabel.textContent = lang;
-    header.appendChild(langLabel);
+    langLabel.textContent = lang.toUpperCase();
+    headerEl.appendChild(langLabel);
     
     const button = document.createElement('button');
     button.textContent = '复制';
     button.className = 'copy-button';
-    header.appendChild(button);
+    headerEl.appendChild(button);
     
-    pre.appendChild(header);
+    pre.appendChild(headerEl);
     
     const wrapper = document.createElement('div');
     wrapper.className = 'code-wrapper';
@@ -254,6 +254,11 @@
     linesContainer.className = 'code-lines';
     
     const codeLines = code.textContent.split('\n');
+    // Remove last empty line if any
+    if (codeLines[codeLines.length - 1] === '') {
+      codeLines.pop();
+    }
+    
     codeLines.forEach((_, index) => {
       const lineNum = document.createElement('div');
       lineNum.textContent = index + 1;
@@ -261,9 +266,19 @@
     });
     
     wrapper.appendChild(linesContainer);
+    
+    // We wrap the code element
+    const codeParent = code.parentNode;
+    const codeWrapper = document.createElement('div');
+    codeWrapper.style.flex = '1';
+    codeWrapper.style.overflowX = 'auto';
+    codeParent.replaceChild(codeWrapper, code);
+    codeWrapper.appendChild(code);
+    
+    wrapper.appendChild(codeWrapper);
     pre.appendChild(wrapper);
     
-    code.style.paddingLeft = '60px';
+    code.style.paddingLeft = '15px';
     
     button.addEventListener('click', () => {
       navigator.clipboard.writeText(code.textContent).then(() => {
@@ -277,31 +292,30 @@
     });
   });
 
+  // ─── TOC Highlighting ───
   const tocContent = document.getElementById('tocContent');
   const tocItems = document.querySelectorAll('.toc-item');
-  const headings = document.querySelectorAll('.post-content h2[id], .post-content h3[id]');
+  const headings = document.querySelectorAll('.article-body h2[id], .article-body h3[id]');
 
-  if (tocContent && tocItems.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
+  if (tocContent && tocItems.length > 0 && headings.length > 0) {
+    const headingObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const id = entry.target.id;
-          tocItems.forEach(item => {
-            item.style.background = '';
-            item.style.color = '';
-          });
+          tocItems.forEach(item => item.classList.remove('active'));
+          
           const activeItem = document.querySelector(`.toc-item[href="#${id}"]`);
           if (activeItem) {
-            activeItem.style.background = 'var(--bg-card)';
-            activeItem.style.color = 'var(--accent-color)';
+            activeItem.classList.add('active');
           }
         }
       });
-    }, { threshold: 0.1 });
+    }, { rootMargin: '-10% 0px -70% 0px' });
 
-    headings.forEach(heading => observer.observe(heading));
+    headings.forEach(heading => headingObserver.observe(heading));
   }
 
+  // ─── Mobile Menu Drawer ───
   const mobileMenuToggle = document.getElementById('mobileMenuToggle');
   const mobileMenuClose = document.getElementById('mobileMenuClose');
   const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
@@ -309,13 +323,17 @@
   const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
 
   function openMobileMenu() {
-    mobileMenu.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    if (mobileMenu) {
+      mobileMenu.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
   }
 
   function closeMobileMenu() {
-    mobileMenu.classList.remove('active');
-    document.body.style.overflow = '';
+    if (mobileMenu) {
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    }
   }
 
   if (mobileMenuToggle) {
@@ -335,14 +353,12 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+    if (e.key === 'Escape' && mobileMenu && mobileMenu.classList.contains('active')) {
       closeMobileMenu();
     }
   });
 
-  console.log('%c🎨 欢迎来到我的博客！', 'font-size: 24px; font-weight: bold; color: #6366f1;');
-  console.log('%c这是一个用爱打造的静态博客', 'font-size: 14px; color: #64748b;');
-
+  // ─── Prism Code Highlight Auto-Loader ───
   const preBlocksWithLang = document.querySelectorAll('pre code[class*="language-"]');
   if (preBlocksWithLang.length > 0) {
     const prismScript = document.createElement('script');
@@ -371,13 +387,16 @@
       });
       
       setTimeout(() => {
-        window.Prism.highlightAll();
+        if (window.Prism) {
+          window.Prism.highlightAll();
+        }
       }, 100);
     };
     
     document.head.appendChild(prismScript);
   }
 
+  // ─── Back To Top ───
   const backToTop = document.getElementById('backToTop');
   if (backToTop) {
     const toggleBackToTop = () => {
@@ -399,19 +418,7 @@
     });
   }
 
-  const readingProgressBar = document.getElementById('readingProgressBar');
-  if (readingProgressBar) {
-    const updateReadingProgress = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollTop / docHeight) * 100;
-      readingProgressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
-    };
-
-    window.addEventListener('scroll', updateReadingProgress);
-    updateReadingProgress();
-  }
-
+  // ─── Local Post Views Counter ───
   const postViews = document.getElementById('postViews');
   if (postViews) {
     const path = window.location.pathname;
@@ -429,33 +436,5 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
       <span>${views} 次阅读</span>
     `;
-  }
-
-  const readingModeToggle = document.getElementById('readingModeToggle');
-  const postLayout = document.querySelector('.post-layout');
-  if (readingModeToggle && postLayout) {
-    const savedReadingMode = localStorage.getItem('readingMode') === 'true';
-    
-    function toggleReadingMode(isReadingMode) {
-      if (isReadingMode) {
-        postLayout.classList.add('reading-mode');
-        readingModeToggle.classList.add('active');
-        readingModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-      } else {
-        postLayout.classList.remove('reading-mode');
-        readingModeToggle.classList.remove('active');
-        readingModeToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-      }
-      localStorage.setItem('readingMode', isReadingMode);
-    }
-    
-    if (savedReadingMode) {
-      toggleReadingMode(true);
-    }
-    
-    readingModeToggle.addEventListener('click', () => {
-      const isActive = postLayout.classList.contains('reading-mode');
-      toggleReadingMode(!isActive);
-    });
   }
 })();
