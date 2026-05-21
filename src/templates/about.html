@@ -3,18 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{site.title}} - {{site.subtitle}}</title>
-  <meta name="description" content="{{site.description}}">
+  <title>关于 - {{site.title}}</title>
+  <meta name="description" content="关于 {{site.author}} - {{site.description}}">
   <meta name="theme-color" content="#2f6feb">
-  <meta property="og:title" content="{{site.title}} - {{site.subtitle}}">
-  <meta property="og:description" content="{{site.description}}">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="{{site.url}}">
-  <meta property="og:site_name" content="{{site.title}}">
-  <meta property="og:locale" content="zh_CN">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{site.title}} - {{site.subtitle}}">
-  <meta name="twitter:description" content="{{site.description}}">
   <link rel="stylesheet" href="/static/assets/style.css">
 </head>
 <body>
@@ -25,10 +16,10 @@
       <nav class="nav">
         <a href="/" class="logo">{{site.title}}</a>
         <div class="nav-links">
-          <a href="/" class="nav-link active">首页</a>
+          <a href="/" class="nav-link">首页</a>
           <a href="/static/archives/" class="nav-link">归档</a>
           <a href="/static/tags/" class="nav-link">标签</a>
-          <a href="/static/about/" class="nav-link">关于</a>
+          <a href="/static/about/" class="nav-link active">关于</a>
         </div>
         <div class="header-actions">
           <button class="search-toggle" aria-label="搜索">
@@ -53,10 +44,10 @@
             </button>
           </div>
           <div class="mobile-menu-links">
-            <a href="/" class="mobile-menu-link active">首页</a>
+            <a href="/" class="mobile-menu-link">首页</a>
             <a href="/static/archives/" class="mobile-menu-link">归档</a>
             <a href="/static/tags/" class="mobile-menu-link">标签</a>
-            <a href="/static/about/" class="mobile-menu-link">关于</a>
+            <a href="/static/about/" class="mobile-menu-link active">关于</a>
           </div>
         </div>
       </div>
@@ -77,17 +68,37 @@
   </div>
 
   <main class="main" id="main-content">
-    <div class="container">
-      <section class="hero">
-        <h1 class="hero-title">{{site.title}}</h1>
-        <p class="hero-subtitle">{{site.subtitle}}</p>
-      </section>
+    <div class="container container-narrow">
+      <section class="about-section">
+        <h1>关于我</h1>
+        <div class="about-body">
+          <p>你好，我是 {{site.author}}。后端开发工程师，日常写 Java / Spring Cloud 相关的业务代码，偶尔也折腾一些前端和设计系统的东西。</p>
+          <p>这个博客用来记录工作中的技术心得、读书摘录，以及一些生活碎片。没有宏大叙事，只是想把值得回看的东西留下来。</p>
+          <p>更新不定期，写到哪算哪。</p>
 
-      <section class="posts-section">
-        <h2>最新文章</h2>
-        <ul class="post-list">
-          {{posts}}
-        </ul>
+          <h2>写作主题</h2>
+          <ul>
+            <li>后端技术 — 分布式系统、JVM、Spring 生态、数据库</li>
+            <li>读书笔记 — 非虚构为主，偶尔重读文学</li>
+            <li>生活随笔 — 日常观察、旅行、饮食</li>
+          </ul>
+
+          <h2>联系方式</h2>
+          <div class="contact-list">
+            <div class="contact-item">
+              <span class="contact-label">GitHub</span>
+              <span class="contact-value"><a href="https://github.com/{{site.author}}" target="_blank">github.com/{{site.author}}</a></span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">Email</span>
+              <span class="contact-value"><a href="mailto:hello@{{site.author}}.dev">hello@{{site.author}}.dev</a></span>
+            </div>
+            <div class="contact-item">
+              <span class="contact-label">Twitter</span>
+              <span class="contact-value"><a href="#">@{{site.author}}_dev</a></span>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   </main>

@@ -41,6 +41,7 @@ class BlogGenerator {
     await this.generatePosts();
     await this.generateArchives();
     await this.generateTags();
+    await this.generateAbout();
     await this.generateFeed();
     await this.generateSitemap();
     await this.generateSearchIndex();
@@ -589,6 +590,18 @@ ${post.content}`;
     }
   }
 
+  async generateAbout() {
+    const template = await this.loadTemplate('about.html');
+    const html = this.renderTemplate(template, {
+      posts: this.posts,
+      formatDate: this.formatDate.bind(this)
+    });
+
+    const aboutDir = path.join(__dirname, '..', 'static', 'about');
+    await fs.mkdir(aboutDir, { recursive: true });
+    await fs.writeFile(path.join(aboutDir, 'index.html'), html);
+  }
+
   async generateFeed() {
     const updated = this.posts.length > 0 ? this.formatDateISO(this.posts[0].date) : new Date().toISOString();
     
@@ -643,7 +656,8 @@ ${this.posts.map(post => `  <entry>
     const urls = [
       { loc: this.config.site.url + '/', lastmod: lastMod, priority: '1.0' },
       { loc: this.config.site.url + '/static/archives/', lastmod: lastMod, priority: '0.8' },
-      { loc: this.config.site.url + '/static/tags/', lastmod: lastMod, priority: '0.8' }
+      { loc: this.config.site.url + '/static/tags/', lastmod: lastMod, priority: '0.8' },
+      { loc: this.config.site.url + '/static/about/', lastmod: lastMod, priority: '0.8' }
     ];
     
     this.posts.forEach(post => {
@@ -716,19 +730,16 @@ ${urls.map(url => `  <url>
     const config = this.config;
     
     const postCard = (post) => `
-      <article class="post-card">
-        <div class="post-card-inner">
-          <h2 class="post-title">
-            <a href="/static/posts/${post.slug}/">${post.title}</a>
-          </h2>
-          <div class="post-meta">
-            <span class="post-date">${data.formatDate(post.date)}</span>
-            ${post.tags ? post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('') : ''}
-          </div>
-          <p class="post-excerpt">${post.excerpt}</p>
-          <a href="/static/posts/${post.slug}/" class="read-more">阅读全文 →</a>
+      <li class="post-item">
+        <div class="post-meta">
+          <span class="post-date">${data.formatDate(post.date)}</span>
+          ${post.tags ? post.tags.map(tag => `<span class="post-tag">${tag}</span>`).join('') : ''}
         </div>
-      </article>
+        <h3 class="post-title">
+          <a href="/static/posts/${post.slug}/">${post.title}</a>
+        </h3>
+        <p class="post-excerpt">${post.excerpt}</p>
+      </li>
     `;
     
     let html = template
