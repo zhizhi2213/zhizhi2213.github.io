@@ -769,53 +769,116 @@ body {
   font-weight: 600;
 }
 
-/* ─── Code Copy & Lines ─── */
-.code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px var(--space-3);
+/* ─── Code Copy & Highlighting ─── */
+.code-copy-btn {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
   background: var(--bg);
-  border-bottom: 1px solid var(--border);
-  border-top-left-radius: var(--radius-md);
-  border-top-right-radius: var(--radius-md);
-  margin: -16px -16px 16px -16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--muted);
-}
-
-.copy-button {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 2px 8px;
-  color: var(--muted);
   cursor: pointer;
-  transition: all 0.2s;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background-color 0.2s, border-color 0.2s;
+  z-index: 10;
 }
 
-.copy-button:hover {
-  border-color: var(--fg);
+pre:hover .code-copy-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.code-copy-btn:hover {
+  background: var(--border);
   color: var(--fg);
 }
 
-.code-wrapper {
-  display: flex;
+/* Prism Token Highlighting (Apple Xcode Style) */
+pre[class*="language-"] {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--fg) !important;
+  text-shadow: none !important;
   position: relative;
 }
 
-.code-lines {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  padding-right: var(--space-3);
-  border-right: 1px solid var(--border);
-  user-select: none;
-  text-align: right;
-  min-width: 2.5em;
+code[class*="language-"] {
+  color: var(--fg) !important;
+  text-shadow: none !important;
+  font-family: var(--font-mono) !important;
+}
+
+:root {
+  --token-comment: #707f8d;
+  --token-keyword: #ad3da3;
+  --token-string: #d12f1b;
+  --token-number: #272ad8;
+  --token-function: #3e8087;
+  --token-operator: #5c626d;
+}
+
+:root[data-theme="dark"] {
+  --token-comment: #7f8c8d;
+  --token-keyword: #fc5fa3;
+  --token-string: #fc6a5d;
+  --token-number: #9686f5;
+  --token-function: #41b4c5;
+  --token-operator: #a9b2c3;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--token-comment);
+  font-style: italic;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.string,
+.token.attr-value {
+  color: var(--token-string);
+}
+
+.token.punctuation,
+.token.operator {
+  color: var(--token-operator);
+}
+
+.token.keyword,
+.token.selector,
+.token.important,
+.token.atrule {
+  color: var(--token-keyword);
+  font-weight: 500;
+}
+
+.token.function,
+.token.class-name {
+  color: var(--token-function);
+}
+
+.token.number,
+.token.boolean,
+.token.property,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: var(--token-number);
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: var(--token-string);
 }
 
 /* ─── TOC (Fixed Right Side) ─── */

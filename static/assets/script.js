@@ -230,62 +230,18 @@
     const code = pre.querySelector('code');
     if (!code) return;
     
-    const lang = pre.getAttribute('data-lang') || 'text';
-    
-    const headerEl = document.createElement('div');
-    headerEl.className = 'code-header';
-    
-    const langLabel = document.createElement('span');
-    langLabel.className = 'code-lang';
-    langLabel.textContent = lang.toUpperCase();
-    headerEl.appendChild(langLabel);
-    
+    // Create absolute positioned copy button
     const button = document.createElement('button');
-    button.textContent = '复制';
-    button.className = 'copy-button';
-    headerEl.appendChild(button);
-    
-    pre.appendChild(headerEl);
-    
-    const wrapper = document.createElement('div');
-    wrapper.className = 'code-wrapper';
-    
-    const linesContainer = document.createElement('div');
-    linesContainer.className = 'code-lines';
-    
-    const codeLines = code.textContent.split('\n');
-    // Remove last empty line if any
-    if (codeLines[codeLines.length - 1] === '') {
-      codeLines.pop();
-    }
-    
-    codeLines.forEach((_, index) => {
-      const lineNum = document.createElement('div');
-      lineNum.textContent = index + 1;
-      linesContainer.appendChild(lineNum);
-    });
-    
-    wrapper.appendChild(linesContainer);
-    
-    // We wrap the code element
-    const codeParent = code.parentNode;
-    const codeWrapper = document.createElement('div');
-    codeWrapper.style.flex = '1';
-    codeWrapper.style.overflowX = 'auto';
-    codeParent.replaceChild(codeWrapper, code);
-    codeWrapper.appendChild(code);
-    
-    wrapper.appendChild(codeWrapper);
-    pre.appendChild(wrapper);
-    
-    code.style.paddingLeft = '15px';
+    button.textContent = 'Copy';
+    button.className = 'code-copy-btn';
+    pre.appendChild(button);
     
     button.addEventListener('click', () => {
       navigator.clipboard.writeText(code.textContent).then(() => {
-        button.textContent = '已复制!';
+        button.textContent = 'Copied!';
         button.classList.add('copied');
         setTimeout(() => {
-          button.textContent = '复制';
+          button.textContent = 'Copy';
           button.classList.remove('copied');
         }, 2000);
       });
