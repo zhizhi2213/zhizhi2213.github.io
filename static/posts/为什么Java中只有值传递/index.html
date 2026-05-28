@@ -6,28 +6,26 @@
   <title>为什么Java中只有值传递？ - 吱吱的博客</title>
   <meta name="description" content="为什么Java中只有值传递？
 
+为什么Java中只有值传递？
+
  形参&实参
 
 方法的定义可能会用到 参数，参数在程序语言中分为：
 
 - 实参（实际参数，Arguments）：用于传递给函数/方法的参数，必须有确定的值。
-- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需要有确定的值。
-
-java
-St...">
+- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需...">
   <meta name="theme-color" content="#2f6feb">
   <meta property="og:title" content="为什么Java中只有值传递？">
   <meta property="og:description" content="为什么Java中只有值传递？
 
+为什么Java中只有值传递？
+
  形参&实参
 
 方法的定义可能会用到 参数，参数在程序语言中分为：
 
 - 实参（实际参数，Arguments）：用于传递给函数/方法的参数，必须有确定的值。
-- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需要有确定的值。
-
-java
-St...">
+- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需...">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/为什么Java中只有值传递/">
   <meta property="og:site_name" content="吱吱的博客">
@@ -35,19 +33,20 @@ St...">
   <meta property="article:author" content="zhizhi2213">
   <meta property="article:published_time" content="2026年1月25日">
   
+  <meta property="article:tag" content="{{.}}">
+  
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="为什么Java中只有值传递？">
   <meta name="twitter:description" content="为什么Java中只有值传递？
+
+为什么Java中只有值传递？
 
  形参&实参
 
 方法的定义可能会用到 参数，参数在程序语言中分为：
 
 - 实参（实际参数，Arguments）：用于传递给函数/方法的参数，必须有确定的值。
-- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需要有确定的值。
-
-java
-St...">
+- 形参（形式参数，Parameters）：用于定义函数/方法，接收实参，不需...">
   <link rel="stylesheet" href="/static/assets/style.css">
 </head>
 <body>
@@ -162,13 +161,14 @@ St...">
                 <span>加载中...</span>
               </span>
               <span class="tags-list">
-                
+                <span class="post-tag">Blog</span><span class="post-tag">Java</span>
               </span>
             </div>
           </header>
 
           <div class="post-content article-body">
-            <p>#为什么Java中只有值传递？</p>
+            <h1>为什么Java中只有值传递？</h1>
+<p>#为什么Java中只有值传递？</p>
 <h2 id="形参-实参">形参&amp;实参</h2>
 <p>方法的定义可能会用到 <strong>参数</strong>，参数在程序语言中分为：</p>
 <ul>
@@ -238,7 +238,7 @@ num2 = 20
 0
 </code></pre>
 <p>解析：</p>
-<p>这里我的理解是这里还是传递的实参指向的值，这不过这个值是个地址罢了��所以形参只是拷贝了这个地址，指向的还是同一个对象。方法中修改了这个对象内部的值，所以影响到了实参。<br>
+<p>这里我的理解是��里还是传递的实参指向的值，这不过这个值是个地址罢了，所以形参只是拷贝了这个地址，指向的还是同一个对象。方法中修改了这个对象内部的值，所以影响到了实参。<br>
 如果你直接修改array这个值，是不会影响到实参的。</p>
 <p>看了这个案例很多人肯定觉得 Java 对引用类型的参数采用的是引用传递。</p>
 <p>实际上，并不是的，这里传递的还是值，不过，这个值是实参的地址罢了！</p>
@@ -320,7 +320,6 @@ invoke after: 11
 <li><a href="https://javaguide.cn/java/basis/why-there-only-value-passing-in-java.html">Java 到底是值传递还是引用传递？ javaguide</a></li>
 </ul>
 <!-- @include: @article-footer.snippet.md -->
-
           </div>
 
           
@@ -354,23 +353,23 @@ invoke after: 11
             <ul class="related-posts-list">
               
               <li class="related-posts-item">
-                <a href="/static/posts/Git-提交约定详解/" class="related-posts-link">
-                  <h4 class="related-posts-item-title">Git 提交约定详解</h4>
-                  <time class="related-posts-item-date">2026年5月21日</time>
+                <a href="/static/posts/java语法糖详解/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">java语法糖详解</h4>
+                  <time class="related-posts-item-date">2026年1月26日</time>
                 </a>
               </li>
               
               <li class="related-posts-item">
-                <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/" class="related-posts-link">
-                  <h4 class="related-posts-item-title">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</h4>
-                  <time class="related-posts-item-date">2026年5月20日</time>
+                <a href="/static/posts/Trae-Java环境配置/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">Trae-Java环境配置</h4>
+                  <time class="related-posts-item-date">2026年1月26日</time>
                 </a>
               </li>
               
               <li class="related-posts-item">
-                <a href="/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/" class="related-posts-link">
-                  <h4 class="related-posts-item-title">zoxide & fzf 安装与使用指南（终端提效神器）</h4>
-                  <time class="related-posts-item-date">2026年5月16日</time>
+                <a href="/static/posts/IDEA快捷键-Mac/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">IDEA快捷键（Mac）</h4>
+                  <time class="related-posts-item-date">2026年5月6日</time>
                 </a>
               </li>
               
