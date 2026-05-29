@@ -301,7 +301,7 @@ incr before: 10
 incr after: 11
 invoke after: 11
 </code></pre>
-<p>分析：可以看到，在 <code>incr</code> 函数中对形参的修改，可以影响到实参的值。要注意：这里的 <code>incr</code> 形参的数据类型用的是 <code>int&amp;</code> 才为引用传递，如果是用 <code>int</code> 的话还是值传递哦！</p>
+<p>分析：可以看到，在 <code>incr</code> 函数中对形参的修改，可以影响到实参的值。要注意：这里�� <code>incr</code> 形参的数据类型用的是 <code>int&amp;</code> 才为引用传递，如果是用 <code>int</code> 的话还是值传递哦！</p>
 <h2 id="为什么-Java-不引入引用传递呢">为什么 Java 不引入引用传递呢？</h2>
 <p>引用传递看似很好，能在方法内就直接把实参的值修改了，但是，为什么 Java 不引入引用传递呢？</p>
 <p><strong>注意：以下为个人观点看法，并非来自于 Java 官方：</strong></p>
