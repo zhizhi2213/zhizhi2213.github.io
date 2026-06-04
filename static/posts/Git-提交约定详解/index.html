@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git 提交约定详解 - 吱吱的博客</title>
+  <meta name="description" content="Git 提交约定详解
+
+ 概述
+
+Git 提交约定是一种统一的提交信息格式规范，帮助团队更好地理解代码变更历史，提高协作效率。最流行的规范是 Conventional Commits(https://www.conventionalcommits.org/)。
+
+ 提交类型（Type）
+
+ 1. f...">
+  <meta name="theme-color" content="#2f6feb">
+  <meta property="og:title" content="Git 提交约定详解">
+  <meta property="og:description" content="Git 提交约定详解
+
+ 概述
+
+Git 提交约定是一种统一的提交信息格式规范，帮助团队更好地理解代码变更历史，提高协作效率。最流行的规范是 Conventional Commits(https://www.conventionalcommits.org/)。
+
+ 提交类型（Type）
+
+ 1. f...">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://zhizhi2213.github.io/static/posts/Git-提交约定详解/">
+  <meta property="og:site_name" content="吱吱的博客">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="article:author" content="zhizhi2213">
+  <meta property="article:published_time" content="2026年5月21日">
+  
+  <meta property="article:tag" content="{{.}}">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Git 提交约定详解">
+  <meta name="twitter:description" content="Git 提交约定详解
+
+ 概述
+
+Git 提交约定是一种统一的提交信息格式规范，帮助团队更好地理解代码变更历史，提高协作效率。最流行的规范是 Conventional Commits(https://www.conventionalcommits.org/)。
+
+ 提交类型（Type）
+
+ 1. f...">
+  <link rel="stylesheet" href="/static/assets/style.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+  
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="/" class="logo">吱吱的博客</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">首页</a>
+          <a href="/static/archives/" class="nav-link">归档</a>
+          <a href="/static/tags/" class="nav-link">标签</a>
+          <a href="/static/about/" class="nav-link">关于</a>
+        </div>
+        <div class="header-actions">
+          <button class="search-toggle" aria-label="搜索">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </button>
+          <button class="theme-toggle" aria-label="切换主题">
+            <span class="theme-icon">🌙</span>
+          </button>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+      
+      <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+        <div class="mobile-menu-content">
+          <div class="mobile-menu-header">
+            <a href="/" class="logo">吱吱的博客</a>
+            <button class="mobile-menu-close" id="mobileMenuClose" aria-label="关闭菜单">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="mobile-menu-links">
+            <a href="/" class="mobile-menu-link">首页</a>
+            <a href="/static/archives/" class="mobile-menu-link">归档</a>
+            <a href="/static/tags/" class="mobile-menu-link">标签</a>
+            <a href="/static/about/" class="mobile-menu-link">关于</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-modal" id="searchModal">
+    <div class="search-modal-backdrop" id="searchBackdrop"></div>
+    <div class="search-modal-content">
+      <div class="search-header">
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+        <button class="search-close" id="searchClose" aria-label="关闭搜索">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+
+  <!-- 静默编译占位符，不在前台显示 -->
+  <div style="display: none;">
+    
+    <a href="/static/posts/Git-提交约定详解/">Git 提交约定详解</a>
+    
+    <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</a>
+    
+    <a href="/static/posts/zoxide-fzf-安装与使用指南-终端提效神器/">zoxide & fzf 安装与使用指南（终端提效神器）</a>
+    
+    <a href="/static/posts/IDEA快捷键-Mac/">IDEA快捷键（Mac）</a>
+    
+    <a href="/static/posts/MyBatis源码深度解析/">MyBatis源码深度解析</a>
+    
+    <a href="/static/posts/ThreadLocal异步场景问题解析/">ThreadLocal异步场景问题解析</a>
+    
+    <a href="/static/posts/Spring-IOC与AOP详解/">Spring IOC与AOP详解</a>
+    
+    <a href="/static/posts/Spring源码中的设计模式详解/">Spring源码中的设计模式详解</a>
+    
+    <a href="/static/posts/HashMap源码分析/">HashMap源码分析</a>
+    
+    <a href="/static/posts/java语法糖详解/">java语法糖详解</a>
+    
+    <a href="/static/posts/Trae-Java环境配置/">Trae-Java环境配置</a>
+    
+    <a href="/static/posts/为什么Java中只有值传递/">为什么Java中只有值传递？</a>
+    
+    <a href="/static/posts/关于技术分享/">关于技术分享</a>
+    
+    <a href="/static/posts/代码之美/">代码之美</a>
+    
+    <a href="/static/posts/首页美化教程/">首页美化教程</a>
+    
+    <a href="/static/posts/如何创建GitHub个人网站/">如何创建GitHub个人网站</a>
+    
+  </div>
+
+  <main class="main" id="main-content">
+    <div class="post-layout-container">
+      <div class="post-layout">
+        <article class="post">
+          <header class="article-header">
+            <a href="/" class="back-link">← 返回首页</a>
+            <h1>Git 提交约定详解</h1>
+            <div class="article-meta">
+              <span class="date">2026年5月21日</span>
+              <span class="views" id="postViews">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <span>加载中...</span>
+              </span>
+              <span class="tags-list">
+                <span class="post-tag">Git</span><span class="post-tag">开发规范</span><span class="post-tag">提交约定</span>
+              </span>
+            </div>
+          </header>
+
+          <div class="post-content article-body">
+            <h1>Git 提交约定详解</h1>
+<h2 id="概述">概述</h2>
+<p>Git 提交约定是一种统一的提交信息格式规范，帮助团队更好地理解代码变更历史，提高协作效率。最流行的规范是 <a href="https://www.conventionalcommits.org/">Conventional Commits</a>。</p>
+<h2 id="提交类型-Type">提交类型（Type）</h2>
+<h3 id="1-feat-新功能">1. <code>feat</code> - 新功能</h3>
+<p>表示新增功能或改进现有功能。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 添加新功能</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"feat: 添加用户登录功能"</span>
+
+<span class="token comment"># 改进现有功能</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"feat: 支持导出为 PDF 格式"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>新增 API 接口</li>
+<li>新增用户界面组件</li>
+<li>添加新的业务逻辑</li>
+<li>扩展现有功能</li>
+</ul>
+<hr>
+<h3 id="2-fix-修复-Bug">2. <code>fix</code> - 修复 Bug</h3>
+<p>表示修复了问题或错误。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 修复页面显示问题</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"fix: 修复登录页面在 Safari 上的显示问题"</span>
+
+<span class="token comment"># 修复代码逻辑错误</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"fix: 修复数组越界异常"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>修复功能缺陷</li>
+<li>修复性能问题</li>
+<li>修复安全问题</li>
+<li>修复兼容性问题</li>
+</ul>
+<hr>
+<h3 id="3-perf-性能优化">3. <code>perf</code> - 性能优化</h3>
+<p>表示提升了性能，但不改变功能。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 优化数据库查询</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"perf: 优化数据库查询，减少 N+1 问题"</span>
+
+<span class="token comment"># 缓存静态资源</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"perf: 缓存静态资源，减少请求次数"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>数据库查询优化</li>
+<li>算法复杂度降低</li>
+<li>缓存策略优化</li>
+<li>资源加载优化</li>
+<li>减少内存占用</li>
+</ul>
+<hr>
+<h3 id="4-docs-文档更新">4. <code>docs</code> - 文档更新</h3>
+<p>表示更新了文档或注释。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 更新 README</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"docs: 更新 README 安装说明"</span>
+
+<span class="token comment"># 添加代码注释</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"docs: 添加 API 接口注释"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>更新项目文档</li>
+<li>添加代码注释</li>
+<li>更新 API 文档</li>
+<li>更新 CHANGELOG</li>
+</ul>
+<hr>
+<h3 id="5-style-代码格式">5. <code>style</code> - 代码格式</h3>
+<p>表示不影响功能代码的格式调整。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 统一代码格式</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"style: 格式化代码，统一缩进为 2 空格"</span>
+
+<span class="token comment"># 调整 import 顺序</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"style: 调整 import 顺序"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>代码格式化</li>
+<li>缩进调整</li>
+<li>空格/换行调整</li>
+<li>注释格式调整</li>
+</ul>
+<hr>
+<h3 id="6-refactor-重构">6. <code>refactor</code> - 重构</h3>
+<p>表示重构代码，不改变功能。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 提取公共方法</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"refactor: 提取公共方法到 utils 文件"</span>
+
+<span class="token comment"># 重构组件结构</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"refactor: 重构组件结构，提高可维护性"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>代码结构优化</li>
+<li>提取公共代码</li>
+<li>重命名变量/函数</li>
+<li>模式重构</li>
+<li>架构优化</li>
+</ul>
+<hr>
+<h3 id="7-test-测试相关">7. <code>test</code> - 测试相关</h3>
+<p>表示添加或修改测试代码。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 添加单元测试</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"test: 添加单元测试覆盖"</span>
+
+<span class="token comment"># 修复测试用例</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"test: 修复测试用例断言错误"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>添加单元测试</li>
+<li>添加集成测试</li>
+<li>修改测试代码</li>
+<li>更新测试数据</li>
+</ul>
+<hr>
+<h3 id="8-chore-构建-工具链">8. <code>chore</code> - 构建/工具链</h3>
+<p>表示构建过程或辅助工具的变更。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 升级依赖包</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"chore: 升级依赖包版本"</span>
+
+<span class="token comment"># 更新构建脚本</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"chore: 更新构建脚本"</span>
+
+<span class="token comment"># 配置代码规范工具</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"chore: 配置 prettier 和 eslint"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>升级依赖包</li>
+<li>更新构建配置</li>
+<li>配置 CI/CD</li>
+<li>工具链升级</li>
+</ul>
+<hr>
+<h3 id="9-ci-CI-CD">9. <code>ci</code> - CI/CD</h3>
+<p>表示持续集成/部署配置的变更。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 添加自动部署</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"ci: 添加 GitHub Actions 自动部署流程"</span>
+
+<span class="token comment"># 优化构建时间</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"ci: 优化 CI 构建时间"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>添加 CI 流程</li>
+<li>优化 CI 配置</li>
+<li>添加自动部署</li>
+<li>修改流水线配置</li>
+</ul>
+<hr>
+<h3 id="10-revert-回退">10. <code>revert</code> - 回退</h3>
+<p>表示回退之前的提交。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 回退指定提交</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"revert: 回退 commit 3438d29"</span>
+</code></pre>
+<p><strong>适用场景：</strong></p>
+<ul>
+<li>回退错误提交</li>
+<li>撤销功能变更</li>
+</ul>
+<hr>
+<h2 id="提交格式">提交格式</h2>
+<p>完整的提交信息格式：</p>
+<pre class="language-plaintext"><code class="language-plaintext">&lt;type>(&lt;scope>): &lt;subject>
+
+&lt;body>
+
+&lt;footer>
+</code></pre>
+<h3 id="Scope-范围">Scope（范围）</h3>
+<p>表示变更影响的模块或范围。</p>
+<pre class="language-bash"><code class="language-bash">feat<span class="token punctuation">(</span>auth<span class="token punctuation">)</span>: 添加 OAuth2 登录支持
+fix<span class="token punctuation">(</span>user<span class="token punctuation">)</span>: 修复用户头像上传失败问题
+perf<span class="token punctuation">(</span>db<span class="token punctuation">)</span>: 优化查询索引
+</code></pre>
+<h3 id="Subject-主题">Subject（主题）</h3>
+<ul>
+<li>使用祈使句，如 <code>&quot;添加&quot;</code> 而不是 <code>&quot;添加了&quot;</code></li>
+<li>首字母小写</li>
+<li>末尾不加句号</li>
+</ul>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># ✅ 正确</span>
+feat: 添加用户登录功能
+fix: 修复登录页面显示问题
+
+<span class="token comment"># ❌ 错误</span>
+feat: 添加用户登录功能。  <span class="token comment"># 有句号</span>
+Fix: 修复登录页面显示问题  <span class="token comment"># 首字母大写</span>
+</code></pre>
+<h3 id="Body-正文">Body（正文）</h3>
+<p>可选，详细说明变更原因和影响。</p>
+<pre class="language-bash"><code class="language-bash">feat<span class="token punctuation">(</span>auth<span class="token punctuation">)</span>: 添加 OAuth2 登录支持
+
+- 支持微信登录
+- 支持 GitHub 登录
+- 更新登录页面 UI
+</code></pre>
+<h3 id="Footer-脚注">Footer（脚注）</h3>
+<p>可选，用于关联 Issue 或 Breaking Changes。</p>
+<pre class="language-bash"><code class="language-bash">fix<span class="token punctuation">(</span>api<span class="token punctuation">)</span>: 修复分页接口参数错误
+
+Closes <span class="token comment">#123</span>
+
+BREAKING CHANGE: 分页接口参数格式已变更，请更新客户端代码
+</code></pre>
+<hr>
+<h2 id="完整示例">完整示例</h2>
+<pre class="language-bash"><code class="language-bash"><span class="token comment"># 简单提交</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"feat: 添加用户管理模块"</span>
+
+<span class="token comment"># 带范围的提交</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"feat(user): 添加用户权限管理功能"</span>
+
+<span class="token comment"># 带详细说明的提交</span>
+<span class="token function">git</span> commit <span class="token parameter variable">-m</span> <span class="token string">"feat(api): 添加用户导出功能
+
+- 支持 CSV 格式导出
+- 支持自定义导出字段
+- 添加导出进度提示
+
+Closes #456"</span>
+</code></pre>
+<hr>
+<h2 id="工具推荐">工具推荐</h2>
+<h3 id="Commitlint">Commitlint</h3>
+<p>自动检查提交信息是否符合规范。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> @commitlint/cli @commitlint/config-conventional
+<span class="token builtin class-name">echo</span> <span class="token string">"export COMMITLINT_ENABLE=true"</span> <span class="token operator">>></span> ~/.zshrc
+</code></pre>
+<h3 id="Commitizen">Commitizen</h3>
+<p>交互式提交工具，避免忘记提交类型。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-g</span> commitizen cz-conventional-changelog
+<span class="token builtin class-name">echo</span> <span class="token string">"export COMMIT_GEN_ENABLE=true"</span> <span class="token operator">>></span> ~/.zshrc
+</code></pre>
+<h3 id="Husky">Husky</h3>
+<p>Git hooks 工具，在提交前自动检查。</p>
+<pre class="language-bash"><code class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> <span class="token parameter variable">-D</span> husky lint-staged
+npx husky <span class="token function">install</span>
+npx husky <span class="token function">add</span> .husky/commit-msg <span class="token string">"npx --no -- commitlint --edit \<span class="token variable">$1</span>"</span>
+</code></pre>
+<hr>
+<h2 id="参考资源">参考资源</h2>
+<ul>
+<li><a href="https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit">Angular 提交规范</a></li>
+<li><a href="https://www.conventionalcommits.org/">Conventional Commits</a></li>
+<li><a href="https://commitlint.js.org/">Commitlint</a></li>
+</ul>
+
+          </div>
+
+          
+          <section class="comments-section">
+            <div class="comments-container">
+              <h3 class="comments-title">评论</h3>
+              <div class="giscus-wrapper">
+                <script src="https://giscus.app/client.js"
+                  data-repo="zhizhi2213/zhizhi2213.github.io"
+                  data-repo-id="R_kgDOQ-4OZg"
+                  data-category="Announcements"
+                  data-category-id="DIC_kwDOQ-4OZs4C2RLo"
+                  data-mapping="title"
+                  data-strict="0"
+                  data-reactions-enabled="1"
+                  data-emit-metadata="0"
+                  data-input-position="bottom"
+                  data-theme="preferred_color_scheme"
+                  data-lang="zh-CN"
+                  data-loading="lazy"
+                  crossorigin="anonymous"
+                  async>
+                </script>
+              </div>
+            </div>
+          </section>
+          
+
+          <aside class="related-posts">
+            <h3 class="related-posts-title">相关推荐</h3>
+            <ul class="related-posts-list">
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/如何创建GitHub个人网站/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">如何创建GitHub个人网站</h4>
+                  <time class="related-posts-item-date">2026年1月22日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/首页美化教程/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">首页美化教程</h4>
+                  <time class="related-posts-item-date">2026年1月23日</time>
+                </a>
+              </li>
+              
+              <li class="related-posts-item">
+                <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</h4>
+                  <time class="related-posts-item-date">2026年5月20日</time>
+                </a>
+              </li>
+              
+            </ul>
+          </aside>
+        </article>
+
+        
+        <aside class="toc-container">
+          <nav class="toc-content" id="tocContent">
+            <div class="toc-title">目录</div>
+            <a href="#概述" class="toc-item toc-level-2" style="">概述</a><a href="#提交类型-Type" class="toc-item toc-level-2" style="">提交类型（Type）</a><a href="#1-feat-新功能" class="toc-item toc-level-3" style="padding-left: 1.5rem;">1. `feat` - 新功能</a><a href="#2-fix-修复-Bug" class="toc-item toc-level-3" style="padding-left: 1.5rem;">2. `fix` - 修复 Bug</a><a href="#3-perf-性能优化" class="toc-item toc-level-3" style="padding-left: 1.5rem;">3. `perf` - 性能优化</a><a href="#4-docs-文档更新" class="toc-item toc-level-3" style="padding-left: 1.5rem;">4. `docs` - 文档更新</a><a href="#5-style-代码格式" class="toc-item toc-level-3" style="padding-left: 1.5rem;">5. `style` - 代码格式</a><a href="#6-refactor-重构" class="toc-item toc-level-3" style="padding-left: 1.5rem;">6. `refactor` - 重构</a><a href="#7-test-测试相关" class="toc-item toc-level-3" style="padding-left: 1.5rem;">7. `test` - 测试相关</a><a href="#8-chore-构建-工具链" class="toc-item toc-level-3" style="padding-left: 1.5rem;">8. `chore` - 构建/工具链</a><a href="#9-ci-CI-CD" class="toc-item toc-level-3" style="padding-left: 1.5rem;">9. `ci` - CI/CD</a><a href="#10-revert-回退" class="toc-item toc-level-3" style="padding-left: 1.5rem;">10. `revert` - 回退</a><a href="#提交格式" class="toc-item toc-level-2" style="">提交格式</a><a href="#Scope-范围" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Scope（范围）</a><a href="#Subject-主题" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Subject（主题）</a><a href="#Body-正文" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Body（正文）</a><a href="#Footer-脚注" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Footer（脚注）</a><a href="#完整示例" class="toc-item toc-level-2" style="">完整示例</a><a href="#工具推荐" class="toc-item toc-level-2" style="">工具推荐</a><a href="#Commitlint" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Commitlint</a><a href="#Commitizen" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Commitizen</a><a href="#Husky" class="toc-item toc-level-3" style="padding-left: 1.5rem;">Husky</a><a href="#参考资源" class="toc-item toc-level-2" style="">参考资源</a>
+          </nav>
+        </aside>
+        
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 zhizhi2213. All rights reserved.</p>
+      <p>Powered by <a href="https://github.com/zhizhi2213">吱吱的博客</a></p>
+      <p class="footer-links">
+        <a href="/atom.xml" aria-label="RSS 订阅">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
+          RSS 订阅
+        </a>
+      </p>
+    </div>
+  </footer>
+
+  <button class="back-to-top" id="backToTop" aria-label="返回顶部">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+  </button>
+
+  <script src="/static/assets/script.js" defer></script>
+</body>
+</html>
