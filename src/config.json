@@ -12,7 +12,7 @@
   },
   "github": {
     "enabled": true,
-    "repo": "zhizhi2213/obsidian-notes",
+    "repo": "zhizhi2213/agent-obsidian",
     "branch": "main",
     "path": "09_Blog"
   },
