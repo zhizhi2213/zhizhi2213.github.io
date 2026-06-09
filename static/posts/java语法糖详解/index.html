@@ -789,7 +789,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继��执
     <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>可以看到，在forEach方法中，其实是调用了java.lang.invoke.LambdaMetafactory#metafactory方法，该方法的第四个参数 implMethod<br>
+<p>可以看到，在forEach方法中，其实是调用了java.lang.invoke.LambdaMetafactory#metafactory方法，该���法的第四个参数 implMethod<br>
 指定了方法实现。可以看到这里其实是调用了一个lambda$main$0方法进行了输出。</p>
 <p>再来看一个稍微复杂一点的，先对 List 进行过滤，然后再输出：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -846,7 +846,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继��执
 List，擦除动作导致这两个方法的特征签名变得一模一样。</p>
 <h4 id="二、当泛型遇到-catch" tabindex="-1">二、当泛型遇到 catch</h4>
 <p>泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻来进行的。由于类型信息被擦除，JVM<br>
-是无法区分两个异常类型MyException<String>和MyException<Integer>的</p>
+��无法区分两个异常类型MyException<String>和MyException<Integer>的</p>
 <h4 id="三、当泛型内包含静态变量" tabindex="-1">三、当泛型内包含静态变量</h4>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">StaticTest</span> <span class="token punctuation">{</span>
 
@@ -888,7 +888,7 @@ c == d is true
 </code></pre>
 <p>在 Java 5 中，在 Integer 的操作上引入了一个新功能来节省内存和提高性能。整型对象通过使用相同的对象引用实现了缓存和重用。</p>
 <p>适用于整数值区间-128 至 +127。</p>
-<p>只适用于自动装箱。使用构造函数创建对象不适用。</p>
+<p>只适用于自动��箱。使用构造函数创建对象不适用。</p>
 <h3 id="增强-for-循环">增强 for 循环</h3>
 <pre class="language-plaintext"><code class="language-plaintext">for (Student stu : students) {
 if (stu.getId() == 2)
@@ -904,7 +904,7 @@ fail-fast 原则 Iterator 会马上抛出java.util.ConcurrentModificationExcepti
 <h2 id="总结">总结</h2>
 <p>前面介绍了 12 种 Java 中常用的语法糖。所谓语法糖就是提供给开发人员便于开发的一种语法而已。但是这种语法只有开发人员认识。要想被执行，需要进行解糖，即转成<br>
 JVM 认识的语法。当我们把语法糖解糖之后，你就会发现其实我们日常使用的这些方便的语法，其实都是一些其他更简单的语法构成的。</p>
-<p>有了这些语法糖，我们在日常开发的时候可以大大提升效率，但是同时也要避过度使用。使用之前最好了解下原理，避免掉坑。</p>
+<p>有了这些语法糖，我们在日常开发的时候可以大大提升效率，但���同时也要避过度使用。使用之前最好了解下原理，避免掉坑。</p>
 
           </div>
 
