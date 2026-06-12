@@ -630,7 +630,7 @@ C/C++的条件编译相比，确实更有局限性。在 Java 语言设计之初
 if 语言，如果断言结果为 true，则什么都不做，程序继续执行，如果断言结果为 false，则程序抛出 AssertError<br>
 来打断程序的执行。-enableassertions会设置$assertionsDisabled 字段的值。</p>
 <p>数值字面量<br>
-在 java 7 中，数值字面量，不管是整数还是浮点数，都允许在数字之间插入任意多个下划线。这些���划线不会对字面量的数值产生影响，目的就是方便阅读。</p>
+在 java 7 中，数值字面量，不管是整数还是浮点数，都允许在数字之间插入任意多个下划线。这些下划线不会对字面量的数值产生影响，目的就是方便阅读。</p>
 <p>比如：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">{</span>
 
@@ -763,7 +763,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 </code></pre>
 <p>其实背后的原理也很简单，那些我们没有做的关闭资源的操作，编译器都帮我们做了。所以，再次印证了，语法糖的作用就是方便程序员的使用，但最终还是要转成编译器认识的语言。</p>
 <h3 id="Lambda-表达式">Lambda 表达式</h3>
-<p>关于 lambda 表达式，有人可能会有质疑，因为网上有人说他并不是语法糖。其实我想纠正下这个说法。Lambda<br>
+<p>关于 lambda 表达式，有人可能会有质疑，��为网上有人说他并不是语法糖。其实我想纠正下这个说法。Lambda<br>
 表达式不是匿名内部类的语法糖，但是他也是一个语法糖。实现方式其实是依赖了几个 JVM 底层提供的 lambda 相关 api。</p>
 <p>先来看一个简单的 lambda 表达式。遍历一个 list：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
@@ -825,7 +825,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 <span class="token punctuation">}</span>
 </code></pre>
 <p>两个 lambda 表达式分别调用了lambda$main$1和lambda$main$0两个方法。</p>
-<p>所以，lambda 表达式的实现其实是依赖了一些底层的 api，在编译阶段，编译器会把 lambda 表达式进行解糖，转换成调用内部 api 的��式。</p>
+<p>所以，lambda 表达式的实现其实是依赖了一些底层的 api，在编译阶段，编译器会把 lambda 表达式进行解糖，转换成调用内部 api 的方式。</p>
 <h2 id="可能遇到的坑">可能遇到的坑</h2>
 <h3 id="泛型">泛型</h3>
 <h4 id="一、当泛型遇到重载" tabindex="-1">一、当泛型遇到重载</h4>
@@ -845,7 +845,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继续执行
 ，但是，这段代码是编译通不过的。因为我们前面讲过，参数List<Integer>和List<String>编译之后都被擦除了，变成了一样的原生类型<br>
 List，擦除动作导致这两个方法的特征签名变得一模一样。</p>
 <h4 id="二、当泛型遇到-catch" tabindex="-1">二、当泛型遇到 catch</h4>
-<p>泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻来进行的。由于类型信息被擦除，JVM<br>
+<p>泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻��进行的。由于类型信息被擦除，JVM<br>
 是无法区分两个异常类型MyException<String>和MyException<Integer>的</p>
 <h4 id="三、当泛型内包含静态变量" tabindex="-1">三、当泛型内包含静态变量</h4>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">StaticTest</span> <span class="token punctuation">{</span>
@@ -887,7 +887,7 @@ List，擦除动作导致这两个方法的特征签名变得一模一样。</p>
 c == d is true
 </code></pre>
 <p>在 Java 5 中，在 Integer 的操作上引入了一个新功能来节省内存和提高性能。整型对象通过使用相同的对象引用实现了缓存和重用。</p>
-<p>适用于整数值区间-128 至 +127。</p>
+<p>适用于整���值区间-128 至 +127。</p>
 <p>只适用于自动装箱。使用构造函数创建对象不适用。</p>
 <h3 id="增强-for-循环">增强 for 循环</h3>
 <pre class="language-plaintext"><code class="language-plaintext">for (Student stu : students) {
