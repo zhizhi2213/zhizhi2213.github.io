@@ -1,5 +1,18 @@
 [
   {
+    "title": "解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流",
+    "slug": "解决-macOS-剪贴板历史限制的-Raycast-购物车模式工作流",
+    "excerpt": "解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流\n\n在日常开发或进行多代码库协同维护时，我们经常需要在本地搭建需求工作区，这就不可避免地要同时克隆（git clone）多个特定分支的仓库。\n\n然而，在这个过程中，macOS 的原生机制带来了一个让人头疼的痛点：macOS 的系统剪...",
+    "tags": [
+      "Blog",
+      "Raycast",
+      "Workflow",
+      "Git",
+      "Automation"
+    ],
+    "date": "2026-06-18 14:58:00"
+  },
+  {
     "title": "Git 提交约定详解",
     "slug": "Git-提交约定详解",
     "excerpt": "Git 提交约定详解\n\n 概述\n\nGit 提交约定是一种统一的提交信息格式规范，帮助团队更好地理解代码变更历史，提高协作效率。最流行的规范是 Conventional Commits(https://www.conventionalcommits.org/)。\n\n 提交类型（Type）\n\n 1. f...",

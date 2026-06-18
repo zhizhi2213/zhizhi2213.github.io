@@ -108,6 +108,8 @@ Java 语法糖
   <!-- 静默编译占位符，不在前台显示 -->
   <div style="display: none;">
     
+    <a href="/static/posts/解决-macOS-剪贴板历史限制的-Raycast-购物车模式工作流/">解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流</a>
+    
     <a href="/static/posts/Git-提交约定详解/">Git 提交约定详解</a>
     
     <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</a>
@@ -176,7 +178,7 @@ Java 语法糖
 ，这个方法就是负责解语法糖的实现的。</p>
 </blockquote>
 <p>Java 中最常用的语法糖主要有泛型、变长参数、条件编译、自动拆装箱、内部类等。</p>
-<p>通过 Decompilers online 对 Class 文件进行��线反编译。</p>
+<p>通过 Decompilers online 对 Class 文件进行在线反编译。</p>
 <p>接下来都是javaguide对java常用语法糖讲解</p>
 <h3 id="switch-支持-String-与枚举">switch 支持 String 与枚举</h3>
 <p>前面提到过，从 Java 7 开始，Java 语言中的语法糖在逐渐丰富，其中一个比较重要的就是 Java 7 中switch开始支持String。</p>
@@ -234,7 +236,7 @@ switch 或者使用纯整数常量，但这也不是很差。</p>
 <h3 id="泛型">泛型</h3>
 <p>我们都知道，很多语言都是支持泛型的，但是很多人不知道的是，不同的编译器对于泛型的处理方式是不同的，通常情况下，一个编译器处理泛型有两种方式：Code<br>
 specialization和Code sharing。C++和 C#是使用Code specialization的处理机制，而 Java 使用的是Code sharing的机制。</p>
-<p>Code sharing 方式为每个泛型类型创建唯一的字节码表示，并且将该泛型类型的实例都映射到这个唯一的字节码表示上。将多种泛型类形实例映射到唯一的字节码表��是通过类型擦除（type<br>
+<p>Code sharing 方式为每个泛型类型创建唯一的字节码表示，并且将该泛型类型的实例都映射到这个唯一的字节码表示上。将多种泛型类形实例映射到唯一的字节码表示是通过类型擦除（type<br>
 erasue）实现的。</p>
 <p>也就是说，对于 Java 虚拟机来说，他根本不认识Map&lt;String, String&gt; map这样的语法。需要在编译阶段通过类型擦除的方式进行解语法糖。</p>
 <p>类型擦除的主要过程如下：1.将所有的泛型参数用其最左边界（最顶级的父类型）类型替换。 2.移除所有的类型参数。</p>
@@ -289,7 +291,7 @@ map<span class="token punctuation">.</span>
     <span class="token keyword">return</span> w<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>虚拟机中没有泛���，只有普通类和普通方法，所有泛型类的类型参数在编译时都会被擦除，泛型类并没有自己独有的Class类对象。比如并不存在List<String><br>
+<p>虚拟机中没有泛型，只有普通类和普通方法，所有泛型类的类型参数在编译时都会被擦除，泛型类并没有自己独有的Class类对象。比如并不存在List<String><br>
 .class或是List<Integer>.class，而只有List.class。</p>
 <h3 id="自动装箱与拆箱">自动装箱与拆箱</h3>
 <p>自动装箱就是 Java 自动将原始类型值转换成对应的对象，比如将 int 的变量转换成 Integer 对象，这个过程叫做装箱，反之将 Integer<br>
@@ -349,7 +351,7 @@ Double, Boolean。</p>
 
 <span class="token punctuation">}</span>
 </code></pre>
-<p>从反编译后代码可以看出，可变参数在被使用的时候，他首先会创建一个数组，数组的长度就是调用该方法是传递的实参的个数，然后再把参数值全部放到这个数组当中，然后再把这个数组作为参数传递到��调用的方法中。（注：transient<br>
+<p>从反编译后代码可以看出，可变参数在被使用的时候，他首先会创建一个数组，数组的长度就是调用该方法是传递的实参的个数，然后再把参数值全部放到这个数组当中，然后再把这个数组作为参数传递到被调用的方法中。（注：transient<br>
 仅在修饰成员变量时有意义，此处 “修饰方法” 是由于在 javassist 中使用相同数值分别表示 transient 以及 vararg，见 此处。）</p>
 <p>枚举<br>
 Java SE5 提供了一种新的类型-Java 的枚举类型，关键字enum可以将一组具名的值的有限集合创建为一种新的类型，而这些具名的值可以作为常规的程序组件使用，这是一种非常有用的功能。</p>
@@ -515,7 +517,7 @@ userName 属性。正是通过这个方法实现内部类访问外部类私有�
 <p>补充：</p>
 <p>匿名内部类、局部内部类、静态内部类也是通过桥方法来获取 private 属性。<br>
 静态内部类没有this$0的引用<br>
-匿名内部类、局部内部类通过复制使用局部变量，该��量初始化之后就不能被修改。以下是一个案例：</p>
+匿名内部类、局部内部类通过复制使用局部变量，该变量初始化之后就不能被修改。以下是一个案例：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">OuterClass</span> <span class="token punctuation">{</span>
 
     <span class="token keyword">private</span> <span class="token class-name">String</span> userName<span class="token punctuation">;</span>
@@ -587,8 +589,8 @@ userName 属性。正是通过这个方法实现内部类访问外部类私有�
 false 的代码块消除。通过该方式实现的条件编译，必须在方法体内实现，而无法在整个 Java 类的结构或者类的属性上进行条件编译，这与<br>
 C/C++的条件编译相比，确实更有局限性。在 Java 语言设计之初并没有引入条件编译的功能，虽有局限，但是总比没有更强。</p>
 <p>断言<br>
-在 Java 中，assert关键字是从 JAVA SE 1.4 引入的，为了避免和老版本的 Java 代码中使用了assert关键字导致错误，Java<br>
-在执行的时候默认是不启动断言检查的（这个时候，所���的断言语句都将忽略！），如果要开启断言检查，则需要用开关-enableassertions或-ea来开启。</p>
+在 Java 中，assert关键字是从 JAVA SE 1.4 引入的，为了���免和老版本的 Java 代码中使用了assert关键字导致错误，Java<br>
+在执行的时候默认是不启动断言检查的（这个时候，所有的断言语句都将忽略！），如果要开启断言检查，则需要用开关-enableassertions或-ea来开启。</p>
 <p>看一段包含断言的代码：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">AssertTest</span> <span class="token punctuation">{</span>
 
@@ -627,7 +629,7 @@ C/C++的条件编译相比，确实更有局限性。在 Java 语言设计之初
 <span class="token punctuation">}</span>
 </code></pre>
 <p>很明显，反编译之后的代码要比我们自己的代码复杂的多。所以，使用了 assert 这个语法糖我们节省了很多代码。其实断言的底层实现就是<br>
-if 语言，如果断言结果为 true，则什么都不做，程序继��执行，如果断言结果为 false，则程序抛出 AssertError<br>
+if 语言，如果断言结果为 true，则什么都不做，程序继续执行，如果断言结果为 false，则程序抛出 AssertError<br>
 来打断程序的执行。-enableassertions会设置$assertionsDisabled 字段的值。</p>
 <p>数值字面量<br>
 在 java 7 中，数值字面量，不管是整数还是浮点数，都允许在数字之间插入任意多个下划线。这些下划线不会对字面量的数值产生影响，目的就是方便阅读。</p>
@@ -764,7 +766,7 @@ if 语言，如果断言结果为 true，则什么都不做，程序继��执
 <p>其实背后的原理也很简单，那些我们没有做的关闭资源的操作，编译器都帮我们做了。所以，再次印证了，语法糖的作用就是方便程序员的使用，但最终还是要转成编译器认识的语言。</p>
 <h3 id="Lambda-表达式">Lambda 表达式</h3>
 <p>关于 lambda 表达式，有人可能会有质疑，因为网上有人说他并不是语法糖。其实我想纠正下这个说法。Lambda<br>
-表达式不是匿名内部类的语法糖，但是他也是一个语法糖。实现方��其实是依赖了几个 JVM 底层提供的 lambda 相关 api。</p>
+表达式不是匿名内部类的语法糖，但是他也是一个语法糖。实现方式其实是依赖了几个 JVM 底层提供的 lambda 相关 api。</p>
 <p>先来看一个简单的 lambda 表达式。遍历一个 list：</p>
 <pre class="language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span> strList <span class="token operator">=</span> <span class="token class-name">ImmutableList</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span><span class="token string">"Hollis"</span><span class="token punctuation">,</span> <span class="token string">"公众号：Hollis"</span><span class="token punctuation">,</span> <span class="token string">"博客：www.hollischuang.com"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -953,9 +955,9 @@ JVM 认识的语法。当我们把语法糖解糖之后，你就会发现其实�
               </li>
               
               <li class="related-posts-item">
-                <a href="/static/posts/WhatCable-让-Mac-识别-USB-C-线缆能力的菜单栏神器/" class="related-posts-link">
-                  <h4 class="related-posts-item-title">WhatCable：让 Mac 识别 USB-C 线缆能力的菜单栏神器</h4>
-                  <time class="related-posts-item-date">2026年5月20日</time>
+                <a href="/static/posts/解决-macOS-剪贴板历史限制的-Raycast-购物车模式工作流/" class="related-posts-link">
+                  <h4 class="related-posts-item-title">解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流</h4>
+                  <time class="related-posts-item-date">2026年6月18日</time>
                 </a>
               </li>
               

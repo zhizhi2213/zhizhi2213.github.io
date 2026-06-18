@@ -3,11 +3,22 @@
   <title>吱吱的博客</title>
   <link href="https://zhizhi2213.github.io/atom.xml" rel="self"/>
   <link href="https://zhizhi2213.github.io/"/>
-  <updated>2026-05-21T11:20:00.000Z</updated>
+  <updated>2026-06-18T14:58:00.000Z</updated>
   <id>https://zhizhi2213.github.io/</id>
   <author>
     <name>zhizhi2213</name>
   </author>
+  <entry>
+    <title>解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流</title>
+    <link href="https://zhizhi2213.github.io/static/posts/解决-macOS-剪贴板历史限制的-Raycast-购物车模式工作流/"/>
+    <updated>2026-06-18T14:58:00.000Z</updated>
+    <id>https://zhizhi2213.github.io/static/posts/解决-macOS-剪贴板历史限制的-Raycast-购物车模式工作流/</id>
+    <summary>解决 macOS 剪贴板历史限制的 Raycast 购物车模式工作流
+
+在日常开发或进行多代码库协同维护时，我们经常需要在本地搭建需求工作区，这就不可避免地要同时克隆（git clone）多个特定分支的仓库。
+
+然而，在这个过程中，macOS 的原生机制带来了一个让人头疼的痛点：macOS 的系统剪...</summary>
+  </entry>
   <entry>
     <title>Git 提交约定详解</title>
     <link href="https://zhizhi2213.github.io/static/posts/Git-提交约定详解/"/>
